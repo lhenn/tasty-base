@@ -14,11 +14,11 @@ const config = {
 let firebaseCache;
 
 export const getFirebase = () => {
-  if (firebaseCache) {
-    return firebaseCache;
-  }
+    if (firebaseCache) {
+        return firebaseCache;
+    }
 
-  firebase.initializeApp(config);
-  firebaseCache = firebase;
-  return firebase;
+    firebase.initializeApp(config);
+    firebaseCache = firebase;
+    return firebase;
 };

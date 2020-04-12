@@ -5,6 +5,8 @@ main {
 
 nav {
   background-color: #039be5;
+  display:flex;
+  justify-content: space-around;
 }
 
 nav a {

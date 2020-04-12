@@ -1,55 +1,44 @@
-import React, { useState }  from "react";
-import { Redirect } from "react-router-dom";
-import { getFirebase } from "../firebase";
+import React, {useState} from "react";
+import {Redirect} from "react-router-dom";
+import {getFirebase} from "../firebase";
 
-const Post = ({ match }) => {
-  
-  const [loading, setLoading] = useState(true);
-  const [blogPost, setBlogPost] = useState([]);
-  
-  //get the slug from the path
-  const slug = match.params.slug;
-  console.log('match', match, 'slug',slug);
+const Post = ({match}) => {
+    const slug = match.params.slug;
+    // const postSlugs = ["my-first-blog-post", "my-second-blog-post"];
+    const [loading, setLoading] = useState(true);
+    const [currentPost, setCurrentPost] = useState();
 
-  
-  //find the right post
-  if (loading && !blogPost.length) {
-    getFirebase()
-      .database()
-      .ref("/posts")
-      .once("value")
-      .then(snapshot => {
-        const snapshotVal = snapshot.val();
-        console.log('snapshotVal', snapshot.val());
-        
-        let thisPost;
-        for(var key in snapshotVal) {
-          if(snapshotVal[key].slug == slug){
-            thisPost = snapshotVal[key];
-          }
-        }
-        if(thisPost == undefined) return <Redirect to="/404" />; 
-        console.log("this post: ", thisPost);
+    if (loading && !currentPost) {
+        getFirebase()
+            .database()
+            .ref()
+            .child(`posts/${slug}`)  // ` used for interpolating
+            .once("value")
+            .then(snapshot => {
+                if (snapshot.val()) {
+                    setCurrentPost(snapshot.val());
+                }
+                setLoading(false);
+            });
+    }
 
-        setBlogPost(thisPost);
-        setLoading(false);
-      });
-  }
-  
-  if (loading) {
-    return <h1>Loading...</h1>;
-  }
+    if (loading) {
+        return <h1>Loading...</h1>;
+    }
 
-  
-  return (
-    <>
-      <h1>{blogPost.title}</h1>
-      <h4>{blogPost.datePretty}</h4>
-      <img src={blogPost.coverImage} alt={blogPost.coverImageAlt}/>
-      <div dangerouslySetInnerHTML={{ __html: blogPost.content}}></div>
-      
-    </>
-  );
+    // Loading is done and post wasn't found in the database
+    if (!currentPost) {
+        return <Redirect to="/404" />;
+    }
+
+    return (
+        <>
+            <img src={currentPost.coverImage} alt={currentPost.coverImageAlt} />
+            <h1>{currentPost.title}</h1>
+            <em>{currentPost.datePretty}</em>
+            <p dangerouslySetInnerHTML={{__html: currentPost.content}}></p>
+        </>
+    );
 };
 
 export default Post;
