@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { getFirebase } from "../firebase";
 
 const Home = () => {
-  const [loading, setLoading] = useState(true);
+const [loading, setLoading] = useState(true);
 const [blogPosts, setBlogPosts] = useState([]);
 
 if (loading && !blogPosts.length) {
@@ -32,9 +32,6 @@ if (loading) {
   return (
     <>
       <h1>Blog posts</h1>
-      <p>
-        Welcome to the starter code! We're showing hard-coded data right now.
-      </p>
       {blogPosts.map(blogPost => (
         <section key={blogPost.slug} className="card">
           <img src={blogPost.coverImage} alt={blogPost.coverImageAlt} />
