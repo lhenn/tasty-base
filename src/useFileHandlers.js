@@ -1,4 +1,5 @@
-import React, {useCallback, useEffect, useReducer, useRef} from "react";
+import { useCallback, useEffect, useReducer, useRef } from "react";
+import { getFirebase } from "./firebase";
 
 const initalState = {
     files: [],  // files being uploaded
