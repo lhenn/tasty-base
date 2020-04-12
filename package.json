@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@firebase/storage": "^0.3.31",
     "firebase": "^7.13.1",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",

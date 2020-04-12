@@ -1,5 +1,6 @@
 import firebase from "firebase/app";
 import database from "firebase/database";
+import storage from "firebase/storage";
 
 const config = {
     apiKey: "AIzaSyAZOwNwikvL7sAd_KhjYpsozA-UQBW_CGw",
@@ -22,3 +23,4 @@ export const getFirebase = () => {
     firebaseCache = firebase;
     return firebase;
 };
+

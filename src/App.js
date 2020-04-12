@@ -6,6 +6,7 @@ import Home from "./pages/home";
 import Create from "./pages/create";
 import Post from "./pages/post";
 import NoMatch from "./pages/no-match";
+import ImageTest from "./pages/image-test";
 
 function App() {
     return (
@@ -24,6 +25,8 @@ function App() {
                     <Route exact path="/" component={Home} />
                     <Route path="/create" component={Create} />
                     <Route path="/404" component={NoMatch} />
+                    <Route path="/get-image" component={ImageTest} />
+
                     <Route path="/:slug" component={Post} />
                 </Switch>
             </main>
