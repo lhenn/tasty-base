@@ -1,4 +1,5 @@
-import React, {useCallback, useEffect, useReducer, useRef} from "react";
+import { useCallback, useEffect, useReducer, useRef } from "react";
+import { getFirebase } from "./firebase";
 
 const initalState = {
     files: [],  // files being uploaded
@@ -54,6 +55,7 @@ const logUploadedFile = (num, color = "green") => {
 }
 
 // Simulate an upload promise handler
+/*
 const api = {
     uploadFile({timeout = 550}) {
         return new Promise((resolve) => {
@@ -63,6 +65,7 @@ const api = {
         })
     },
 }
+*/
 
 const useFileHandlers = () => {
     const [state, dispatch] = useReducer(reducer, initalState);
@@ -104,8 +107,13 @@ const useFileHandlers = () => {
     useEffect(() => {
         if (state.pending.length && state.next) {
             const {next} = state
-            api
-                .uploadFile(next)
+            console.log("state.next: ", state.next.file.name);
+            let imgName = state.next.file.name;
+            getFirebase()
+                .storage()
+                .ref()
+                .child(imgName)
+                .put(next.file)
                 .then(() => {
                     const prev = next
                     logUploadedFile(++countRef.current)

@@ -1,11 +1,11 @@
-import React, {useCallback, useReducer} from "react";
+import React from "react";
 import useFileHandlers from "../useFileHandlers";
 
 const Input = (props) => (
     <input type="file" accept="image/*" name="img-uploader-input" multiple {...props} />
 )
 
-const Test = () => {
+const ImageUploader = () => {
     const {
         files,
         pending,
@@ -33,7 +33,7 @@ const Test = () => {
                     <button type="submit">Submit</button>
                 </div>
                 <div>
-                    {files.map(({file, src, id}, index) => (
+                    {files.map(({ file, src, id }, index) => (
                         <div key={`thumb${index}`} className="thumbnail-wrapper">
                             <img className="thumbnail" src={src} alt="" />
                             <div className="thumbnail-caption">{file.name}</div>
@@ -45,4 +45,4 @@ const Test = () => {
     )
 }
 
-export default Test;
+export default ImageUploader;

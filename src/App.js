@@ -4,10 +4,11 @@ import "./App.css";
 
 import Home from "./pages/home";
 import Create from "./pages/create";
-import Test from "./pages/test";
+import ImageUploader from "./pages/image-uploader";
 import Post from "./pages/post";
 import NoMatch from "./pages/no-match";
 import ImageTest from "./pages/image-test";
+import RecipePost from "./pages/recipe-post";
 
 function App() {
     return (
@@ -25,7 +26,7 @@ function App() {
                 <Switch>
                     <Route exact path="/" component={Home} />
                     <Route path="/create" component={Create} />
-                    <Route path="/test" component={Test} />
+                    <Route path="/image-uploader" component={ImageUploader} />
                     <Route path="/404" component={NoMatch} />
                     <Route path="/get-image" component={ImageTest} />
                     <Route path="/:slug" component={Post} />
