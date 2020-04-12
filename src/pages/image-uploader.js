@@ -5,7 +5,7 @@ const Input = (props) => (
     <input type="file" accept="image/*" name="img-uploader-input" multiple {...props} />
 )
 
-const Test = () => {
+const ImageUploader = () => {
     const {
         files,
         pending,
@@ -45,4 +45,4 @@ const Test = () => {
     )
 }
 
-export default Test;
+export default ImageUploader;
