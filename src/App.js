@@ -4,6 +4,7 @@ import "./App.css";
 
 import Home from "./pages/home";
 import Create from "./pages/create";
+import Test from "./pages/test";
 import Post from "./pages/post";
 import NoMatch from "./pages/no-match";
 
@@ -23,6 +24,7 @@ function App() {
                 <Switch>
                     <Route exact path="/" component={Home} />
                     <Route path="/create" component={Create} />
+                    <Route path="/test" component={Test} />
                     <Route path="/404" component={NoMatch} />
                     <Route path="/:slug" component={Post} />
                 </Switch>
