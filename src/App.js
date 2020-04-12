@@ -28,7 +28,6 @@ function App() {
                     <Route path="/test" component={Test} />
                     <Route path="/404" component={NoMatch} />
                     <Route path="/get-image" component={ImageTest} />
-
                     <Route path="/:slug" component={Post} />
                 </Switch>
             </main>
