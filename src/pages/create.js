@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { getFirebase } from "../firebase";
-import TextEditor from "../editor/editor.js";
 
 
 const labelStyles = {
@@ -69,7 +68,6 @@ const Create = ({ history }) => {
   return (
     <>
       <h1>Create a new post</h1>
-      <TextEditor/>
       <section style={{ margin: "2rem 0" }}>
         <label style={labelStyles} htmlFor="title-field">
           Title
