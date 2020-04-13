@@ -9,6 +9,7 @@ import Post from "./pages/post";
 import NoMatch from "./pages/no-match";
 import ImageTest from "./pages/image-test";
 import RecipePost from "./pages/recipe-post";
+import Editor from "./pages/editor";
 
 function App() {
     return (
@@ -30,6 +31,7 @@ function App() {
                     <Route path="/404" component={NoMatch} />
                     <Route path="/get-image" component={ImageTest} />
                     <Route path="/recipes/:slug" component={RecipePost} />
+                    <Route path="/editor" component={Editor} />
                     <Route path="/:slug" component={Post} />
                 </Switch>
             </main>
