@@ -5,7 +5,6 @@ import "./App.css";
 import Home from "./pages/home";
 import Create from "./pages/create";
 import ImageUploader from "./pages/image-uploader";
-import Post from "./pages/post";
 import NoMatch from "./pages/no-match";
 import ImageTest from "./pages/image-test";
 import RecipePost from "./pages/recipe-post";
@@ -33,7 +32,7 @@ function App() {
                     <Route path="/get-image" component={ImageTest} />
                     <Route path="/recipes/:slug" component={RecipePost} />
                     <Route path="/editor" component={Editor} />
-                    <Route path="/:slug" component={Post} />
+                   
                 </Switch>
             </main>
         </Router>
