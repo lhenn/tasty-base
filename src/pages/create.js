@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { getFirebase } from "../firebase";
-
+import ImageUploader from "./image-uploader";
 
 const labelStyles = {
   display: "block",
@@ -121,6 +121,11 @@ const Create = ({ history }) => {
           }}
         />
 
+        <label style={labelStyles} htmlFor="image-uploader">
+          Upload images
+        </label>
+        <ImageUploader />
+
         <label style={labelStyles} htmlFor="content-field">
           Content
         </label>
@@ -133,6 +138,14 @@ const Create = ({ history }) => {
             setContent(value);
           }}
         />
+
+        <label style={labelStyles} htmlFor="preview">
+          Post preview
+        </label>
+        <div>
+            <p dangerouslySetInnerHTML={{__html: content}}></p>
+        </div>
+
         <div style={{ textAlign: "right" }}>
           <button
             style={{
@@ -148,7 +161,6 @@ const Create = ({ history }) => {
             Create
           </button>
         </div>
-       
       </section>
     </>
   );

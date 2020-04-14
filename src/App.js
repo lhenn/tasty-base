@@ -11,6 +11,7 @@ import ImageTest from "./pages/image-test";
 import RecipePost from "./pages/recipe-post";
 import Editor from "./pages/editor";
 
+// BUG: home not working!!!
 function App() {
     return (
         <Router>
