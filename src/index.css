@@ -14,3 +14,15 @@ h1,
 h2 {
   margin-bottom: 12px;
 }
+
+main {
+    width: 100%;
+}
+
+.container {
+    flex-grow: 1;
+}
+
+.form {
+    flex-grow: 1;
+}

@@ -23,4 +23,3 @@ export const getFirebase = () => {
     firebaseCache = firebase;
     return firebase;
 };
-
