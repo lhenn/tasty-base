@@ -20,6 +20,7 @@ const Home = () => {
 
                 const newestFirst = posts.reverse();
                 setBlogPosts(newestFirst);
+                console.log(newestFirst)
                 setLoading(false);
             });
     }
@@ -44,7 +45,7 @@ const Home = () => {
                                 __html: `${blogPost.content.substring(0, 200)}...`
                             }}
                         ></p>
-                        <Link to={`/${blogPost.slug}`}>Continue reading...</Link>
+                        <Link to={`/recipes/${blogPost.slug}`}>Continue reading...</Link>
                     </div>
                 </section>
             ))}

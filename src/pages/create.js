@@ -49,18 +49,20 @@ const Create = ({ history }) => {
   const createPost = () => {
     const date = generateDate();
     const newPost = {
-      title,
-      dateFormatted: date.formatted,
-      datePretty: date.pretty,
-      slug,
-      coverImage,
-      coverImageAlt,
-      content,
+        title,
+        dateFormatted: date.formatted,
+        datePretty: date.pretty,
+        slug,
+        coverImage,
+        coverImageAlt,
+        content,
     };
-    getFirebase()
+    console.log(newPost);
+    const postsRef = getFirebase()
       .database()
       .ref()
-      .child(`posts/${slug}`)
+      .child(`posts`)
+      .push()
       .set(newPost)
       .then(() => history.push(`/`));
   };
@@ -143,7 +145,7 @@ const Create = ({ history }) => {
           Post preview
         </label>
         <div>
-            <p dangerouslySetInnerHTML={{__html: content}}></p>
+          <p dangerouslySetInnerHTML={{ __html: content }}></p>
         </div>
 
         <div style={{ textAlign: "right" }}>
