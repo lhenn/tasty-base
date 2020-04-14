@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useReducer, useRef } from "react";
-import { getFirebase } from "./firebase";
+import {useCallback, useEffect, useReducer, useRef} from "react";
+import {getFirebase} from "./firebase";
 
 const initalState = {
     files: [],  // files being uploaded
@@ -36,13 +36,13 @@ const reducer = (state, action) => {
                 pending: action.pending,
                 uploaded: {
                     ...state.uploaded,
-                    [action.prev.id]: action.prev.file,  // ???
+                    [action.prev.id]: {file: action.prev.file, downloadUrl: action.downloadUrl},
                 }
             };
         case "set-upload-error":
-            return { ...state, uploadError: action.error, status: UPLOAD_ERROR };
-        case "files-uploaded" :
-            return { ...state, uploading: false, status: FILES_UPLOADED };
+            return {...state, uploadError: action.error, status: UPLOAD_ERROR};
+        case "files-uploaded":
+            return {...state, uploading: false, status: FILES_UPLOADED};
         default:
             return state;
     }
@@ -107,30 +107,61 @@ const useFileHandlers = () => {
     useEffect(() => {
         if (state.pending.length && state.next) {
             const {next} = state
-            console.log("state.next: ", state.next.file.name);
             let imgName = state.next.file.name;
-            getFirebase()
-                .storage()
-                .ref()
-                .child(imgName)
-                .put(next.file)
-                .then(() => {
-                    const prev = next
-                    logUploadedFile(++countRef.current)
-                    const pending = state.pending.slice(1)
-                    dispatch({type: 'file-uploaded', prev, pending})
-                })
-                .catch((error) => {
-                    console.error(error)
-                    dispatch({type: 'set-upload-error', error})
-                })
+
+            console.log("state.next: ", imgName);  // DEBUG
+
+            let uploadTask = getFirebase().storage().ref().child(imgName).put(next.file);
+
+            uploadTask.on(getFirebase().storage.TaskEvent.STATE_CHANGED,
+                (snapshot) => {
+                    let progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    console.log("upload is " + progress + "% done");
+                    switch (snapshot.state) {
+                        case getFirebase().storage.TaskState.PAUSED:
+                            console.log("upload is paused");
+                            break;
+                        case getFirebase().storage.TaskState.RUNNING:
+                            console.log("upload is running");
+                            break;
+                        default:
+                            console.log("snapshot.state is ", snapshot.state);
+                            break;
+                    }
+                }, (error) => {
+                    switch (error.code) {
+                        case 'storage/unauthorized':
+                            console.log("User doesn't have permission to access the object");
+                            dispatch({type: 'set-upload-error', error})
+                            break;
+                        case 'storage/canceled':
+                            console.log("User canceled the upload");
+                            dispatch({type: 'set-upload-error', error})
+                            break;
+                        default:
+                            console.log("Unknown error occurred");
+                            dispatch({type: 'set-upload-error', error})
+                            break;
+                    }
+                }, () => {
+                    uploadTask.snapshot.ref.getDownloadURL().then(
+                        (downloadUrl) => {
+                            const prev = next
+                            logUploadedFile(++countRef.current)
+                            const pending = state.pending.slice(1)
+                            console.log("DOWNLOAD URL: ", downloadUrl)
+                            dispatch({type: 'file-uploaded', prev, pending, downloadUrl})
+                        }
+                    )
+                }
+            );
         }
     }, [state])
 
     // Ends uploading
     useEffect(() => {
         if (!state.pending.length && state.uploading) {
-            dispatch({ type: "files-uploaded" });
+            dispatch({type: "files-uploaded"});
         }
     }, [state.pending.length, state.uploading])
 
