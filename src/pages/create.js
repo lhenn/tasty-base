@@ -1,22 +1,21 @@
 import React, { useState } from "react";
 import { getFirebase } from "../firebase";
+import styled from "styled-components";
 import ImageUploader from "./image-uploader";
+import Label from "../forms/label.js";
+import TextInput from "../forms/input.js";
+import TextArea from "../forms/text-area.js";
 
-const labelStyles = {
-  display: "block",
-  marginBottom: 4,
-};
-
-const inputStyles = {
-  width: "100%",
-  height: "2rem",
-  lineHeight: "2rem",
-  verticalAlign: "middle",
-  fontSize: "1rem",
-  marginBottom: "1.5rem",
-  padding: "0 0.25rem",
-};
-
+const FormGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-right:10px;
+  flex-grow:1;
+`;
+const FormRow = styled.div`
+  display: flex;
+  margin: 20px 0;
+`;
 const generateDate = () => {
   const now = new Date();
   const options = { month: "long", day: "numeric", year: "numeric" };
@@ -49,13 +48,13 @@ const Create = ({ history }) => {
   const createPost = () => {
     const date = generateDate();
     const newPost = {
-        title,
-        dateFormatted: date.formatted,
-        datePretty: date.pretty,
-        slug,
-        coverImage,
-        coverImageAlt,
-        content,
+      title,
+      dateFormatted: date.formatted,
+      datePretty: date.pretty,
+      slug,
+      coverImage,
+      coverImageAlt,
+      content,
     };
     console.log(newPost);
     const postsRef = getFirebase()
@@ -70,25 +69,20 @@ const Create = ({ history }) => {
   return (
     <>
       <h1>Create a new post</h1>
-      <section style={{ margin: "2rem 0" }}>
-        <label style={labelStyles} htmlFor="title-field">
-          Title
-        </label>
-        <input
-          style={inputStyles}
+      <FormRow>
+      <FormGroup>
+        <Label htmlFor="title-field" content="Title" />
+        <TextInput
           id="title-field"
           type="text"
-          value={title}
           onChange={({ target: { value } }) => {
             setTitle(value);
           }}
         />
-
-        <label style={labelStyles} htmlFor="slug-field">
-          Slug
-        </label>
-        <input
-          style={inputStyles}
+      </FormGroup>
+      <FormGroup>
+        <Label htmlFor="slug-field" content="Slug" />
+        <TextInput
           id="slug-field"
           type="text"
           value={slug}
@@ -96,74 +90,64 @@ const Create = ({ history }) => {
             setSlug(value);
           }}
         />
+      </FormGroup>
+      </FormRow>
+      <Label htmlFor="image-uploader" content="Upload images"></Label>
+      <ImageUploader />
+      <FormRow>
+        <FormGroup>
+      <Label htmlFor="cover-image-field" content="Cover image" />
+      <TextInput
+        id="cover-image-field"
+        type="text"
+        value={coverImage}
+        onChange={({ target: { value } }) => {
+          setCoverImage(value);
+        }}
+      />
+      </FormGroup>
+      <FormGroup>
+      <Label htmlFor="cover-image-alt-field" content="Cover image alt"></Label>
+      <TextInput
+        id="cover-image-alt-field"
+        type="text"
+        value={coverImageAlt}
+        onChange={({ target: { value } }) => {
+          setCoverImageAlt(value);
+        }}
+      />
+      </FormGroup>
+      </FormRow>
+      <Label htmlFor="content-field" content="Content"></Label>
 
-        <label style={labelStyles} htmlFor="cover-image-field">
-          Cover image
-        </label>
-        <input
-          style={inputStyles}
-          id="cover-image-field"
-          type="text"
-          value={coverImage}
-          onChange={({ target: { value } }) => {
-            setCoverImage(value);
+      <TextArea
+        id="content"
+        type="text"
+        value={content}
+        onChange={({ target: { value } }) => {
+          setContent(value);
+        }}
+      />
+      <Label htmlFor="preview" content="Post preview"></Label>
+      <div>
+        <p dangerouslySetInnerHTML={{ __html: content }}></p>
+      </div>
+
+      <div style={{ textAlign: "right" }}>
+        <button
+          style={{
+            border: "none",
+            color: "#fff",
+            backgroundColor: "#039be5",
+            borderRadius: "4px",
+            padding: "8px 12px",
+            fontSize: "0.9rem",
           }}
-        />
-
-        <label style={labelStyles} htmlFor="cover-image-alt-field">
-          Cover image alt
-        </label>
-        <input
-          style={inputStyles}
-          id="cover-image-alt-field"
-          type="text"
-          value={coverImageAlt}
-          onChange={({ target: { value } }) => {
-            setCoverImageAlt(value);
-          }}
-        />
-
-        <label style={labelStyles} htmlFor="image-uploader">
-          Upload images
-        </label>
-        <ImageUploader />
-
-        <label style={labelStyles} htmlFor="content-field">
-          Content
-        </label>
-        <textarea
-          style={{ ...inputStyles, height: 200, verticalAlign: "top" }}
-          id="content"
-          type="text"
-          value={content}
-          onChange={({ target: { value } }) => {
-            setContent(value);
-          }}
-        />
-
-        <label style={labelStyles} htmlFor="preview">
-          Post preview
-        </label>
-        <div>
-          <p dangerouslySetInnerHTML={{ __html: content }}></p>
-        </div>
-
-        <div style={{ textAlign: "right" }}>
-          <button
-            style={{
-              border: "none",
-              color: "#fff",
-              backgroundColor: "#039be5",
-              borderRadius: "4px",
-              padding: "8px 12px",
-              fontSize: "0.9rem",
-            }}
-            onClick={createPost}
-          >
-            Create
-          </button>
-        </div>
-      </section>
+          onClick={createPost}
+        >
+          Create
+        </button>
+      </div>
     </>
   );
 };

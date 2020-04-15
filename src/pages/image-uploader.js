@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import useFileHandlers from "../useFileHandlers";
 
+
 const Input = (props) => (
   <input
     type="file"
@@ -23,9 +24,9 @@ const SuccessContainer = (props) => (
 
 // Container for thumbnail
 const ThumbnailDiv = styled.div`
-  width: 100px;
+  width: 120px;
   align-items: center;
-  padding: 5px 5px;
+  padding: 5px;
 `;
 
 // Thumbnail image
@@ -96,6 +97,15 @@ const Thumbnail = (props) => {
   );
 };
 
+const ThumbnailContainer = styled.div`
+  display:flex;
+  flex-wrap:wrap;
+`;
+
+const SubmitBtn = styled.button` 
+  padding:10px;
+`;
+
 const ImageUploader = () => {
   const {
     files,
@@ -112,11 +122,10 @@ const ImageUploader = () => {
     <div className="container">
       <form className="form" onSubmit={onSubmit}>
         {status === "FILES_UPLOADED" && <SuccessContainer />}
-        <div>
+        
           <Input onChange={onChange} />
-          <button type="submit">Submit</button>
-        </div>
-        <div>
+      
+        <ThumbnailContainer>
           {files.map(({ file, src, id }, index) => {
             let wasUploaded = false;
             let downloadUrl = "";
@@ -140,7 +149,10 @@ const ImageUploader = () => {
               />
             );
           })}
-        </div>
+        </ThumbnailContainer>
+        {status === "LOADED" && <SubmitBtn>Upload</SubmitBtn>}
+
+
       </form>
     </div>
   );
