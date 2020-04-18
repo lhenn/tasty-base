@@ -2,17 +2,14 @@ import React, { useState } from "react";
 import { Redirect } from "react-router-dom";
 import { getFirebase } from "../firebase";
 import styled from "styled-components";
+import OverviewDiv from './overview';
 
 const MainImg = styled.img`
     height:300px;
     width:100%;
     object-fit: cover;
 `;
-const OverviewDiv = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin:20px 0;
-`;
+
 const LabelSpan = styled.span`
   font-weight: bold;
 `;
@@ -47,23 +44,7 @@ const RecipePost = ({ match }) => {
     <MainImg src={currentPost.coverImage}/>
       <h1>{currentPost.title}</h1>
       <em>{currentPost.datePretty}</em>
-      <OverviewDiv>
-        <div>
-          <p>
-            <LabelSpan>Source: </LabelSpan>
-            <span
-              dangerouslySetInnerHTML={{ __html: currentPost.source }}
-            ></span>
-          </p>
-          <p>
-            {currentPost.time} | {currentPost.servings} servings
-          </p>
-        </div>
-        <div>
-            <p>{currentPost.easiness}/10 Easiness</p>
-            <p>{currentPost.tastiness}/10 Tastiness</p>
-        </div>
-      </OverviewDiv>
+      <OverviewDiv post={currentPost}/>
 
       <p dangerouslySetInnerHTML={{ __html: currentPost.content }}></p>
     </>

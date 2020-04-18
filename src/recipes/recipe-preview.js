@@ -1,30 +1,42 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import styled from "styled-components";
+import OverviewDiv from './overview.js';
 
 
 
-/* */
+const StyledCard = styled.div`
+    margin-top: 24px;
+    border:solid 1px black;
+`;
+const StyledImg = styled.img`
+    height:300px;
+    width:100%;
+    object-fit:cover;
+`;
+const CardContent = styled.div`
+  padding: 16px;
+ 
+
+`;
+
 const RecipePreview = (props) => {
-     console.log('the props: ', props);
-    // console.log('props.props.post',props.post)
+  const {post} = props;
      
     return (
         
-        <div key={props.post.slug} className="card">
-                    <img src={props.post.coverImage} alt={props.post.coverImageAlt} />
-                    <div className="card-content">
+        <StyledCard key={post.slug} className="card">
+                    <StyledImg src={post.coverImage} alt={post.coverImageAlt} />
+                    <CardContent>
                         <h2>
-                            {props.post.title} &mdash;{" "}
-                            <span style={{ color: "#5e5e5e" }}>{props.post.datePretty}</span>
+                            {post.title} &mdash;{" "}
+                            <span style={{ color: "#5e5e5e" }}>{post.datePretty}</span>
                         </h2>
-                        <p
-                            dangerouslySetInnerHTML={{
-                                __html: `${props.post.content.substring(0, 200)}...`
-                            }}
-                        ></p>
-                        <Link to={`/recipes/${props.post.slug}`}>Continue reading...</Link>
-                    </div>
-                </div> 
+                        <OverviewDiv post={post}/>
+                        <br></br>
+                        <Link to={`/recipes/${post.slug}`}>Continue reading...</Link>
+                    </CardContent>
+                </StyledCard> 
      
     );
 }
