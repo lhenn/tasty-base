@@ -9,18 +9,17 @@ const StyledInput = styled.input`
     fontSize: 1rem;
     marginBottom: 1.5rem;
     padding: 0 0.25rem;
+
 `;
 
-const TextInput = (props) => {
+const Input = (props) => {
   return (
     <>
       <StyledInput
-        type={props.type}
-        id={props.id}
-        onChange={props.onChange}
+        {...props}
       ></StyledInput>
     </>
   );
 };
 
-export default TextInput;
+export default Input;

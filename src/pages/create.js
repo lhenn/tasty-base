@@ -3,14 +3,14 @@ import { getFirebase } from "../firebase";
 import styled from "styled-components";
 import ImageUploader from "./image-uploader";
 import Label from "../forms/label.js";
-import TextInput from "../forms/input.js";
+import Input from "../forms/input.js";
 import TextArea from "../forms/text-area.js";
 
 const FormGroup = styled.div`
   display: flex;
   flex-direction: column;
-  margin-right:10px;
-  flex-grow:1;
+  margin-right: 10px;
+  flex-grow: 1;
 `;
 const FormRow = styled.div`
   display: flex;
@@ -41,6 +41,11 @@ const generateDate = () => {
 const Create = ({ history }) => {
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
+  const [source, setSource] = useState("");
+  const [time, setTime] = useState("");
+  const [servings, setServings] = useState("");
+  const [easiness, setEasiness] = useState(-1);
+  const [tastiness, setTastiness] = useState(-1);
   const [coverImage, setCoverImage] = useState("");
   const [coverImageAlt, setCoverImageAlt] = useState("");
   const [content, setContent] = useState("");
@@ -52,6 +57,11 @@ const Create = ({ history }) => {
       dateFormatted: date.formatted,
       datePretty: date.pretty,
       slug,
+      source,
+      time,
+      servings,
+      easiness,
+      tastiness,
       coverImage,
       coverImageAlt,
       content,
@@ -70,53 +80,112 @@ const Create = ({ history }) => {
     <>
       <h1>Create a new post</h1>
       <FormRow>
-      <FormGroup>
-        <Label htmlFor="title-field" content="Title" />
-        <TextInput
-          id="title-field"
-          type="text"
-          onChange={({ target: { value } }) => {
-            setTitle(value);
-          }}
-        />
-      </FormGroup>
-      <FormGroup>
-        <Label htmlFor="slug-field" content="Slug" />
-        <TextInput
-          id="slug-field"
-          type="text"
-          value={slug}
-          onChange={({ target: { value } }) => {
-            setSlug(value);
-          }}
-        />
-      </FormGroup>
+        <FormGroup>
+          <Label htmlFor="title-field" content="Title" />
+          <Input
+            id="title-field"
+            type="text"
+            onChange={({ target: { value } }) => {
+              setTitle(value);
+            }}
+          />
+        </FormGroup>
+        <FormGroup>
+          <Label htmlFor="slug-field" content="Slug" />
+          <Input
+            id="slug-field"
+            type="text"
+            value={slug}
+            onChange={({ target: { value } }) => {
+              setSlug(value);
+              setCoverImageAlt(`${value}-img`);
+            }}
+          />
+        </FormGroup>
+      </FormRow>
+      <FormRow>
+        <FormGroup>
+          <Label htmlFor="source-field" content="Source" />
+          <Input
+            type="text"
+            id="source-field"
+            placeholder="html if link"
+            value={source}
+            onChange={({ target: { value } }) => {
+              setSource(value);
+            }}
+          />
+        </FormGroup>
+      </FormRow>
+      <FormRow>
+        <FormGroup>
+          <Label htmlFor="time-field" content="Time" />
+          <Input
+            type="text"
+            id="time-field"
+            value={time}
+            onChange={({ target: { value } }) => {
+              setTime(value);
+            }}
+          />
+        </FormGroup>
+        <FormGroup>
+          <Label htmlFor="servings-field" content="No. servings" />
+          <Input
+            type="text"
+            id="servings-field"
+            value={servings}
+            onChange={({ target: { value } }) => {
+              setServings(value);
+            }}
+          />
+        </FormGroup>
+      </FormRow>
+      <FormRow>
+        <FormGroup>
+          <Label htmlFor="easiness-field" content="Easiness rating" />
+          <Input
+            id="easiness-field"
+            type="number"
+            placeholder="1-10"
+            max="10"
+            min="0"
+            value={easiness}
+            onChange={({ target: { value } }) => {
+              setEasiness(value);
+            }}
+          />
+        </FormGroup>
+        <FormGroup>
+          <Label htmlFor="tastiness-field" content="Tastiness rating" />
+          <Input
+            id="tastiness-field"
+            type="number"
+            placeholder="1-10"
+            max="10"
+            min="0"
+            value={tastiness}
+            onChange={({ target: { value } }) => {
+              setTastiness(value);
+            }}
+          />
+        </FormGroup>
       </FormRow>
       <Label htmlFor="image-uploader" content="Upload images"></Label>
       <ImageUploader />
       <FormRow>
         <FormGroup>
-      <Label htmlFor="cover-image-field" content="Cover image" />
-      <TextInput
-        id="cover-image-field"
-        type="text"
-        value={coverImage}
-        onChange={({ target: { value } }) => {
-          setCoverImage(value);
-        }}
-      />
-      </FormGroup>
-      <FormGroup>
-      <Label htmlFor="cover-image-alt-field" content="Cover image alt"></Label>
-      <TextInput
-        id="cover-image-alt-field"
-        type="text"
-        value={coverImageAlt}
-        onChange={({ target: { value } }) => {
-          setCoverImageAlt(value);
-        }}
-      />
-      </FormGroup>
+          <Label htmlFor="cover-image-field" content="Cover image" />
+          <Input
+            id="cover-image-field"
+            type="text"
+            value={coverImage}
+            placeholder="image url"
+            onChange={({ target: { value } }) => {
+              setCoverImage(value);
+            }}
+          />
+        </FormGroup>
       </FormRow>
       <Label htmlFor="content-field" content="Content"></Label>
 

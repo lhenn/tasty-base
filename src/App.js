@@ -7,23 +7,52 @@ import Create from "./pages/create";
 import ImageUploader from "./pages/image-uploader";
 import NoMatch from "./pages/no-match";
 import ImageTest from "./pages/image-test";
-import RecipePost from "./pages/recipe-post";
+import RecipePost from "./recipes/recipe-post";
 import Editor from "./pages/editor";
+import styled from "styled-components";
+import Button from "./general/button-primary";
+import MutedText from "./general/muted-text";
 
-// BUG: home not working!!!
+
+
+
+const NavWrapper = styled.div`
+    display:flex;
+    width:100%;
+    justify-content:center;
+    background-color:#EBCB0C;
+    padding:20px 0;
+`;
+const NavBar = styled.nav`
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    width:100%;
+    max-width:900px;
+`;
+const MainContent = styled.main`
+    max-width:900px;
+    margin: 20px auto;
+    width:100%;
+    background-color:white;
+    padding:20px;
+
+`;
 function App() {
     return (
         <Router>
-            <nav id="nav-bars">
+            <NavWrapper>
+            <NavBar id="nav-bars">
                 <Link to="/">
                     <h2>Tasty Base</h2>
-                    <p>An Adam&Laura© website</p>
+                    <MutedText text="An Adam&Laura© website"/>
                 </Link>
                 <Link to="/create">
-                    Create a post
+                    <Button text="Create a post"/>
                 </Link>
-            </nav>
-            <main>
+            </NavBar>
+            </NavWrapper>
+            <MainContent>
                 <Switch>
                     <Route exact path="/" component={Home} />
                     <Route path="/create" component={Create} />
@@ -34,7 +63,7 @@ function App() {
                     <Route path="/editor" component={Editor} />
                    
                 </Switch>
-            </main>
+            </MainContent>
         </Router>
     );
 }
