@@ -54,19 +54,6 @@ const logUploadedFile = (num, color = "green") => {
     console.log(msg, style)
 }
 
-// Simulate an upload promise handler
-/*
-const api = {
-    uploadFile({timeout = 550}) {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                resolve()
-            }, timeout)
-        })
-    },
-}
-*/
-
 const useFileHandlers = () => {
     const [state, dispatch] = useReducer(reducer, initalState);
 

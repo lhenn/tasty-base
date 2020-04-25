@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import styled from "styled-components";
 
 
@@ -25,7 +25,7 @@ const OverviewDiv = (props) => {
             ></span>
           </p>
           <p>
-            {post.time} | {post.servings} servings
+            {post.activeTime} min active | {post.downtime} min downtime | {post.servings} servings
           </p>
         </div>
       </StyledDiv>
