@@ -1,12 +1,7 @@
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: sans-serif;
-  color: black;
-}
+
 body{
+  font-family: 'Source Sans Pro', sans-serif;
 }
 nav a {
   text-decoration: none;

@@ -6,7 +6,7 @@ import styled from "styled-components";
 const StyledDiv = styled.div`
   display: flex;
   justify-content: space-between;
-  margin:20px 0;
+  margin:0;
 `;
 const LabelSpan = styled.span`
   font-weight: bold;

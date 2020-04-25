@@ -4,9 +4,11 @@
   "private": true,
   "dependencies": {
     "@firebase/storage": "^0.3.31",
-    "firebase": "^7.13.1",
+    "firebase": "^7.14.2",
+    "firebaseui": "^4.5.0",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
+    "react-firebaseui": "^4.1.0",
     "react-router-dom": "^5.0.1",
     "react-scripts": "^3.4.1",
     "styled-components": "^5.1.0"
