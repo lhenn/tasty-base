@@ -2,7 +2,8 @@ import React from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import OverviewDiv from './overview.js';
-import Highlighted from '../general/highlight';
+import Ratings from './ratings.js';
+import HighlightedTitle from '../general/highlight';
 
 const StyledCard = styled.div`
     margin-top: 24px;
@@ -16,8 +17,17 @@ const StyledImg = styled.img`
 const CardContent = styled.div`
   padding: 16px;
 `;
+const Row1 = styled.div`
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+`;
 const Date = styled.span`
     font-size:16px;
+`;
+const H1 = styled.h1`
+    font-size:48px;
+    font-family: "Playfair Display", serif;
 `;
 
 const RecipePreview = (props) => {
@@ -28,10 +38,14 @@ const RecipePreview = (props) => {
         <StyledCard key={post.slug} className="card">
                     <StyledImg src={post.coverImage} alt={post.coverImageAlt} />
                     <CardContent>
+                        <Row1>
                         <h1>
-                            <Highlighted text={post.title} /> 
+                            <HighlightedTitle text={post.title} /> 
                             <Date> {post.datePretty}</Date>
                         </h1>
+                        <Ratings post={post}/>
+                        </Row1>
+                        
                         <OverviewDiv post={post}/>
                         <br></br>
                         <Link to={`/recipes/${post.slug}`}>Continue reading...</Link>

@@ -3,22 +3,23 @@ import styled from "styled-components";
 
 
 const StyledSpan = styled.span`
-    
-background-image: linear-gradient(120deg,#d8ade6 0%,#d8ade6 100%);
+  font-size:48px;
+  font-family: "Playfair Display", serif;
+  background-image: linear-gradient(120deg,#fffa4e 0%,#fffa4e 100%);
   background-repeat: no-repeat;
   background-size: 100% 0.5em;
   background-position: 0 88%;
-  transition: background-size 0.25s ease-in;
+  transition: background-size 0.1s ease-in;
   cursor:pointer;
   &:hover {
-    background-size: 100% 88%;
+    background-size: 100% 60%;
   }
 `;
 
-const Highlighted = (props) => {
+const HighlightedTitle = (props) => {
 return(
 <StyledSpan>{props.text}</StyledSpan>
 )
 }
 
-export default Highlighted
+export default HighlightedTitle
