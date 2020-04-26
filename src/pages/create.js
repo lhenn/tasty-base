@@ -1,4 +1,4 @@
-import React, { useReducer, useState } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { getFirebase } from "../firebase";
 import Input from "../forms/input";
@@ -65,66 +65,59 @@ const generateDate = () => {
   };
 };
 
-const emptyIngredient = { name: "", amount: "" };
+// Custom hook
+const useInputRows = (emptyRow) => {
+  const [rows, setRows] = useState([emptyRow]);
 
-// TODO
-// * Click and drag reordering
-// * Automatically add new row when last one starts being filled -> done!
-// * Button to remove ingredient
-const ingredientsReducer = (ingredients, action) => {
-  let i = action.index;
+  const updateRow = (index, value, field = "") => {
+    let newState = [...rows];
 
-  if (action.type === "change") {
-    // Update the field
-    let newIngredients = [...ingredients];
-    newIngredients[i] = {
-      ...newIngredients[i],
-      [action.field]: action.value,
-    };
-
-    // Add a new empty row if last row is being edited
-    if (i === ingredients.length - 1) {
-      newIngredients.push(emptyIngredient);
-    }
-
-    return newIngredients;
-  } else if (action.type === "delete") {
-    // Delete ingredient, unless it's the only one and is empty
-    let newIngredients = [...ingredients];
-
-    if (newIngredients.length === 1 && newIngredients[0] === emptyIngredient) {
-      return newIngredients;
+    // If no field was specified, replace whole row
+    if (field === "") {
+      newState[index] = value;
     } else {
-      newIngredients.splice(action.index, 1);
-      return newIngredients;
+      newState[index] = {
+        ...newState[index],
+        [field]: value,
+      };
     }
-  } else {
-    return ingredients;
-  }
+
+    if (index === rows.length - 1) {
+      newState.push(emptyRow);
+    }
+
+    setRows(newState);
+  };
+
+  const deleteRow = (index) => {
+    console.log("Number of rows: ", rows.length);
+    if (rows.length > 1) {
+      let newState = [...rows];
+      newState.splice(index, 1);
+      setRows(newState);
+    }
+  };
+
+  return [rows, updateRow, deleteRow];
 };
 
-const IngredientList = () => {
-  const [ingredients, dispatch] = useReducer(ingredientsReducer, [
-    emptyIngredient,
-  ]);
+const Ingredients = () => {
+  const [ingredients, updateIngredient, deleteIngredient] = useInputRows({
+    name: "",
+    amount: "",
+  });
 
-  const onChange = (field, index, value) => {
-    dispatch({ type: "change", field, index, value });
-  };
+  console.log("ingredients: ", ingredients);
 
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
-      <Label
-        htmlFor="ingredients-input-list"
-        content="Ingredients: name, quantity"
-      />
-      <div id="ingredients-input-list">
+      <Label htmlFor="ingredients-list" content="Ingredients: name, quantity" />
+      <div id="ingredients-list">
         {ingredients.map((ingredient, i) => (
           <div key={`ingredient${i}`}>
             <DeleteIngredientButton
-              onClick={() => {
-                dispatch({ type: "delete", index: i });
-              }}
+              id={`delete-ingredient${i}`}
+              onClick={() => deleteIngredient(i)}
             >
               X
             </DeleteIngredientButton>
@@ -132,13 +125,53 @@ const IngredientList = () => {
               type="text"
               id={`ingredient-name${i}`}
               value={ingredient.name}
-              onChange={(e) => onChange("name", i, e.target.value)}
+              onChange={(e) => updateIngredient(i, e.target.value, "name")}
             />
             <input
               type="text"
               id={`ingredient-amount${i}`}
               value={ingredient.amount}
-              onChange={(e) => onChange("amount", i, e.target.value)}
+              onChange={(e) => updateIngredient(i, e.target.value, "amount")}
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const DeleteInstructionButton = styled.button``;
+
+const InstructionsList = () => {
+  const [instructions, updateInstructions, deleteInstruction] = useInputRows(
+    ""
+  );
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column" }}>
+      <Label htmlFor="instructions-list" content="Instructions" />
+      <div id="instructions-list">
+        {instructions.map((instruction, i) => (
+          <div
+            key={`instruction${i}`}
+            style={{ display: "flex", flexDirection: "row" }}
+          >
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <Label
+                htmlFor={`instruction-content${i}`}
+                content={`Step ${i + 1}`}
+              />
+              <DeleteInstructionButton
+                id={`delete-instruction${i}`}
+                onClick={() => deleteInstruction(i)}
+              >
+                X
+              </DeleteInstructionButton>
+            </div>
+            <textarea
+              id={`instruction-content${i}`}
+              value={instruction}
+              onChange={(e) => updateInstructions(i, e.target.value)}
             />
           </div>
         ))}
@@ -154,7 +187,8 @@ const CustomRecipeContentDiv = styled.div`
 const CustomRecipeContent = () => {
   return (
     <CustomRecipeContentDiv>
-      <IngredientList />
+      <Ingredients />
+      <InstructionsList />
     </CustomRecipeContentDiv>
   );
 };
@@ -341,7 +375,6 @@ const Create = ({ history }) => {
       <ContentDiv>
         <Label htmlFor="description" content="Description"></Label>
         <TextArea
-          type="text"
           id="description"
           placeholder="How did you find this recipe? What should we know about it?"
           value={fields.description}
