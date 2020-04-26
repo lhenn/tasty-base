@@ -5,7 +5,14 @@ import styled from "styled-components";
 import OverviewDiv from "./overview";
 
 const MainImg = styled.img`
-  height: 300px;
+  height: ${(props) => {
+    console.log("main image url: ", props);
+    if (props.src === "") {
+      return "0px";
+    } else {
+      return "300px";
+    }
+  }};
   width: 100%;
   object-fit: cover;
 `;
@@ -13,7 +20,10 @@ const MainImg = styled.img`
 export const DisplayRecipePost = (post) => {
   return (
     <>
-      <MainImg src={post.coverImageURL} />
+      <MainImg
+        src={post.coverImageURL}
+        onerror="this.onerror=null; this.src=''"
+      />
       <h1>{post.title}</h1>
       <em>{post.datePretty}</em>
       <OverviewDiv post={post} />
