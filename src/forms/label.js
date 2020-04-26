@@ -9,7 +9,7 @@ const StyledLabel = styled.label`
 const Label = (props) => {
   return (
     <>
-      <StyledLabel htmlFor={props.htmlFor}>{props.content}</StyledLabel>
+      <StyledLabel htmlFor={props.htmlFor} {...props}>{props.content}</StyledLabel>
     </>
   );
 };

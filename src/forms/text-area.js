@@ -19,6 +19,7 @@ const TextArea = (props) => {
         id={props.id}
         value={props.value}
         onChange={props.onChange}
+        {...props}
       ></StyledTextArea>
     </>
   );
