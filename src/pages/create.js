@@ -1,11 +1,11 @@
-import React, { useState, useReducer } from "react";
-import { getFirebase } from "../firebase";
+import React, { useReducer, useState } from "react";
 import styled from "styled-components";
-import ImageUploader from "./image-uploader";
-import Label from "../forms/label";
+import { getFirebase } from "../firebase";
 import Input from "../forms/input";
+import Label from "../forms/label";
 import TextArea from "../forms/text-area";
 import { DisplayRecipePost } from "../recipes/recipe-post";
+import ImageUploader from "./image-uploader";
 
 const FormGroup = styled.div`
   display: flex;
@@ -29,6 +29,8 @@ const PreviewDiv = styled.div`
   border: 1px solid black;
   margin: 5px 0;
 `;
+
+const DeleteIngredientButton = styled.button``;
 
 const CreatePostButton = styled.button`
   border: none;
@@ -66,6 +68,8 @@ const RecipeContentDiv = styled.div`
   display: flex;
 `;
 
+const emptyIngredient = { name: "", amount: "" };
+
 // TODO
 // * Click and drag reordering
 // * Automatically add new row when last one starts being filled -> done!
@@ -73,26 +77,30 @@ const RecipeContentDiv = styled.div`
 const ingredientsReducer = (ingredients, action) => {
   let i = action.index;
 
-  if (action.type === "name_change") {
+  if (action.type === "change") {
+    // Update the field
     let newIngredients = [...ingredients];
-    if (i === ingredients.length - 1) {
-      newIngredients.push({ amount: "", name: "" });
-    }
     newIngredients[i] = {
-      amount: newIngredients[i].amount,
-      name: action.newName,
+      ...newIngredients[i],
+      [action.field]: action.value,
     };
+
+    // Add a new empty row if last row is being edited
+    if (i === ingredients.length - 1) {
+      newIngredients.push(emptyIngredient);
+    }
+
     return newIngredients;
-  } else if (action.type === "amount_change") {
+  } else if (action.type === "delete") {
+    // Delete ingredient, unless it's the only one and is empty
     let newIngredients = [...ingredients];
-    if (i === ingredients.length - 1) {
-      newIngredients.push({ amount: "", name: "" });
+
+    if (newIngredients.length === 1 && newIngredients[0] === emptyIngredient) {
+      return newIngredients;
+    } else {
+      newIngredients.splice(action.index, 1);
+      return newIngredients;
     }
-    newIngredients[i] = {
-      amount: action.newAmount,
-      name: newIngredients[i].name,
-    };
-    return newIngredients;
   } else {
     return ingredients;
   }
@@ -100,38 +108,40 @@ const ingredientsReducer = (ingredients, action) => {
 
 const IngredientList = () => {
   const [ingredients, dispatch] = useReducer(ingredientsReducer, [
-    { amount: "", name: "" },
+    emptyIngredient,
   ]);
+
+  const onChange = (field, index, value) => {
+    dispatch({ type: "change", field, index, value });
+  };
 
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
-      <Label content="Ingredients" />
-      <div>
+      <Label
+        htmlFor="ingredients-input-list"
+        content="Ingredients: name, quantity"
+      />
+      <div id="ingredients-input-list">
         {ingredients.map((ingredient, i) => (
           <div key={`ingredient${i}`}>
-            <input
-              type="text"
-              id={`ingredient-amount${i}`}
-              value={ingredient.amount}
-              onChange={(e) => {
-                dispatch({
-                  type: "amount_change",
-                  index: i,
-                  newAmount: e.target.value,
-                });
+            <DeleteIngredientButton
+              onClick={() => {
+                dispatch({ type: "delete", index: i });
               }}
-            />
+            >
+              X
+            </DeleteIngredientButton>
             <input
               type="text"
               id={`ingredient-name${i}`}
               value={ingredient.name}
-              onChange={(e) => {
-                dispatch({
-                  type: "name_change",
-                  index: i,
-                  newName: e.target.value,
-                });
-              }}
+              onChange={(e) => onChange("name", i, e.target.value)}
+            />
+            <input
+              type="text"
+              id={`ingredient-amount${i}`}
+              value={ingredient.amount}
+              onChange={(e) => onChange("amount", i, e.target.value)}
             />
           </div>
         ))}
@@ -166,7 +176,7 @@ const Create = ({ history }) => {
   const [fields, setFields] = useFormFields({
     title: "",
     slug: "",
-    sourceType: "Web", // TODO: must align with an option in the select...
+    sourceType: "other", // TODO: must manually align with an option...
     source: "",
     activeTime: 0,
     downtime: 0,
@@ -175,7 +185,7 @@ const Create = ({ history }) => {
     tastiness: 10,
     coverImageURL: "",
     coverImageAlt: "",
-    content: "", // TODO: refactor!
+    description: "",
   });
 
   const createPost = () => {
@@ -185,7 +195,6 @@ const Create = ({ history }) => {
       dateFormatted: date.formatted,
       datePretty: date.pretty,
     };
-    console.log(fields);
     // TODO: maybe use this ref to push new post to history?
     // const postsRef =
     getFirebase()
@@ -248,7 +257,6 @@ const Create = ({ history }) => {
           <Input
             type="number"
             id="activeTime"
-            placeholder="0"
             min="0"
             step="15"
             value={fields.activeTime}
@@ -260,7 +268,6 @@ const Create = ({ history }) => {
           <Input
             type="number"
             id="downtime"
-            placeholder="0"
             min="0"
             step="15"
             value={fields.downtime}
@@ -272,7 +279,6 @@ const Create = ({ history }) => {
           <Input
             type="number"
             id="servings"
-            placeholder="1"
             min="1"
             value={fields.servings}
             onChange={setFields}
@@ -285,7 +291,6 @@ const Create = ({ history }) => {
           <Input
             type="number"
             id="easiness"
-            placeholder="1-10"
             max="10"
             min="1"
             value={fields.easiness}
@@ -297,7 +302,6 @@ const Create = ({ history }) => {
           <Input
             type="number"
             id="tastiness"
-            placeholder="1-10"
             max="10"
             min="1"
             value={fields.tastiness}
@@ -306,8 +310,8 @@ const Create = ({ history }) => {
         </FormGroup>
       </FormRow>
 
-      <Label content="Upload images"></Label>
-      <ImageUploader />
+      <Label htmlFor="post-image-uploader" content="Upload images"></Label>
+      <ImageUploader id="post-image-uploader" />
 
       <FormRow>
         <FormGroup>
@@ -323,19 +327,20 @@ const Create = ({ history }) => {
       </FormRow>
 
       <ContentDiv>
-        <Label content="Content"></Label>
+        <Label htmlFor="description" content="Description"></Label>
         <TextArea
           type="text"
-          id="content"
-          value={fields.content}
+          id="description"
+          placeholder="How did you find this recipe? What should we know about it?"
+          value={fields.description}
           onChange={setFields}
         />
       </ContentDiv>
 
       {fields.sourceType === "other" && <RecipeContent />}
 
-      <Label content="Post preview"></Label>
-      <PreviewDiv>{DisplayRecipePost(fields)}</PreviewDiv>
+      <Label htmlFor="preview" content="Post preview"></Label>
+      <PreviewDiv id="preview">{DisplayRecipePost(fields)}</PreviewDiv>
 
       <div style={{ textAlign: "right" }}>
         <CreatePostButton onClick={createPost}> Create </CreatePostButton>

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 import OverviewDiv from "./overview.js";
 import Ratings from "./ratings.js";
-import HighlightedTitle from "../general/highlight";
+// import HighlightedTitle from "../general/highlight";
 
 const StyledCard = styled.div`
   margin-top: 24px;
