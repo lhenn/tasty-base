@@ -31,13 +31,16 @@ const Bars = styled.div`
   background-color: #eae8df73;
   font-family: "Playfair Display", serif;
 `;
-const Bar = styled.div`
+const BarWrapper = styled.div`
+  display: flex;
+`;
+const BarSection = styled.div`
   width: ${(props) => props.percentage}px;
   background-color: ${(props) => props.color};
   padding: 3px 0;
   margin: 3px 0;
   font-family: "Playfair Display", serif;
-  font-size:13px;
+  font-size: 13px;
 `;
 
 const NumVotes = styled.div`
@@ -60,14 +63,24 @@ const Ratings = (props) => {
           <Label>ease</Label>
         </Labels>
         <Bars>
-          <Bar color="#775ffbb3" percentage={tastePercent}>
-            {" "}
-            &nbsp;{tastePercent}%
-          </Bar>
-          <Bar color="#fb6e5fb3" percentage={easePercent}>
-            {" "}
-            &nbsp;{easePercent}%
-          </Bar>
+          <BarWrapper>
+            <BarSection color="#775ffbb3" percentage={tastePercent}>
+              {" "}
+              &nbsp;{tastePercent}%
+            </BarSection>
+            <BarSection color="#775ffb4d" percentage={100 - tastePercent}>
+              &nbsp;
+            </BarSection>
+          </BarWrapper>
+          <BarWrapper>
+            <BarSection color="#fb6e5fb3" percentage={easePercent}>
+              {" "}
+              &nbsp;{easePercent}%
+            </BarSection>
+            <BarSection color="#fb6e5f5e" percentage={100 - tastePercent}>
+              &nbsp;
+            </BarSection>
+          </BarWrapper>
         </Bars>
       </RatingsInner>
       <NumVotes>x votes</NumVotes>

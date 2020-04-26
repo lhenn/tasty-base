@@ -26,14 +26,29 @@ const Row1 = styled.div`
   align-items: center;
 `;
 
-const Date = styled.span`
-  font-size: 16px;
+const Title = styled(Link)`
+  color: black;
+  font-size: 48px;
+  text-decoration: none;
+  font-family: "Playfair Display", serif;
+  background-image: linear-gradient(120deg, #fffa4e 0%, #fffa4e 100%);
+  background-repeat: no-repeat;
+  background-size: 100% 0.5em;
+  background-position: 0 88%;
+  transition: background-size 0.1s ease-in;
+  cursor: pointer;
+  &:hover {
+    background-size: 100% 60%;
+  }
 `;
-
-// const H1 = styled.h1`
-//   font-size: 48px;
-//   font-family: "Playfair Display", serif;
-// `;
+const TitleDate = styled.div`
+  margin: 0;
+`;
+const Date = styled.span`
+  font-size: 18px;
+  margin: 0 10px;
+  font-weight: bold;
+`;
 
 const RecipePreview = (props) => {
   const { post } = props;
@@ -43,13 +58,12 @@ const RecipePreview = (props) => {
       <StyledImg src={post.coverImageURL} alt={post.coverImageAlt} />
       <CardContent>
         <Row1>
-          <h1>
-            <HighlightedTitle text={post.title} />
+          <TitleDate>
+            <Title to={`/recipes/${post.slug}`}>{post.title}</Title>
             <Date> {post.datePretty}</Date>
-          </h1>
+          </TitleDate>
           <Ratings post={post} />
         </Row1>
-
         <OverviewDiv post={post} />
         <br></br>
         <Link to={`/recipes/${post.slug}`}>Continue reading...</Link>
