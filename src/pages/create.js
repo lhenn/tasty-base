@@ -6,6 +6,7 @@ import Label from "../forms/label";
 import TextArea from "../forms/text-area";
 import { DisplayRecipePost } from "../recipes/recipe-post";
 import ImageUploader from "./image-uploader";
+import { CounterContext } from "../App";
 
 const FormGroup = styled.div`
   display: flex;
@@ -63,10 +64,6 @@ const generateDate = () => {
     pretty: now.toLocaleDateString("en-US", options), // used for displaying
   };
 };
-
-const RecipeContentDiv = styled.div`
-  display: flex;
-`;
 
 const emptyIngredient = { name: "", amount: "" };
 
@@ -150,11 +147,15 @@ const IngredientList = () => {
   );
 };
 
-const RecipeContent = () => {
+const CustomRecipeContentDiv = styled.div`
+  display: flex;
+`;
+
+const CustomRecipeContent = () => {
   return (
-    <RecipeContentDiv>
+    <CustomRecipeContentDiv>
       <IngredientList />
-    </RecipeContentDiv>
+    </CustomRecipeContentDiv>
   );
 };
 
@@ -208,6 +209,17 @@ const Create = ({ history }) => {
 
   return (
     <>
+      <h1>Global counter test</h1>
+      <CounterContext.Consumer>
+        {(value) => {
+          return (
+            <>
+              <p>Count in Create: {value.count}</p>
+              <button onClick={() => value.increment()}>Increment count</button>
+            </>
+          );
+        }}
+      </CounterContext.Consumer>
       <h1>Create a new post</h1>
       <FormRow>
         <FormGroup>
@@ -337,7 +349,7 @@ const Create = ({ history }) => {
         />
       </ContentDiv>
 
-      {fields.sourceType === "other" && <RecipeContent />}
+      {fields.sourceType === "other" && <CustomRecipeContent />}
 
       <Label htmlFor="preview" content="Post preview"></Label>
       <PreviewDiv id="preview">{DisplayRecipePost(fields)}</PreviewDiv>
