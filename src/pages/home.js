@@ -20,7 +20,6 @@ const Home = () => {
 
         const newestFirst = posts.reverse();
         setBlogPosts(newestFirst);
-        console.log(newestFirst);
         setLoading(false);
       });
   }
@@ -32,10 +31,8 @@ const Home = () => {
   return (
     <>
       <h1>Blog posts</h1>
-      {blogPosts.map((blogPost) => (
-          <>
-          <RecipePreview key={blogPost.slug} post={blogPost} />
-          </>
+      {blogPosts.map((blogPost, i) => (
+        <RecipePreview key={`post${i}`} post={blogPost} />
       ))}
     </>
   );

@@ -51,7 +51,6 @@ const reducer = (state, action) => {
 const logUploadedFile = (num, color = "green") => {
     const msg = `%cUploaded ${num} files.`
     const style = `color:${color};font-weight:bold;`
-    console.log(msg, style)
 }
 
 const useFileHandlers = () => {
@@ -95,8 +94,6 @@ const useFileHandlers = () => {
         if (state.pending.length && state.next) {
             const {next} = state
             let imgName = state.next.file.name;
-
-            console.log("state.next: ", imgName);  // DEBUG
 
             let uploadTask = getFirebase().storage().ref().child(imgName).put(next.file);
 

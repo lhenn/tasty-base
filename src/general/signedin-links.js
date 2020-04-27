@@ -14,12 +14,8 @@ const UserPhoto = styled.img`
 `;
 
 const SignedInLinks = ({ user }) => {
-  console.log("picture:", user.photoURL);
-  console.log("email:", user.email);
-
   // TODO: useCallback?
   const logout = () => {
-    console.log("logging out");
     getFirebase().auth().signOut();
   };
 

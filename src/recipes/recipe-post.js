@@ -26,7 +26,7 @@ export const DisplayRecipePost = (post) => {
       <h1>{post.title}</h1>
       <em>{post.datePretty}</em>
       <OverviewDiv post={post} />
-      <p dangerouslySetInnerHTML={{ __html: post.content }}></p>
+      <p dangerouslySetInnerHTML={{ __html: post.description }}></p>
     </>
   );
 };
@@ -42,7 +42,6 @@ const RecipePost = ({ match }) => {
       .orderByChild("slug")
       .equalTo(slug)
       .on("child_added", function (snapshot) {
-        console.log("the post: ", snapshot.val());
         setCurrentPost(snapshot.val());
         setLoading(false);
       });

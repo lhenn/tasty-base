@@ -219,18 +219,13 @@ const createPost = (basicInfo, history, details = null) => {
   if (details !== null) {
     newPost["details"] = details;
   }
-  console.log("new post: ", newPost);
-  // TODO: clean up any empty rows in ingredients and instructions?
-
-  // TODO: maybe use this ref to push new post to history?
-  // const postsRef =
   getFirebase()
     .database()
     .ref()
     .child(`posts`)
     .push()
     .set(newPost)
-    .then(() => history.push(`/`));
+    .then(() => history.push(`/recipes/${newPost.slug}`));
 };
 
 const Create = ({ history }) => {

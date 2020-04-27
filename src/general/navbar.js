@@ -24,7 +24,6 @@ const NavInner = styled.nav`
 
 const NavBar = () => {
   const user = useContext(UserContext);
-  console.log("user: ", user);
 
   return (
     <NavWrapper>

@@ -27,12 +27,9 @@ const onAuthStateChanged = (callback) => {
   return getFirebase()
     .auth()
     .onAuthStateChanged((user) => {
-      console.log("calling onChange with user = ", user);
       if (user) {
-        console.log("\tUser is logged in");
         callback(user);
       } else {
-        console.log("\tUser is logged out");
         callback(null);
       }
     });
@@ -43,11 +40,9 @@ const App = () => {
 
   // Subscribe to listen for auth state changes when application mounts
   useEffect(() => {
-    console.log("calling useEffect");
     const unsubscribe = onAuthStateChanged(setUser);
     // Unsubscribe to the listener when unmounting
     return () => {
-      console.log("called unsubscribe");
       unsubscribe();
     };
   }, []);
