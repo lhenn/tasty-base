@@ -33,10 +33,10 @@ const NavBar = (props) => {
           <MutedText text="An Adam&Laura© website" />
         </Link>
         <Link to="/create">
-          <Button text="Create a post" />
+          <Button>Create a post</Button>
         </Link>
         <Link to="/signin">
-          <Button text="Sign in" />
+          <Button>Sign in</Button>
         </Link>
         <div>
           <CounterContext.Consumer>
