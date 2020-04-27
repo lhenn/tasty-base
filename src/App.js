@@ -36,7 +36,7 @@ const onAuthStateChanged = (callback) => {
     });
 };
 
-const defaultUser = { loggedIn: false, email: "" };
+export const defaultUser = { loggedIn: false, email: "" };
 export const UserContext = createContext(defaultUser);
 
 const App = () => {

@@ -1,10 +1,10 @@
-import React, { useContext } from "react";
-import { Link } from "react-router-dom";
+import React, {useContext} from "react";
+import {Link} from "react-router-dom";
 import styled from "styled-components";
-import { UserContext } from "../App";
-import { getFirebase } from "../firebase";
-import Button from "./button-primary";
+import {UserContext} from "../App";
 import MutedText from "./muted-text";
+import SignedInLinks from "./signedin-links";
+import SignedOutLinks from "./signedout-links";
 
 const NavWrapper = styled.div`
   display: flex;
@@ -26,11 +26,6 @@ const NavBar = () => {
   const user = useContext(UserContext);
   console.log("user: ", user);
 
-  const logout = () => {
-    console.log("logging out");
-    getFirebase().auth().signOut();
-  };
-
   return (
     <NavWrapper>
       <NavInner id="nav-bars">
@@ -38,16 +33,7 @@ const NavBar = () => {
           <h2>Tasty Base</h2>
           <MutedText text="An Adam&Laura© website" />
         </Link>
-        <Link to="/create">
-          <Button>Create a post</Button>
-        </Link>
-        <Button onClick={logout}>Sign out</Button>
-        <Link to="/signin">
-          <Button>Sign in</Button>
-        </Link>
-        <div>
-          <p>User information: {user.email}</p>;
-        </div>
+        {user.loggedIn ? <SignedInLinks user={user} /> : <SignedOutLinks />}
       </NavInner>
     </NavWrapper>
   );
