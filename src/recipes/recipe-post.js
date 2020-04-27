@@ -2,23 +2,32 @@ import React, { useState } from "react";
 import { Redirect } from "react-router-dom";
 import { getFirebase } from "../firebase";
 import styled from "styled-components";
-import OverviewDiv from './overview';
+import OverviewDiv from "./overview";
 
 const MainImg = styled.img`
-    height:300px;
-    width:100%;
-    object-fit: cover;
+  height: 300px;
+  width: 100%;
+  object-fit: cover;
 `;
 
-const LabelSpan = styled.span`
-  font-weight: bold;
-`;
+export const DisplayRecipePost = (post) => {
+  return (
+    <>
+      <MainImg src={post.coverImageURL} />
+      <h1>{post.title}</h1>
+      <em>{post.datePretty}</em>
+      <OverviewDiv post={post} />
+      <p dangerouslySetInnerHTML={{ __html: post.content }}></p>
+    </>
+  );
+};
+
 const RecipePost = ({ match }) => {
   const slug = match.params.slug;
-  // const postSlugs = ["my-first-blog-post", "my-second-blog-post"];
   const [loading, setLoading] = useState(true);
-  const [currentPost, setCurrentPost] = useState();
-  if (loading && !currentPost) {
+  const [post, setCurrentPost] = useState();
+
+  if (loading && !post) {
     const postsRef = getFirebase().database().ref().child("posts");
     postsRef
       .orderByChild("slug")
@@ -35,20 +44,11 @@ const RecipePost = ({ match }) => {
   }
 
   // Loading is done and post wasn't found in the database
-  if (!currentPost) {
+  if (!post) {
     return <Redirect to="/404" />;
   }
-  //<img src={currentPost.coverImage} alt={currentPost.coverImageAlt} />
-  return (
-    <>
-    <MainImg src={currentPost.coverImage}/>
-      <h1>{currentPost.title}</h1>
-      <em>{currentPost.datePretty}</em>
-      <OverviewDiv post={currentPost}/>
 
-      <p dangerouslySetInnerHTML={{ __html: currentPost.content }}></p>
-    </>
-  );
+  return DisplayRecipePost(post);
 };
 
 export default RecipePost;

@@ -1,4 +1,6 @@
 import firebase from "firebase/app";
+// Required, even though they appear to be unused. Can probably move imports to
+// wherever they're actually needed.
 import database from "firebase/database";
 import storage from "firebase/storage";
 

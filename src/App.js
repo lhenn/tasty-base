@@ -4,7 +4,7 @@ import "./App.css";
 import styled from "styled-components";
 import NavBar from "./general/navbar";
 import Home from "./pages/home";
-import Signin from './pages/signin'
+import Signin from "./pages/signin";
 import Create from "./pages/create";
 import NoMatch from "./pages/no-match";
 import RecipePost from "./recipes/recipe-post";

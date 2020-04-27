@@ -3,24 +3,29 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 import OverviewDiv from "./overview.js";
 import Ratings from "./ratings.js";
+// import HighlightedTitle from "../general/highlight";
 
 const StyledCard = styled.div`
   margin-top: 24px;
   box-shadow: 2px 2px 5px -1px rgba(0, 0, 0, 0.38);
 `;
+
 const StyledImg = styled.img`
   height: 300px;
   width: 100%;
   object-fit: cover;
 `;
+
 const CardContent = styled.div`
   padding: 16px;
 `;
+
 const Row1 = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
 `;
+
 const Title = styled(Link)`
   color: black;
   font-size: 48px;
@@ -50,13 +55,11 @@ const RecipePreview = (props) => {
 
   return (
     <StyledCard key={post.slug} className="card">
-      <StyledImg src={post.coverImage} alt={post.coverImageAlt} />
+      <StyledImg src={post.coverImageURL} alt={post.coverImageAlt} />
       <CardContent>
         <Row1>
           <TitleDate>
-            <Title to={`/recipes/${post.slug}`}>
-              {post.title}
-            </Title>
+            <Title to={`/recipes/${post.slug}`}>{post.title}</Title>
             <Date> {post.datePretty}</Date>
           </TitleDate>
           <Ratings post={post} />

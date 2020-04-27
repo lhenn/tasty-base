@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import useFileHandlers from "../useFileHandlers";
 
@@ -64,7 +64,8 @@ const Thumbnail = (props) => {
       let copyHelper = document.createElement("input");
       document.body.appendChild(copyHelper);
       copyHelper.setAttribute("id", "copy-helper");
-      copyHelper.value = `<img src="${props.downloadUrl}" alt="${props.fileName}">`;
+      // copyHelper.value = `<img src="${props.downloadUrl}" alt="${props.fileName}">`;
+      copyHelper.value = props.downloadUrl;
       copyHelper.select();
       document.execCommand("copy");
       document.body.removeChild(copyHelper);
