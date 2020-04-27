@@ -1,11 +1,12 @@
-export const ADD_USER = 'ADD_USER' // action types
+export const SIGNED_IN = 'SIGNED_IN' // action types
 
-export function addUser(user) {
+const signedIn = (user) => {
   return(
     {     
-        type: ADD_USER,
-        user: 'test'     // action payload
+        type: SIGNED_IN,
+        user    // action payload
      }
-  )
-     
+  )  
 }
+
+export default signedIn;

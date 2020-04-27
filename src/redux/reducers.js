@@ -1,11 +1,12 @@
-import { ADD_USER } from "./actions";
+import { SIGNED_IN } from "./actions";
 
-function userDataReducer(state={users: []}, action){
+function userDataReducer(state={user: null}, action){
+    console.log('userDataReducer being called with: ', action)
     switch(action.type) {
-        case ADD_USER:
+        case SIGNED_IN:
           return Object.assign({}, state, 
               {
-                users: [...state.users, action.user]
+                user: {...action.user}
                }); 
          default: 
            return state;
