@@ -1,35 +1,47 @@
 import React from "react";
 import styled from "styled-components";
 
-
-
-const StyledDiv = styled.div`
+const OverviewWrapper = styled.div`
   display: flex;
   justify-content: space-between;
-  margin:0;
+  margin: 0;
 `;
-const LabelSpan = styled.span`
+
+const SourceLabel = styled.span`
   font-weight: bold;
 `;
 
+const WebSourceLink = styled.a`
+  font-weight: bold;
+`;
 
-const OverviewDiv = (props) => {
-    const {post} = props;
-    return(
-        <StyledDiv>
-        <div>
-          <p>
-            <LabelSpan>Source: </LabelSpan>
-            <span
-              dangerouslySetInnerHTML={{ __html: post.source }}
-            ></span>
-          </p>
-          <p>
-            {post.activeTime} min active | {post.downtime} min downtime | {post.servings} servings
-          </p>
-        </div>
-      </StyledDiv>
-    )
-}
+const Source = ({ sourceType, source }) => {
+  return (
+    <p>
+      {sourceType === "web" ? (
+        <WebSourceLink href={source}>Source</WebSourceLink>
+      ) : (
+        <>
+          <SourceLabel>Source: </SourceLabel>
+          <span>{source}</span>
+        </>
+      )}
+    </p>
+  );
+};
+
+const OverviewDiv = ({ post }) => {
+  return (
+    <OverviewWrapper>
+      <div>
+        <Source sourceType={post.sourceType} source={post.source} />
+        <p>
+          {post.activeTime} min active | {post.downtime} min downtime |{" "}
+          {post.servings} servings
+        </p>
+      </div>
+    </OverviewWrapper>
+  );
+};
 
 export default OverviewDiv;
