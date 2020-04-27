@@ -6,7 +6,6 @@ import Label from "../forms/label";
 import TextArea from "../forms/text-area";
 import { DisplayRecipePost } from "../recipes/recipe-post";
 import ImageUploader from "./image-uploader";
-import { CounterContext } from "../App";
 
 const FormGroup = styled.div`
   display: flex;
@@ -31,49 +30,16 @@ const PreviewDiv = styled.div`
   margin: 5px 0;
 `;
 
-const DeleteIngredientButton = styled.button``;
-
-const CreatePostButton = styled.button`
-  border: none;
-  color: #fff;
-  backgroundcolor: #039be5;
-  borderradius: 4px;
-  padding: 8px 12px;
-  fontsize: 0.9rem;
-`;
-
-// TODO: generate timestamp and move date formatting to post viewer
-const generateDate = () => {
-  const now = new Date();
-  const options = { month: "long", day: "numeric", year: "numeric" };
-
-  const year = now.getFullYear();
-
-  let month = now.getMonth() + 1;
-  if (month < 10) {
-    month = `0${month}`; // prepend with a 0
-  }
-
-  let day = now.getDate();
-  if (day < 10) {
-    day = `0${day}`; // prepend with a 0
-  }
-
-  return {
-    formatted: `${year}-${month}-${day}`, // used for sorting
-    pretty: now.toLocaleDateString("en-US", options), // used for displaying
-  };
-};
-
-// Custom hook
+// Auto-expanding input rows
 const useInputRows = (emptyRow) => {
   const [rows, setRows] = useState([emptyRow]);
 
-  const updateRow = (index, value, field = "") => {
+  // Updates a row or a field in a row
+  const updateRow = (index, value, field = null) => {
     let newState = [...rows];
 
     // If no field was specified, replace whole row
-    if (field === "") {
+    if (field === null) {
       newState[index] = value;
     } else {
       newState[index] = {
@@ -89,8 +55,8 @@ const useInputRows = (emptyRow) => {
     setRows(newState);
   };
 
+  // Deletes a row using its index
   const deleteRow = (index) => {
-    console.log("Number of rows: ", rows.length);
     if (rows.length > 1) {
       let newState = [...rows];
       newState.splice(index, 1);
@@ -101,14 +67,9 @@ const useInputRows = (emptyRow) => {
   return [rows, updateRow, deleteRow];
 };
 
-const Ingredients = () => {
-  const [ingredients, updateIngredient, deleteIngredient] = useInputRows({
-    name: "",
-    amount: "",
-  });
+const DeleteIngredientButton = styled.button``;
 
-  console.log("ingredients: ", ingredients);
-
+const Ingredients = ({ ingredients, updateIngredient, deleteIngredient }) => {
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
       <Label htmlFor="ingredients-list" content="Ingredients: name, quantity" />
@@ -142,11 +103,11 @@ const Ingredients = () => {
 
 const DeleteInstructionButton = styled.button``;
 
-const InstructionsList = () => {
-  const [instructions, updateInstructions, deleteInstruction] = useInputRows(
-    ""
-  );
-
+const InstructionsList = ({
+  instructions,
+  updateInstruction,
+  deleteInstruction,
+}) => {
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
       <Label htmlFor="instructions-list" content="Instructions" />
@@ -171,7 +132,7 @@ const InstructionsList = () => {
             <textarea
               id={`instruction-content${i}`}
               value={instruction}
-              onChange={(e) => updateInstructions(i, e.target.value)}
+              onChange={(e) => updateInstruction(i, e.target.value)}
             />
           </div>
         ))}
@@ -184,11 +145,19 @@ const CustomRecipeContentDiv = styled.div`
   display: flex;
 `;
 
-const CustomRecipeContent = () => {
+const CustomRecipeContent = (props) => {
   return (
     <CustomRecipeContentDiv>
-      <Ingredients />
-      <InstructionsList />
+      <Ingredients
+        ingredients={props.ingredients}
+        updateIngredient={props.updateIngredient}
+        deleteIngredient={props.deleteIngredient}
+      />
+      <InstructionsList
+        instructions={props.instructions}
+        updateInstruction={props.updateInstruction}
+        deleteInstruction={props.deleteInstruction}
+      />
     </CustomRecipeContentDiv>
   );
 };
@@ -207,11 +176,69 @@ const useFormFields = (initialState) => {
   ];
 };
 
+const CreatePostButton = styled.button`
+  border: none;
+  color: #fff;
+  backgroundcolor: #039be5;
+  borderradius: 4px;
+  padding: 8px 12px;
+  fontsize: 0.9rem;
+`;
+
+// TODO: generate timestamp and move date formatting to post viewer
+const generateDate = () => {
+  const now = new Date();
+  const options = { month: "long", day: "numeric", year: "numeric" };
+
+  const year = now.getFullYear();
+
+  let month = now.getMonth() + 1;
+  if (month < 10) {
+    month = `0${month}`; // prepend with a 0
+  }
+
+  let day = now.getDate();
+  if (day < 10) {
+    day = `0${day}`; // prepend with a 0
+  }
+
+  return {
+    formatted: `${year}-${month}-${day}`, // used for sorting
+    pretty: now.toLocaleDateString("en-US", options), // used for displaying
+  };
+};
+
+// Called when create post button is clicked
+const createPost = (basicInfo, history, details = null) => {
+  const date = generateDate();
+  let newPost = {
+    ...basicInfo,
+    dateFormatted: date.formatted,
+    datePretty: date.pretty,
+  };
+  if (details !== null) {
+    newPost["details"] = details;
+  }
+  console.log("new post: ", newPost);
+  // TODO: clean up any empty rows in ingredients and instructions?
+
+  // TODO: maybe use this ref to push new post to history?
+  // const postsRef =
+  getFirebase()
+    .database()
+    .ref()
+    .child(`posts`)
+    .push()
+    .set(newPost)
+    .then(() => history.push(`/`));
+};
+
 const Create = ({ history }) => {
-  const [fields, setFields] = useFormFields({
+  // Information shared by all posts
+  const [basicInfo, setBasicInfo] = useFormFields({
     title: "",
     slug: "",
-    sourceType: "other", // TODO: must manually align with an option...
+    sourceType: "personal", // TODO: must manually align with an option...
     source: "",
     activeTime: 0,
     downtime: 0,
@@ -223,37 +250,18 @@ const Create = ({ history }) => {
     description: "",
   });
 
-  const createPost = () => {
-    const date = generateDate();
-    const newPost = {
-      ...fields,
-      dateFormatted: date.formatted,
-      datePretty: date.pretty,
-    };
-    // TODO: maybe use this ref to push new post to history?
-    // const postsRef =
-    getFirebase()
-      .database()
-      .ref()
-      .child(`posts`)
-      .push()
-      .set(newPost)
-      .then(() => history.push(`/`));
-  };
+  // URLs and alt text for gallery images
+  // const [gallery, setGallery] = useState([{ url: "", alt: "" }]);
+
+  // Information for personal recipes only
+  const [ingredients, updateIngredient, deleteIngredient] = useInputRows({
+    name: "",
+    amount: "",
+  });
+  const [instructions, updateInstruction, deleteInstruction] = useInputRows("");
 
   return (
     <>
-      <h1>Global counter test</h1>
-      <CounterContext.Consumer>
-        {(value) => {
-          return (
-            <>
-              <p>Count in Create: {value.count}</p>
-              <button onClick={() => value.increment()}>Increment count</button>
-            </>
-          );
-        }}
-      </CounterContext.Consumer>
       <h1>Create a new post</h1>
       <FormRow>
         <FormGroup>
@@ -261,8 +269,8 @@ const Create = ({ history }) => {
           <Input
             type="text"
             id="title"
-            value={fields.title}
-            onChange={setFields}
+            value={basicInfo.title}
+            onChange={setBasicInfo}
           />
         </FormGroup>
         <FormGroup>
@@ -270,8 +278,8 @@ const Create = ({ history }) => {
           <Input
             type="text"
             id="slug"
-            value={fields.slug}
-            onChange={setFields}
+            value={basicInfo.slug}
+            onChange={setBasicInfo}
           />
         </FormGroup>
       </FormRow>
@@ -279,21 +287,21 @@ const Create = ({ history }) => {
         <FormGroup>
           <Label htmlFor="sourceType" content="Source" />
           <select
-            value={fields.sourceType}
+            value={basicInfo.sourceType}
             id="sourceType"
             onChange={(e) => {
-              setFields(e);
+              setBasicInfo(e);
             }}
           >
+            <option value="personal">Personal</option>
             <option value="web">Web</option>
             <option value="cookbook">Cookbook</option>
-            <option value="other">Other</option>
           </select>
           <Input
             type="text"
             id="source"
-            value={fields.source}
-            onChange={setFields}
+            value={basicInfo.source}
+            onChange={setBasicInfo}
           />
         </FormGroup>
       </FormRow>
@@ -305,8 +313,8 @@ const Create = ({ history }) => {
             id="activeTime"
             min="0"
             step="15"
-            value={fields.activeTime}
-            onChange={setFields}
+            value={basicInfo.activeTime}
+            onChange={setBasicInfo}
           />
         </FormGroup>
         <FormGroup>
@@ -316,8 +324,8 @@ const Create = ({ history }) => {
             id="downtime"
             min="0"
             step="15"
-            value={fields.downtime}
-            onChange={setFields}
+            value={basicInfo.downtime}
+            onChange={setBasicInfo}
           />
         </FormGroup>
         <FormGroup>
@@ -326,8 +334,8 @@ const Create = ({ history }) => {
             type="number"
             id="servings"
             min="1"
-            value={fields.servings}
-            onChange={setFields}
+            value={basicInfo.servings}
+            onChange={setBasicInfo}
           />
         </FormGroup>
       </FormRow>
@@ -339,8 +347,8 @@ const Create = ({ history }) => {
             id="easiness"
             max="10"
             min="1"
-            value={fields.easiness}
-            onChange={setFields}
+            value={basicInfo.easiness}
+            onChange={setBasicInfo}
           />
         </FormGroup>
         <FormGroup>
@@ -350,8 +358,8 @@ const Create = ({ history }) => {
             id="tastiness"
             max="10"
             min="1"
-            value={fields.tastiness}
-            onChange={setFields}
+            value={basicInfo.tastiness}
+            onChange={setBasicInfo}
           />
         </FormGroup>
       </FormRow>
@@ -365,9 +373,9 @@ const Create = ({ history }) => {
           <Input
             type="text"
             id="coverImageURL"
-            value={fields.coverImageURL}
+            value={basicInfo.coverImageURL}
             placeholder="Image URL"
-            onChange={setFields}
+            onChange={setBasicInfo}
           />
         </FormGroup>
       </FormRow>
@@ -377,18 +385,38 @@ const Create = ({ history }) => {
         <TextArea
           id="description"
           placeholder="How did you find this recipe? What should we know about it?"
-          value={fields.description}
-          onChange={setFields}
+          value={basicInfo.description}
+          onChange={setBasicInfo}
         />
       </ContentDiv>
 
-      {fields.sourceType === "other" && <CustomRecipeContent />}
+      {basicInfo.sourceType === "personal" && (
+        <CustomRecipeContent
+          ingredients={ingredients}
+          updateIngredient={updateIngredient}
+          deleteIngredient={deleteIngredient}
+          instructions={instructions}
+          updateInstruction={updateInstruction}
+          deleteInstruction={deleteInstruction}
+        />
+      )}
 
       <Label htmlFor="preview" content="Post preview"></Label>
-      <PreviewDiv id="preview">{DisplayRecipePost(fields)}</PreviewDiv>
+      <PreviewDiv id="preview">{DisplayRecipePost(basicInfo)}</PreviewDiv>
 
       <div style={{ textAlign: "right" }}>
-        <CreatePostButton onClick={createPost}> Create </CreatePostButton>
+        <CreatePostButton
+          onClick={() => {
+            if (basicInfo.sourceType === "personal") {
+              createPost(basicInfo, history, { ingredients, instructions });
+            } else {
+              createPost(basicInfo, history);
+            }
+          }}
+        >
+          {" "}
+          Create{" "}
+        </CreatePostButton>
       </div>
     </>
   );

@@ -6,7 +6,6 @@ import OverviewDiv from "./overview";
 
 const MainImg = styled.img`
   height: ${(props) => {
-    console.log("main image url: ", props);
     if (props.src === "") {
       return "0px";
     } else {
