@@ -1,9 +1,8 @@
-import React from "react";
-import {connect} from "react-redux";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
-
 import styled from "styled-components";
-import {CounterContext} from "../App";
+import { UserContext } from "../App";
+import { getFirebase } from "../firebase";
 import Button from "./button-primary";
 import MutedText from "./muted-text";
 
@@ -14,6 +13,7 @@ const NavWrapper = styled.div`
   background-color: #ebcb0c;
   padding: 20px 0;
 `;
+
 const NavInner = styled.nav`
   display: flex;
   justify-content: space-between;
@@ -22,8 +22,14 @@ const NavInner = styled.nav`
   max-width: 900px;
 `;
 
-const NavBar = (props) => {
-  console.log("according to the store, we are: ", props.user);
+const NavBar = () => {
+  const user = useContext(UserContext);
+  console.log("user: ", user);
+
+  const logout = () => {
+    console.log("logging out");
+    getFirebase().auth().signOut();
+  };
 
   return (
     <NavWrapper>
@@ -35,25 +41,16 @@ const NavBar = (props) => {
         <Link to="/create">
           <Button>Create a post</Button>
         </Link>
+        <Button onClick={logout}>Sign out</Button>
         <Link to="/signin">
           <Button>Sign in</Button>
         </Link>
         <div>
-          <CounterContext.Consumer>
-            {(value) => {
-              return <p>Count in App: {value.count}</p>;
-            }}
-          </CounterContext.Consumer>
+          <p>User information: {user.email}</p>;
         </div>
       </NavInner>
     </NavWrapper>
   );
 };
-const mapStateToProps = (state) => {
-  const user = state.userDataReducer;
-  console.log("STATE", state);
-  return user;
-};
 
-export default connect(mapStateToProps)(NavBar);
-
+export default NavBar;
