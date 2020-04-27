@@ -6,16 +6,19 @@ const RatingsContainer = styled.div`
   flex-direction: column;
   align-items: center;
 `;
+
 const RatingsInner = styled.div`
   display: flex;
   width: min-content;
 `;
+
 const Labels = styled.div`
   border-right: solid 1px #5f5d58eb;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
 `;
+
 const Label = styled.div`
   padding: 3px 8px;
   font-family: "Playfair Display", serif;
@@ -23,6 +26,7 @@ const Label = styled.div`
   font-size: 16px;
   font-style: italic;
 `;
+
 const Bars = styled.div`
   display: flex;
   flex-direction: column;
@@ -31,9 +35,11 @@ const Bars = styled.div`
   background-color: #eae8df73;
   font-family: "Playfair Display", serif;
 `;
+
 const BarWrapper = styled.div`
   display: flex;
 `;
+
 const BarSection = styled.div`
   width: ${(props) => props.percentage}px;
   background-color: ${(props) => props.color};

@@ -5,7 +5,6 @@ import "./App.css";
 import { getFirebase } from "./firebase";
 import NavBar from "./general/navbar";
 import Create from "./pages/create";
-import Editor from "./pages/editor";
 import Home from "./pages/home";
 import NoMatch from "./pages/no-match";
 import Signin from "./pages/signin";
@@ -58,7 +57,6 @@ const App = () => {
             <Route path="/create" component={Create} />
             <Route path="/404" component={NoMatch} />
             <Route path="/recipes/:slug" component={RecipePost} />
-            <Route path="/editor" component={Editor} />
           </Switch>
         </MainContent>
       </Router>
