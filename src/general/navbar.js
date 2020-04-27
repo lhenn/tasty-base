@@ -1,7 +1,8 @@
 import React from "react";
 import {connect} from "react-redux";
 import { Link } from "react-router-dom";
-
+import SignedInLinks from "./signedin-links"
+import SignedOutLinks from "./signedout-links"
 import styled from "styled-components";
 import {CounterContext} from "../App";
 import Button from "./button-primary";
@@ -22,8 +23,11 @@ const NavInner = styled.nav`
   max-width: 900px;
 `;
 
-const NavBar = (props) => {
-  console.log("according to the store, we are: ", props.user);
+const NavBar = ({user}) => {
+  const links = user != null ? <SignedInLinks user={user}/> : <SignedOutLinks/>;
+
+  console.log("according to the store, we are: ", user);
+ 
 
   return (
     <NavWrapper>
@@ -32,12 +36,7 @@ const NavBar = (props) => {
           <h2>Tasty Base</h2>
           <MutedText text="An Adam&Laura© website" />
         </Link>
-        <Link to="/create">
-          <Button text="Create a post" />
-        </Link>
-        <Link to="/signin">
-          <Button text="Sign in" />
-        </Link>
+        {links}
         <div>
           <CounterContext.Consumer>
             {(value) => {
@@ -50,9 +49,9 @@ const NavBar = (props) => {
   );
 };
 const mapStateToProps = (state) => {
-  const user = state.userDataReducer;
+  const user = state.user;
   console.log("STATE", state);
-  return user;
+  return state;
 };
 
 export default connect(mapStateToProps)(NavBar);
