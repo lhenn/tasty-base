@@ -36,31 +36,31 @@ const useInputRows = (emptyRow) => {
 
   // Updates a row or a field in a row
   const updateRow = (index, value, field = null) => {
-    let newState = [...rows];
+    let newRows = [...rows];
 
     // If no field was specified, replace whole row
     if (field === null) {
-      newState[index] = value;
+      newRows[index] = value;
     } else {
-      newState[index] = {
-        ...newState[index],
+      newRows[index] = {
+        ...newRows[index],
         [field]: value,
       };
     }
 
     if (index === rows.length - 1) {
-      newState.push(emptyRow);
+      newRows.push(emptyRow);
     }
 
-    setRows(newState);
+    setRows(newRows);
   };
 
   // Deletes a row using its index
   const deleteRow = (index) => {
     if (rows.length > 1) {
-      let newState = [...rows];
-      newState.splice(index, 1);
-      setRows(newState);
+      let newRows = [...rows];
+      newRows.splice(index, 1);
+      setRows(newRows);
     }
   };
 
@@ -208,17 +208,23 @@ const generateDate = () => {
   };
 };
 
-// Called when create post button is clicked
-const createPost = (basicInfo, history, details = null) => {
+// Combines all the post elements into one object and adds timestamp
+const combinePostData = (basicInfo, ingredients, instructions) => {
   const date = generateDate();
-  let newPost = {
+  // Remove last ingredient and instruction, which are always empty
+  const newPost = {
     ...basicInfo,
     dateFormatted: date.formatted,
     datePretty: date.pretty,
+    ingredients: ingredients.slice(0, -1),
+    instructions: instructions.slice(0, -1),
   };
-  if (details !== null) {
-    newPost["details"] = details;
-  }
+  return newPost;
+};
+
+// Called when create post button is clicked
+const createPost = (basicInfo, history, ingredients, instructions) => {
+  const newPost = combinePostData(basicInfo, ingredients, instructions);
   getFirebase()
     .database()
     .ref()
@@ -397,17 +403,17 @@ const Create = ({ history }) => {
       )}
 
       <Label htmlFor="preview" content="Post preview"></Label>
-      <PreviewDiv id="preview">{DisplayRecipePost(basicInfo)}</PreviewDiv>
+      <PreviewDiv id="preview">
+        {DisplayRecipePost(
+          combinePostData(basicInfo, ingredients, instructions)
+        )}
+      </PreviewDiv>
 
       <div style={{ textAlign: "right" }}>
         <CreatePostButton
-          onClick={() => {
-            if (basicInfo.sourceType === "personal") {
-              createPost(basicInfo, history, { ingredients, instructions });
-            } else {
-              createPost(basicInfo, history);
-            }
-          }}
+          onClick={() =>
+            createPost(basicInfo, history, ingredients, instructions)
+          }
         >
           {" "}
           Create{" "}

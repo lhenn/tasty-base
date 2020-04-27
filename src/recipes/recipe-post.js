@@ -16,17 +16,70 @@ const MainImg = styled.img`
   object-fit: cover;
 `;
 
+const IngredientsUL = styled.ul``;
+
+const IngredientLI = styled.li``;
+
+const Ingredients = ({ ingredients }) => {
+  return (
+    <IngredientsUL>
+      {ingredients.map((ingredient, i) => (
+        <IngredientLI key={`ingredient-${i}`}>
+          {ingredient.amount} {ingredient.name}
+        </IngredientLI>
+      ))}
+    </IngredientsUL>
+  );
+};
+
+const InstructionsOL = styled.ol``;
+
+const InstructionsLI = styled.li``;
+
+const Instructions = ({ instructions }) => {
+  return (
+    <InstructionsOL>
+      {instructions.map((instruction, i) => (
+        <InstructionsLI key={`instruction-${i}`}>{instruction}</InstructionsLI>
+      ))}
+    </InstructionsOL>
+  );
+};
+
+const Description = styled.p`
+  white-space: pre-wrap;
+`;
+
+const DetailsDiv = styled.div`
+  display: flex;
+`;
+
+const Details = ({ ingredients, instructions }) => {
+  return (
+    <DetailsDiv>
+      <Ingredients ingredients={ingredients} />
+      <Instructions instructions={instructions} />
+    </DetailsDiv>
+  );
+};
+
 export const DisplayRecipePost = (post) => {
   return (
     <>
       <MainImg
         src={post.coverImageURL}
-        onerror="this.onerror=null; this.src=''"
+        onerror="this.onerror=null; this.src=''" // TODO: add default image?
       />
       <h1>{post.title}</h1>
       <em>{post.datePretty}</em>
       <OverviewDiv post={post} />
-      <p dangerouslySetInnerHTML={{ __html: post.description }}></p>
+      <Description>{post.description}</Description>
+      {post.sourceType === "personal" && (
+        <Details
+          ingredients={post.ingredients}
+          instructions={post.instructions}
+        />
+      )}
     </>
   );
 };
@@ -41,7 +94,7 @@ const RecipePost = ({ match }) => {
     postsRef
       .orderByChild("slug")
       .equalTo(slug)
-      .on("child_added", function (snapshot) {
+      .on("child_added", (snapshot) => {
         setCurrentPost(snapshot.val());
         setLoading(false);
       });
