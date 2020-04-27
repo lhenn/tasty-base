@@ -7,8 +7,8 @@ import NavBar from "./general/navbar";
 import Create from "./pages/create";
 import Editor from "./pages/editor";
 import Home from "./pages/home";
-import Signin from "./pages/signin";
 import NoMatch from "./pages/no-match";
+import Signin from "./pages/signin";
 import RecipePost from "./recipes/recipe-post";
 
 const MainContent = styled.main`
@@ -19,6 +19,8 @@ const MainContent = styled.main`
   padding: 20px;
 `;
 
+export const UserContext = createContext(null);
+
 const onAuthStateChanged = (callback) => {
   // Subscribe to auth state changes and call the callback.
   // onAuthStateChanged() returns firebase.unsubscribe().
@@ -28,19 +30,16 @@ const onAuthStateChanged = (callback) => {
       console.log("calling onChange with user = ", user);
       if (user) {
         console.log("\tUser is logged in");
-        callback({ loggedIn: true, email: user.email });
+        callback(user);
       } else {
         console.log("\tUser is logged out");
-        callback({ loggedIn: false, email: "" });
+        callback(null);
       }
     });
 };
 
-export const defaultUser = { loggedIn: false, email: "" };
-export const UserContext = createContext(defaultUser);
-
 const App = () => {
-  const [user, setUser] = useState(defaultUser);
+  const [user, setUser] = useState(null);
 
   // Subscribe to listen for auth state changes when application mounts
   useEffect(() => {

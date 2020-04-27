@@ -25,7 +25,6 @@ const SignedInLinks = ({ user }) => {
 
   return (
     <>
-      <p>{user.email}</p>
       <Link to="/create">
         <Button>Create a post</Button>
       </Link>

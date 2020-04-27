@@ -1,7 +1,7 @@
-import React, {useContext} from "react";
-import {Link} from "react-router-dom";
+import React, { useContext } from "react";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
-import {UserContext} from "../App";
+import { UserContext } from "../App";
 import MutedText from "./muted-text";
 import SignedInLinks from "./signedin-links";
 import SignedOutLinks from "./signedout-links";
@@ -33,7 +33,7 @@ const NavBar = () => {
           <h2>Tasty Base</h2>
           <MutedText text="An Adam&Laura© website" />
         </Link>
-        {user.loggedIn ? <SignedInLinks user={user} /> : <SignedOutLinks />}
+        {user !== null ? <SignedInLinks user={user} /> : <SignedOutLinks />}
       </NavInner>
     </NavWrapper>
   );
