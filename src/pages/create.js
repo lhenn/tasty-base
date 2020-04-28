@@ -166,7 +166,6 @@ const useFormFields = (initialState) => {
   const [fields, setField] = useState(initialState);
 
   return [fields, (field, value) => {
-    console.log("field, value: ", field, value)
     setField({ ...fields, [field]: value });
   }];
 };

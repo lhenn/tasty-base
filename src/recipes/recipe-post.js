@@ -21,15 +21,19 @@ const IngredientsUL = styled.ul``;
 const IngredientLI = styled.li``;
 
 const Ingredients = ({ ingredients }) => {
-  return (
-    <IngredientsUL>
-      {ingredients.map((ingredient, i) => (
-        <IngredientLI key={`ingredient-${i}`}>
-          {ingredient.amount} {ingredient.name}
-        </IngredientLI>
-      ))}
-    </IngredientsUL>
-  );
+  if (ingredients === undefined || ingredients === null) {
+    return <></>;
+  } else {
+    return (
+      <IngredientsUL>
+        {ingredients.map((ingredient, i) => (
+          <IngredientLI key={`ingredient-${i}`}>
+            {ingredient.amount} {ingredient.name}
+          </IngredientLI>
+        ))}
+      </IngredientsUL>
+    );
+  }
 };
 
 const InstructionsOL = styled.ol``;
@@ -37,13 +41,19 @@ const InstructionsOL = styled.ol``;
 const InstructionsLI = styled.li``;
 
 const Instructions = ({ instructions }) => {
-  return (
-    <InstructionsOL>
-      {instructions.map((instruction, i) => (
-        <InstructionsLI key={`instruction-${i}`}>{instruction}</InstructionsLI>
-      ))}
-    </InstructionsOL>
-  );
+  if (instructions === undefined || instructions === null) {
+    return <></>;
+  } else {
+    return (
+      <InstructionsOL>
+        {instructions.map((instruction, i) => (
+          <InstructionsLI key={`instruction-${i}`}>
+            {instruction}
+          </InstructionsLI>
+        ))}
+      </InstructionsOL>
+    );
+  }
 };
 
 const Description = styled.p`
