@@ -1,10 +1,10 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
-import {getFirebase} from "../firebase";
+import { getFirebase } from "../firebase";
 import Input from "../forms/input";
 import Label from "../forms/label";
 import TextArea from "../forms/text-area";
-import {DisplayRecipePost} from "../recipes/recipe-post";
+import { DisplayRecipePost } from "../recipes/recipe-post";
 import ImageUploader from "./image-uploader";
 
 const FormGroup = styled.div`
@@ -165,9 +165,12 @@ const CustomRecipeContent = (props) => {
 const useFormFields = (initialState) => {
   const [fields, setField] = useState(initialState);
 
-  return [fields, (field, value) => {
-    setField({ ...fields, [field]: value });
-  }];
+  return [
+    fields,
+    (field, value) => {
+      setField({ ...fields, [field]: value });
+    },
+  ];
 };
 
 const CreatePostButton = styled.button`
@@ -179,37 +182,11 @@ const CreatePostButton = styled.button`
   fontsize: 0.9rem;
 `;
 
-// TODO: generate timestamp and move date formatting to post viewer
-const generateDate = () => {
-  const now = new Date();
-  const options = { month: "long", day: "numeric", year: "numeric" };
-
-  const year = now.getFullYear();
-
-  let month = now.getMonth() + 1;
-  if (month < 10) {
-    month = `0${month}`; // prepend with a 0
-  }
-
-  let day = now.getDate();
-  if (day < 10) {
-    day = `0${day}`; // prepend with a 0
-  }
-
-  return {
-    formatted: `${year}-${month}-${day}`, // used for sorting
-    pretty: now.toLocaleDateString("en-US", options), // used for displaying
-  };
-};
-
-// Combines all the post elements into one object and adds timestamp
+// Combines all the post data into one object, but does NOT add timestamp
 const combinePostData = (basicInfo, ingredients, instructions) => {
-  const date = generateDate();
   // Remove last ingredient and instruction, which are always empty
   const newPost = {
     ...basicInfo,
-    dateFormatted: date.formatted,
-    datePretty: date.pretty,
     ingredients: ingredients.slice(0, -1),
     instructions: instructions.slice(0, -1),
   };
@@ -218,7 +195,11 @@ const combinePostData = (basicInfo, ingredients, instructions) => {
 
 // Called when create post button is clicked
 const createPost = (basicInfo, history, ingredients, instructions) => {
-  const newPost = combinePostData(basicInfo, ingredients, instructions);
+  // Add firebase timestamp
+  const newPost = {
+    ...combinePostData(basicInfo, ingredients, instructions),
+    timestamp: getFirebase().database.ServerValue.TIMESTAMP,
+  };
   getFirebase()
     .database()
     .ref()
@@ -330,7 +311,7 @@ const Create = ({ history }) => {
       </FormRow>
       <FormRow>
         <FormGroup>
-          <Label htmlFor="active-time" content="Active time" />
+          <Label htmlFor="active-time" content="Active time (minutes)" />
           <Input
             type="number"
             id="active-time"
@@ -343,7 +324,7 @@ const Create = ({ history }) => {
           />
         </FormGroup>
         <FormGroup>
-          <Label htmlFor="downtime" content="Downtime (nearest 15 min)" />
+          <Label htmlFor="downtime" content="Downtime (minutes)" />
           <Input
             type="number"
             id="downtime"
