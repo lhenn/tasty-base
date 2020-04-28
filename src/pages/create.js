@@ -206,11 +206,14 @@ const generateDate = () => {
 // Combines all the post elements into one object and adds timestamp
 const combinePostData = (basicInfo, ingredients, instructions) => {
   const date = generateDate();
+  const author = getFirebase().auth().currentUser == null ? null : getFirebase().auth().currentUser.uid;
+
   // Remove last ingredient and instruction, which are always empty
   const newPost = {
     ...basicInfo,
     dateFormatted: date.formatted,
     datePretty: date.pretty,
+    author: author,
     ingredients: ingredients.slice(0, -1),
     instructions: instructions.slice(0, -1),
   };
@@ -269,6 +272,7 @@ const Create = ({ history }) => {
     let val = parseInt(str);
     return isNaN(val) ? "" : val;
   };
+  
 
   return (
     <>

@@ -49,6 +49,10 @@ const Date = styled.span`
   font-weight: bold;
 `;
 
+const author = (uid) => {
+  //somehow get the username
+}
+
 const RecipePreview = (props) => {
   const { post } = props;
 

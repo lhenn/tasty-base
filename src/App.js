@@ -20,6 +20,30 @@ const MainContent = styled.main`
 
 export const UserContext = createContext(null);
 
+const updateUsers = (user) => {
+  let newUser = true;
+  const usersRef = getFirebase().database().ref("/users");
+  //see if the user data already exists
+  usersRef
+    .once("value")
+    .then((snapshot) => {
+      snapshot.forEach((existingUser) => {
+        if (existingUser.key == user.uid) {
+          newUser = false;
+        }
+      });
+      if(newUser){
+        usersRef.child(user.uid).set({
+          name:user.displayName,
+          email:user.email,
+          photo: user.photoURL
+          //TODO: figure out what other info we want. username??
+        })
+      } 
+    })
+  
+};
+
 const onAuthStateChanged = (callback) => {
   // Subscribe to auth state changes and call the callback.
   // onAuthStateChanged() returns firebase.unsubscribe().
@@ -28,6 +52,7 @@ const onAuthStateChanged = (callback) => {
     .onAuthStateChanged((user) => {
       if (user) {
         callback(user);
+        if(user != null) updateUsers(user);
       } else {
         callback(null);
       }
@@ -40,6 +65,7 @@ const App = () => {
   // Subscribe to listen for auth state changes when application mounts
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(setUser);
+    //getFirebase()
     // Unsubscribe to the listener when unmounting
     return () => {
       unsubscribe();
