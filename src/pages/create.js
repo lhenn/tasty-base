@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
 import styled from "styled-components";
-import { getFirebase } from "../firebase";
+import {getFirebase} from "../firebase";
 import Input from "../forms/input";
 import Label from "../forms/label";
 import TextArea from "../forms/text-area";
-import { DisplayRecipePost } from "../recipes/recipe-post";
+import {DisplayRecipePost} from "../recipes/recipe-post";
 import ImageUploader from "./image-uploader";
 
 const FormGroup = styled.div`
@@ -163,17 +163,12 @@ const CustomRecipeContent = (props) => {
 };
 
 const useFormFields = (initialState) => {
-  const [fields, setFields] = useState(initialState);
+  const [fields, setField] = useState(initialState);
 
-  return [
-    fields,
-    (e) => {
-      setFields({
-        ...fields,
-        [e.target.id]: e.target.value,
-      });
-    },
-  ];
+  return [fields, (field, value) => {
+    console.log("field, value: ", field, value)
+    setField({ ...fields, [field]: value });
+  }];
 };
 
 const CreatePostButton = styled.button`
@@ -234,6 +229,15 @@ const createPost = (basicInfo, history, ingredients, instructions) => {
     .then(() => history.push(`/recipes/${newPost.slug}`));
 };
 
+const WebSourceInput = styled.input`
+  border-color: ${(props) => (props.validationFailed ? "red" : "none")};
+`;
+// From https://cran.r-project.org/web/packages/rex/vignettes/url_parsing.html.
+// Note that a slightly different regex is used in the firebase validation
+// rule.
+const urlRegex =
+  "^(?:(?:http(?:s)?|ftp)://)(?:\\S+(?::(?:\\S)*)?@)?(?:(?:[a-z0-9\u00a1-\uffff](?:-)*)*(?:[a-z0-9\u00a1-\uffff])+)(?:\\.(?:[a-z0-9\u00a1-\uffff](?:-)*)*(?:[a-z0-9\u00a1-\uffff])+)*(?:\\.(?:[a-z0-9\u00a1-\uffff]){2,})(?::(?:\\d){2,5})?(?:/(?:\\S)*)?$";
+
 const Create = ({ history }) => {
   // Information shared by all posts
   const [basicInfo, setBasicInfo] = useFormFields({
@@ -241,7 +245,7 @@ const Create = ({ history }) => {
     slug: "",
     sourceType: "personal", // TODO: must manually align with an option...
     source: "",
-    activeTime: 0,
+    activeTime: 1,
     downtime: 0,
     servings: 1,
     easiness: 10,
@@ -261,6 +265,11 @@ const Create = ({ history }) => {
   });
   const [instructions, updateInstruction, deleteInstruction] = useInputRows("");
 
+  const parseIntOrEmpty = (str) => {
+    let val = parseInt(str);
+    return isNaN(val) ? "" : val;
+  };
+
   return (
     <>
       <h1>Create a new post</h1>
@@ -271,7 +280,8 @@ const Create = ({ history }) => {
             type="text"
             id="title"
             value={basicInfo.title}
-            onChange={setBasicInfo}
+            onChange={(e) => setBasicInfo("title", e.target.value)}
+            required
           />
         </FormGroup>
         <FormGroup>
@@ -280,42 +290,57 @@ const Create = ({ history }) => {
             type="text"
             id="slug"
             value={basicInfo.slug}
-            onChange={setBasicInfo}
+            onChange={(e) => setBasicInfo("slug", e.target.value)}
+            required
           />
         </FormGroup>
       </FormRow>
       <FormRow>
         <FormGroup>
-          <Label htmlFor="sourceType" content="Source" />
+          <Label htmlFor="source-type" content="Source" />
           <select
             value={basicInfo.sourceType}
-            id="sourceType"
-            onChange={(e) => {
-              setBasicInfo(e);
-            }}
+            id="source-type"
+            onChange={(e) => setBasicInfo("sourceType", e.target.value)}
+            required
           >
             <option value="personal">Personal</option>
             <option value="web">Web</option>
             <option value="cookbook">Cookbook</option>
           </select>
-          <Input
-            type="text"
-            id="source"
-            value={basicInfo.source}
-            onChange={setBasicInfo}
-          />
+          {basicInfo.sourceType === "web" ? (
+            <WebSourceInput
+              type="url"
+              id="source"
+              placeholder="https://example.com"
+              pattern={urlRegex}
+              value={basicInfo.source}
+              onChange={(e) => setBasicInfo("source", e.target.value)}
+              required
+            />
+          ) : (
+            <Input
+              type="text"
+              id="source"
+              value={basicInfo.source}
+              onChange={(e) => setBasicInfo("source", e.target.value)}
+              required
+            />
+          )}
         </FormGroup>
       </FormRow>
       <FormRow>
         <FormGroup>
-          <Label htmlFor="activeTime" content="Active time (nearest 15 min)" />
+          <Label htmlFor="active-time" content="Active time" />
           <Input
             type="number"
-            id="activeTime"
-            min="0"
-            step="15"
+            id="active-time"
+            min="1"
             value={basicInfo.activeTime}
-            onChange={setBasicInfo}
+            onChange={(e) =>
+              setBasicInfo("activeTime", parseIntOrEmpty(e.target.value))
+            }
+            required
           />
         </FormGroup>
         <FormGroup>
@@ -324,9 +349,11 @@ const Create = ({ history }) => {
             type="number"
             id="downtime"
             min="0"
-            step="15"
             value={basicInfo.downtime}
-            onChange={setBasicInfo}
+            onChange={(e) =>
+              setBasicInfo("downtime", parseIntOrEmpty(e.target.value))
+            }
+            required
           />
         </FormGroup>
         <FormGroup>
@@ -336,7 +363,10 @@ const Create = ({ history }) => {
             id="servings"
             min="1"
             value={basicInfo.servings}
-            onChange={setBasicInfo}
+            onChange={(e) =>
+              setBasicInfo("servings", parseIntOrEmpty(e.target.value))
+            }
+            required
           />
         </FormGroup>
       </FormRow>
@@ -349,7 +379,10 @@ const Create = ({ history }) => {
             max="10"
             min="1"
             value={basicInfo.easiness}
-            onChange={setBasicInfo}
+            onChange={(e) =>
+              setBasicInfo("easiness", parseIntOrEmpty(e.target.value))
+            }
+            required
           />
         </FormGroup>
         <FormGroup>
@@ -360,7 +393,10 @@ const Create = ({ history }) => {
             max="10"
             min="1"
             value={basicInfo.tastiness}
-            onChange={setBasicInfo}
+            onChange={(e) =>
+              setBasicInfo("tastiness", parseIntOrEmpty(e.target.value))
+            }
+            required
           />
         </FormGroup>
       </FormRow>
@@ -370,13 +406,13 @@ const Create = ({ history }) => {
 
       <FormRow>
         <FormGroup>
-          <Label htmlFor="coverImageURL" content="Cover image URL" />
+          <Label htmlFor="cover-image-url" content="Cover image URL" />
           <Input
             type="text"
-            id="coverImageURL"
+            id="cover-image-url"
             value={basicInfo.coverImageURL}
             placeholder="Image URL"
-            onChange={setBasicInfo}
+            onChange={(e) => setBasicInfo("coverImageURL", e.target.value)}
           />
         </FormGroup>
       </FormRow>
@@ -387,7 +423,8 @@ const Create = ({ history }) => {
           id="description"
           placeholder="How did you find this recipe? What should we know about it?"
           value={basicInfo.description}
-          onChange={setBasicInfo}
+          onChange={(e) => setBasicInfo("description", e.target.value)}
+          required
         />
       </ContentDiv>
 
