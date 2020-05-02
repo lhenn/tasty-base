@@ -20,6 +20,7 @@ const MainContent = styled.main`
 
 export const UserContext = createContext(null);
 
+//we can only retrieve user information for users who are not signed in if we store it ourselves
 const updateUsers = (user) => {
   let newUser = true;
   const usersRef = getFirebase().database().ref("/users");
