@@ -6,11 +6,12 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [blogPosts, setBlogPosts] = useState([]);
 
+  // TODO: could use on() to listen for changes in real time
   if (loading && !blogPosts.length) {
     getFirebase()
       .database()
       .ref("/posts")
-      .orderByChild("dateFormatted")
+      .orderByChild("timestamp")
       .once("value")
       .then((snapshot) => {
         let posts = [];

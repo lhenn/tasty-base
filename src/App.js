@@ -8,7 +8,7 @@ import Create from "./pages/create";
 import Home from "./pages/home";
 import NoMatch from "./pages/no-match";
 import Signin from "./pages/signin";
-import RecipePost from "./recipes/recipe-post";
+import SelfLoadingRecipePost from "./recipes/recipe-post";
 
 const MainContent = styled.main`
   max-width: 900px;
@@ -20,6 +20,15 @@ const MainContent = styled.main`
 
 export const UserContext = createContext(null);
 
+// Update the user's information in Firebase whenever they log in
+const updateUser = (user) =>
+  // set() is safe since uids are unique
+  getFirebase().database().ref(`/users/${user.uid}`).set({
+    name: user.displayName,
+    email: user.email,
+    photo: user.photoURL,
+  });
+
 const onAuthStateChanged = (callback) => {
   // Subscribe to auth state changes and call the callback.
   // onAuthStateChanged() returns firebase.unsubscribe().
@@ -28,6 +37,7 @@ const onAuthStateChanged = (callback) => {
     .onAuthStateChanged((user) => {
       if (user) {
         callback(user);
+        updateUser(user);
       } else {
         callback(null);
       }
@@ -40,6 +50,7 @@ const App = () => {
   // Subscribe to listen for auth state changes when application mounts
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(setUser);
+    //getFirebase()
     // Unsubscribe to the listener when unmounting
     return () => {
       unsubscribe();
@@ -56,7 +67,7 @@ const App = () => {
             <Route path="/signin" component={Signin} />
             <Route path="/create" component={Create} />
             <Route path="/404" component={NoMatch} />
-            <Route path="/recipes/:slug" component={RecipePost} />
+            <Route path="/recipes/:slug" component={SelfLoadingRecipePost} />
           </Switch>
         </MainContent>
       </Router>

@@ -4,7 +4,7 @@ import { getFirebase } from "../firebase";
 import Input from "../forms/input";
 import Label from "../forms/label";
 import TextArea from "../forms/text-area";
-import { DisplayRecipePost } from "../recipes/recipe-post";
+import { RecipePost } from "../recipes/recipe-post";
 import ImageUploader from "./image-uploader";
 
 const FormGroup = styled.div`
@@ -195,26 +195,32 @@ const combinePostData = (basicInfo, ingredients, instructions) => {
 
 // Called when create post button is clicked
 const createPost = (basicInfo, history, ingredients, instructions) => {
-  // Add firebase timestamp
+  // Add firebase timestamp and author information
+  // TODO: fix this by using context!
+  const author =
+    getFirebase().auth().currentUser == null
+      ? null
+      : getFirebase().auth().currentUser.uid;
   const newPost = {
     ...combinePostData(basicInfo, ingredients, instructions),
     timestamp: getFirebase().database.ServerValue.TIMESTAMP,
+    author: author,
   };
+  console.log(newPost);
+  console.log(newPost.title);
   getFirebase()
     .database()
     .ref()
-    .child(`posts`)
-    .push()
-    .set(newPost)
+    .child("/posts")
+    .push(newPost)
     .then(() => history.push(`/recipes/${newPost.slug}`));
 };
 
 const WebSourceInput = styled.input`
   border-color: ${(props) => (props.validationFailed ? "red" : "none")};
 `;
-// From https://cran.r-project.org/web/packages/rex/vignettes/url_parsing.html.
-// Note that a slightly different regex is used in the firebase validation
-// rule.
+
+// From https://cran.r-project.org/web/packages/rex/vignettes/url_parsing.html
 const urlRegex =
   "^(?:(?:http(?:s)?|ftp)://)(?:\\S+(?::(?:\\S)*)?@)?(?:(?:[a-z0-9\u00a1-\uffff](?:-)*)*(?:[a-z0-9\u00a1-\uffff])+)(?:\\.(?:[a-z0-9\u00a1-\uffff](?:-)*)*(?:[a-z0-9\u00a1-\uffff])+)*(?:\\.(?:[a-z0-9\u00a1-\uffff]){2,})(?::(?:\\d){2,5})?(?:/(?:\\S)*)?$";
 
@@ -233,6 +239,7 @@ const Create = ({ history }) => {
     coverImageURL: "",
     coverImageAlt: "",
     description: "",
+    timestamp: Date.now()
   });
 
   // URLs and alt text for gallery images
@@ -421,9 +428,10 @@ const Create = ({ history }) => {
 
       <Label htmlFor="preview" content="Post preview"></Label>
       <PreviewDiv id="preview">
-        {DisplayRecipePost(
-          combinePostData(basicInfo, ingredients, instructions)
-        )}
+        <RecipePost
+          post={combinePostData(basicInfo, ingredients, instructions)}
+          authorName="TODO: CONTEXT"
+        />
       </PreviewDiv>
 
       <div style={{ textAlign: "right" }}>

@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Redirect } from "react-router-dom";
-import { getFirebase } from "../firebase";
 import styled from "styled-components";
+import { getFirebase } from "../firebase";
 import OverviewDiv from "./overview";
 
 const MainImg = styled.img`
@@ -57,7 +57,7 @@ const Instructions = ({ instructions }) => {
 };
 
 const Description = styled.p`
-  white-space: pre-wrap;
+  white-space: pre-line;
 `;
 
 const DetailsDiv = styled.div`
@@ -73,7 +73,36 @@ const Details = ({ ingredients, instructions }) => {
   );
 };
 
-export const DisplayRecipePost = (post) => {
+const TimestampEM = styled.em`
+  font-size: 18px;
+`;
+
+const Timestamp = ({ timestamp }) => {
+  const date = new Date(timestamp);
+  const hoverOptions = {
+    hour: "numeric",
+    minute: "numeric",
+    month: "numeric",
+    day: "numeric",
+    year: "numeric",
+  };
+  const options = { month: "long", day: "numeric", year: "numeric" };
+  return (
+    <TimestampEM title={date.toLocaleDateString("en-GB", hoverOptions)}>
+      {date.toLocaleDateString("en-GB", options)}{" "}
+    </TimestampEM>
+  );
+};
+
+const AuthorSpan = styled.p``;
+
+const Author = ({ name }) => {
+  return <AuthorSpan>{`Posted by ${name}`}</AuthorSpan>;
+};
+
+export const RecipePost = ({ post, authorName }) => {
+  console.log("post title: ", post.title);
+  console.log("post authorName: ", authorName);
   return (
     <>
       <MainImg
@@ -81,9 +110,10 @@ export const DisplayRecipePost = (post) => {
         onerror="this.onerror=null; this.src=''" // TODO: add default image?
       />
       <h1>{post.title}</h1>
-      <em>{post.datePretty}</em>
+      <Timestamp timestamp={post.timestamp} />
+      <Author name={authorName} />
       <OverviewDiv post={post} />
-      <Description>{post.description}</Description>
+      <Description>{post.description.replace(/\\n/g, "\n")}</Description>
       {post.sourceType === "personal" && (
         <Details
           ingredients={post.ingredients}
@@ -94,32 +124,52 @@ export const DisplayRecipePost = (post) => {
   );
 };
 
-const RecipePost = ({ match }) => {
+const SelfLoadingRecipePost = ({ match }) => {
   const slug = match.params.slug;
   const [loading, setLoading] = useState(true);
-  const [post, setCurrentPost] = useState();
+  const [post, setPost] = useState();
+  const [authorName, setAuthorName] = useState();
 
-  if (loading && !post) {
-    const postsRef = getFirebase().database().ref().child("posts");
-    postsRef
+  useEffect(() => {
+    // Need to store uid in temporary variable since setPost is asynchronous!
+    let uid = "";
+
+    getFirebase()
+      .database()
+      .ref("posts")
       .orderByChild("slug")
       .equalTo(slug)
-      .on("child_added", (snapshot) => {
-        setCurrentPost(snapshot.val());
-        setLoading(false);
-      });
-  }
+      .once(
+        "value",
+        (snapshot) => {
+          // Snapshot consists of key and post data
+          const postData = Object.values(snapshot.val())[0];
+          setPost(postData);
+          uid = postData.author;
+        },
+        (err) => console.log("Post loading failed with code: ", err.code)
+      )
+      .then(
+        // Get author name
+        () => getFirebase().database().ref(`/users/${uid}/name`).once("value")
+      )
+      .then(
+        (snapshot) => {
+          setAuthorName(snapshot.val());
+          setLoading(false);
+        },
+        (err) => console.log("Author name loading failed with code: ", err.code)
+      );
+  }, []);
 
   if (loading) {
     return <h1>Loading...</h1>;
-  }
-
-  // Loading is done and post wasn't found in the database
-  if (!post) {
+  } else if (!post) {
+    // Loading is done and post wasn't found in the database
     return <Redirect to="/404" />;
+  } else {
+    return <RecipePost post={post} authorName={authorName} />;
   }
-
-  return DisplayRecipePost(post);
 };
 
-export default RecipePost;
+export default SelfLoadingRecipePost;
