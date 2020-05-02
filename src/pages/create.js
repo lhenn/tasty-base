@@ -195,26 +195,28 @@ const combinePostData = (basicInfo, ingredients, instructions) => {
 
 // Called when create post button is clicked
 const createPost = (basicInfo, history, ingredients, instructions) => {
-  // Add firebase timestamp
+  // Add firebase timestamp and author information
+  const author = getFirebase().auth().currentUser == null ? null : getFirebase().auth().currentUser.uid;
   const newPost = {
     ...combinePostData(basicInfo, ingredients, instructions),
     timestamp: getFirebase().database.ServerValue.TIMESTAMP,
+    author: author
   };
+  console.log(newPost);
+  console.log(newPost.title);
   getFirebase()
     .database()
     .ref()
-    .child(`posts`)
-    .push()
-    .set(newPost)
+    .child("/posts")
+    .push(newPost)
     .then(() => history.push(`/recipes/${newPost.slug}`));
 };
 
 const WebSourceInput = styled.input`
   border-color: ${(props) => (props.validationFailed ? "red" : "none")};
 `;
-// From https://cran.r-project.org/web/packages/rex/vignettes/url_parsing.html.
-// Note that a slightly different regex is used in the firebase validation
-// rule.
+
+// From https://cran.r-project.org/web/packages/rex/vignettes/url_parsing.html
 const urlRegex =
   "^(?:(?:http(?:s)?|ftp)://)(?:\\S+(?::(?:\\S)*)?@)?(?:(?:[a-z0-9\u00a1-\uffff](?:-)*)*(?:[a-z0-9\u00a1-\uffff])+)(?:\\.(?:[a-z0-9\u00a1-\uffff](?:-)*)*(?:[a-z0-9\u00a1-\uffff])+)*(?:\\.(?:[a-z0-9\u00a1-\uffff]){2,})(?::(?:\\d){2,5})?(?:/(?:\\S)*)?$";
 

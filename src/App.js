@@ -20,6 +20,16 @@ const MainContent = styled.main`
 
 export const UserContext = createContext(null);
 
+// Update the user's information in Firebase whenever they log in
+const updateUser = (user) =>
+  getFirebase().database().ref(`/users/${user.uid}`).set({
+    name: user.displayName,
+    email: user.email,
+    photo: user.photoURL,
+  });
+
+// const getUserInfo = (uid, field) => {};
+
 const onAuthStateChanged = (callback) => {
   // Subscribe to auth state changes and call the callback.
   // onAuthStateChanged() returns firebase.unsubscribe().
@@ -28,6 +38,7 @@ const onAuthStateChanged = (callback) => {
     .onAuthStateChanged((user) => {
       if (user) {
         callback(user);
+        updateUser(user);
       } else {
         callback(null);
       }
@@ -40,6 +51,7 @@ const App = () => {
   // Subscribe to listen for auth state changes when application mounts
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(setUser);
+    //getFirebase()
     // Unsubscribe to the listener when unmounting
     return () => {
       unsubscribe();
