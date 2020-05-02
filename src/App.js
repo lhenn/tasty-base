@@ -5,6 +5,7 @@ import "./App.css";
 import { getFirebase } from "./firebase";
 import NavBar from "./general/navbar";
 import Create from "./pages/create";
+import Edit from "./pages/edit";
 import Home from "./pages/home";
 import NoMatch from "./pages/no-match";
 import Signin from "./pages/signin";
@@ -67,7 +68,8 @@ const App = () => {
             <Route path="/signin" component={Signin} />
             <Route path="/create" component={Create} />
             <Route path="/404" component={NoMatch} />
-            <Route path="/recipes/:slug" component={SelfLoadingRecipePost} />
+            <Route exact path="/recipes/:slug" component={SelfLoadingRecipePost} />
+            <Route exact path="/recipes/:slug/edit" component={Edit} />
           </Switch>
         </MainContent>
       </Router>

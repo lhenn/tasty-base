@@ -68,10 +68,6 @@ const Timestamp = ({ timestamp }) => {
   );
 };
 
-const author = (uid) => {
-  //somehow get the username
-};
-
 const RecipePreview = (props) => {
   const { post } = props;
 

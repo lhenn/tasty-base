@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Redirect } from "react-router-dom";
 import styled from "styled-components";
 import { getFirebase } from "../firebase";
 import OverviewDiv from "./overview";
+import { UserContext } from "../App";
 
 const MainImg = styled.img`
   height: ${(props) => {
@@ -100,35 +101,37 @@ const Author = ({ name }) => {
   return <AuthorSpan>{`Posted by ${name}`}</AuthorSpan>;
 };
 
-export const RecipePost = ({ post, authorName }) => {
-  console.log("post title: ", post.title);
-  console.log("post authorName: ", authorName);
-  return (
-    <>
-      <MainImg
-        src={post.coverImageURL}
-        onerror="this.onerror=null; this.src=''" // TODO: add default image?
-      />
-      <h1>{post.title}</h1>
-      <Timestamp timestamp={post.timestamp} />
-      <Author name={authorName} />
-      <OverviewDiv post={post} />
-      <Description>{post.description.replace(/\\n/g, "\n")}</Description>
-      {post.sourceType === "personal" && (
-        <Details
-          ingredients={post.ingredients}
-          instructions={post.instructions}
-        />
-      )}
-    </>
-  );
+const EditButton = ({ slug }) => {
+  const editPath = `/recipes/${slug}/edit`;
+  return <a href={editPath}>edit</a>;
 };
+
+export const DisplayRecipePost = ({ post, authorName }) => (
+  <>
+    <MainImg
+      src={post.coverImageURL}
+      onerror="this.onerror=null; this.src=''" // TODO: add default image?
+    />
+    <h1>{post.title}</h1>
+    <Timestamp timestamp={post.timestamp} />
+    <Author name={authorName} />
+    <OverviewDiv post={post} />
+    <Description>{post.description.replace(/\\n/g, "\n")}</Description>
+    {post.sourceType === "personal" && (
+      <Details
+        ingredients={post.ingredients}
+        instructions={post.instructions}
+      />
+    )}
+  </>
+);
 
 const SelfLoadingRecipePost = ({ match }) => {
   const slug = match.params.slug;
   const [loading, setLoading] = useState(true);
   const [post, setPost] = useState();
   const [authorName, setAuthorName] = useState();
+  const user = useContext(UserContext);
 
   useEffect(() => {
     // Need to store uid in temporary variable since setPost is asynchronous!
@@ -168,7 +171,12 @@ const SelfLoadingRecipePost = ({ match }) => {
     // Loading is done and post wasn't found in the database
     return <Redirect to="/404" />;
   } else {
-    return <RecipePost post={post} authorName={authorName} />;
+    return (
+      <>
+        <DisplayRecipePost post={post} authorName={authorName} />;
+        {post.author === user.uid && <EditButton slug={post.slug} />}
+      </>
+    );
   }
 };
 
