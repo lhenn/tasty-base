@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Redirect } from "react-router-dom";
 import styled from "styled-components";
 import { getFirebase } from "../firebase";
 import OverviewDiv from "./overview";
+import { UserContext } from "../App";
 
 const MainImg = styled.img`
   height: ${(props) => {
@@ -93,8 +94,12 @@ const Timestamp = ({ timestamp }) => {
     </TimestampWrapper>
   );
 };
+const EditButton = ({ slug }) => {
+  const editPath = `/recipes/${slug}/edit`;
+  return <a href={editPath}>edit</a>;
+};
 
-export const DisplayRecipePost = (post) => {
+export const DisplayRecipePost = ({ post }) => {
   return (
     <>
       <MainImg
@@ -119,6 +124,7 @@ const RecipePost = ({ match }) => {
   const slug = match.params.slug;
   const [loading, setLoading] = useState(true);
   const [post, setCurrentPost] = useState();
+  const user = useContext(UserContext);
 
   if (loading && !post) {
     const postsRef = getFirebase().database().ref().child("posts");
@@ -140,7 +146,12 @@ const RecipePost = ({ match }) => {
     return <Redirect to="/404" />;
   }
 
-  return DisplayRecipePost(post);
+  return (
+    <>
+      <DisplayRecipePost post={post} />
+      {post.author === user.uid && <EditButton slug={post.slug} />}
+    </>
+  );
 };
 
 export default RecipePost;
