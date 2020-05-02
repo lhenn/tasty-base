@@ -20,30 +20,15 @@ const MainContent = styled.main`
 
 export const UserContext = createContext(null);
 
-//we can only retrieve user information for users who are not signed in if we store it ourselves
-const updateUsers = (user) => {
-  let newUser = true;
-  const usersRef = getFirebase().database().ref("/users");
-  //see if the user data already exists
-  usersRef
-    .once("value")
-    .then((snapshot) => {
-      snapshot.forEach((existingUser) => {
-        if (existingUser.key == user.uid) {
-          newUser = false;
-        }
-      });
-      if(newUser){
-        usersRef.child(user.uid).set({
-          name:user.displayName,
-          email:user.email,
-          photo: user.photoURL
-          //TODO: figure out what other info we want. username??
-        })
-      } 
-    })
-  
-};
+// Update the user's information in Firebase whenever they log in
+const updateUser = (user) =>
+  getFirebase().database().ref(`/users/${user.uid}`).set({
+    name: user.displayName,
+    email: user.email,
+    photo: user.photoURL,
+  });
+
+// const getUserInfo = (uid, field) => {};
 
 const onAuthStateChanged = (callback) => {
   // Subscribe to auth state changes and call the callback.
@@ -53,7 +38,7 @@ const onAuthStateChanged = (callback) => {
     .onAuthStateChanged((user) => {
       if (user) {
         callback(user);
-        if(user != null) updateUsers(user);
+        updateUser(user);
       } else {
         callback(null);
       }

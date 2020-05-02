@@ -10,7 +10,7 @@ const Home = () => {
     getFirebase()
       .database()
       .ref("/posts")
-      .orderByChild("dateFormatted")
+      .orderByChild("timestamp")
       .once("value")
       .then((snapshot) => {
         let posts = [];

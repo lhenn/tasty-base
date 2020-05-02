@@ -40,18 +40,37 @@ const Title = styled(Link)`
     background-size: 100% 60%;
   }
 `;
+
 const TitleDate = styled.div`
   margin: 0;
 `;
-const Date = styled.span`
+
+const TimestampWrapper = styled.span`
   font-size: 18px;
   margin: 0 10px;
   font-weight: bold;
 `;
 
+const Timestamp = ({ timestamp }) => {
+  const date = new Date(timestamp);
+  const hoverOptions = {
+    hour: "numeric",
+    minute: "numeric",
+    month: "numeric",
+    day: "numeric",
+    year: "numeric",
+  };
+  const options = { month: "long", day: "numeric", year: "numeric" };
+  return (
+    <TimestampWrapper title={date.toLocaleDateString("en-GB", hoverOptions)}>
+      {date.toLocaleDateString("en-GB", options)}{" "}
+    </TimestampWrapper>
+  );
+};
+
 const author = (uid) => {
   //somehow get the username
-}
+};
 
 const RecipePreview = (props) => {
   const { post } = props;
@@ -63,7 +82,7 @@ const RecipePreview = (props) => {
         <Row1>
           <TitleDate>
             <Title to={`/recipes/${post.slug}`}>{post.title}</Title>
-            <Date> {post.datePretty}</Date>
+            <Timestamp timestamp={post.timestamp} />
           </TitleDate>
           <Ratings post={post} />
         </Row1>

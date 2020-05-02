@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Redirect } from "react-router-dom";
-import { getFirebase } from "../firebase";
 import styled from "styled-components";
+import { getFirebase } from "../firebase";
 import OverviewDiv from "./overview";
 
 const MainImg = styled.img`
@@ -57,7 +57,7 @@ const Instructions = ({ instructions }) => {
 };
 
 const Description = styled.p`
-  white-space: pre-wrap;
+  white-space: pre-line;
 `;
 
 const DetailsDiv = styled.div`
@@ -73,6 +73,27 @@ const Details = ({ ingredients, instructions }) => {
   );
 };
 
+const TimestampWrapper = styled.em`
+  font-size: 18px;
+`;
+
+const Timestamp = ({ timestamp }) => {
+  const date = new Date(timestamp);
+  const hoverOptions = {
+    hour: "numeric",
+    minute: "numeric",
+    month: "numeric",
+    day: "numeric",
+    year: "numeric",
+  };
+  const options = { month: "long", day: "numeric", year: "numeric" };
+  return (
+    <TimestampWrapper title={date.toLocaleDateString("en-GB", hoverOptions)}>
+      {date.toLocaleDateString("en-GB", options)}{" "}
+    </TimestampWrapper>
+  );
+};
+
 export const DisplayRecipePost = (post) => {
   return (
     <>
@@ -81,9 +102,9 @@ export const DisplayRecipePost = (post) => {
         onerror="this.onerror=null; this.src=''" // TODO: add default image?
       />
       <h1>{post.title}</h1>
-      <em>{post.datePretty}</em>
+      <Timestamp timestamp={post.timestamp} />
       <OverviewDiv post={post} />
-      <Description>{post.description}</Description>
+      <Description>{post.description.replace(/\\n/g, "\n")}</Description>
       {post.sourceType === "personal" && (
         <Details
           ingredients={post.ingredients}
