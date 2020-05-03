@@ -4,9 +4,20 @@ import styled from "styled-components";
 import OverviewDiv from "./overview.js";
 import Ratings from "./ratings.js";
 
+const InvisibleLink = styled.a`
+text-decoration: none;
+color:inherit;
+&:hover {
+  text-decoration: none;
+  color:inherit;
+}
+`;
 const StyledCard = styled.div`
   margin-top: 24px;
-  box-shadow: 2px 2px 5px -1px rgba(0, 0, 0, 0.38);
+  box-shadow: 10px 10px 5px -10px rgba(0,0,0,0.75);
+  &:hover {
+    box-shadow: 10px 10px 5px -9px rgba(0,0,0,0.75);
+  }
 `;
 
 const StyledImg = styled.img`
@@ -25,7 +36,7 @@ const Row1 = styled.div`
   align-items: center;
 `;
 
-const Title = styled(Link)`
+const Title = styled.span`
   color: black;
   font-size: 48px;
   text-decoration: none;
@@ -71,21 +82,22 @@ const Timestamp = ({ timestamp }) => {
 // TODO: ADD SLUG!
 const RecipePreview = ({ post, slug }) => {
   return (
-    <StyledCard>
+    <InvisibleLink href={`/recipes/${slug}`}>
+    <StyledCard >
       <StyledImg src={post.coverImageURL} alt={post.coverImageAlt} />
       <CardContent>
         <Row1>
           <TitleDate>
-            <Title to={`/recipes/${post.slug}`}>{post.title}</Title>
+            <Title >{post.title}</Title>
             <Timestamp timestamp={post.timestamp} />
           </TitleDate>
           <Ratings post={post} />
         </Row1>
         <OverviewDiv post={post} />
         <br></br>
-        <Link to={`/recipes/${slug}`}>Continue reading...</Link>
       </CardContent>
     </StyledCard>
+    </InvisibleLink>
   );
 };
 

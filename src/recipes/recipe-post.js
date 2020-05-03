@@ -22,7 +22,9 @@ const IngredientsUL = styled.ul``;
 const IngredientLI = styled.li``;
 
 const Ingredients = ({ ingredients }) => {
+  console.log("INGREDIENTS: ")
   if (ingredients === undefined || ingredients === null) {
+    console.log('undefined')
     return <></>;
   } else {
     return (
@@ -66,6 +68,7 @@ const DetailsDiv = styled.div`
 `;
 
 const Details = ({ ingredients, instructions }) => {
+  console.log('ingredients in Details:', ingredients)
   return (
     <DetailsDiv>
       <Ingredients ingredients={ingredients} />
@@ -127,7 +130,8 @@ const Gallery = ({ gallery }) => {
 // authorName is either loaded from firebase (for SelfLoadingRecipePost) or
 // passed in using context (for previews during post edits/creates when user
 // has permission)
-export const DisplayRecipePost = ({ post, authorName }) => (
+export const DisplayRecipePost = ({ post, authorName }) => {
+  return (
   <>
     <MainImg
       src={post.coverImageURL}
@@ -144,11 +148,11 @@ export const DisplayRecipePost = ({ post, authorName }) => (
         instructions={post.instructions}
       />
     )}
-    {post.gallery.length > 0 && (
+    {post.gallery && post.gallery.length > 0 && (
       <Gallery gallery={post.gallery}/>
     )}
   </>
-);
+)};
 
 const EditButton = ({ slug }) => {
   const editPath = `/recipes/${slug}/edit`;
@@ -204,6 +208,7 @@ const SelfLoadingRecipePost = ({ match }) => {
     // Loading is done and post wasn't found in the database
     return <Redirect to="/404" />;
   } else {
+    console.log("THE POST: ", post)
     return (
       <>
         <DisplayRecipePost post={post} authorName={authorName} />
