@@ -106,6 +106,8 @@ const EditButton = ({ slug }) => {
   return <a href={editPath}>edit</a>;
 };
 
+// authorName is either loaded from firebase (for displaying posts) or passed
+// in using context (for previews during post edits/creates)
 export const DisplayRecipePost = ({ post, authorName }) => (
   <>
     <MainImg
@@ -139,9 +141,7 @@ const SelfLoadingRecipePost = ({ match }) => {
 
     getFirebase()
       .database()
-      .ref("posts")
-      .orderByChild("slug")
-      .equalTo(slug)
+      .ref(`posts/${slug}`)
       .once(
         "value",
         (snapshot) => {
@@ -150,7 +150,7 @@ const SelfLoadingRecipePost = ({ match }) => {
           setPost(postData);
           uid = postData.author;
         },
-        (err) => console.log("Post loading failed with code: ", err.code)
+        (err) => console.log("recipe-post: post loading failed with code: ", err.code)
       )
       .then(
         // Get author name

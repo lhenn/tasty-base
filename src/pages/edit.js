@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useEffect, useContext, useState } from "react";
 import { Redirect } from "react-router-dom";
 import { UserContext } from "../App";
 import { getFirebase } from "../firebase";
@@ -11,23 +11,24 @@ const Edit = ({ history, match }) => {
   const [post, setCurrentPost] = useState();
   const [authorized, setAuthorized] = useState();
 
-  if (user != null && loading && !post) {
-    // TODO: switch to useEffect
-    const postsRef = getFirebase().database().ref().child("posts");
-    postsRef
-      .orderByChild("slug")
-      .equalTo(slug)
-      .on("child_added", (snapshot) => {
-        if (snapshot.val().author !== user.uid) {
-          setAuthorized(false);
+  useEffect(() => {
+    getFirebase()
+      .database()
+      .ref(`posts/${slug}`)
+      .once(
+        "value",
+        (snapshot) => {
+          if (snapshot.val().author !== user.uid) {
+            setAuthorized(false);
+          } else {
+            setAuthorized(true);
+            setCurrentPost(snapshot.val());
+          }
           setLoading(false);
-        } else {
-          setAuthorized(true);
-          setCurrentPost(snapshot.val());
-          setLoading(false);
-        }
-      });
-  }
+        },
+        (err) => console.log("edit: post loading failed with code: ", err.code)
+      );
+  }, []);
 
   if (loading) {
     return <h1>Loading...</h1>;
@@ -40,6 +41,7 @@ const Edit = ({ history, match }) => {
       </>
     );
   }
+
   // Loading is done and post wasn't found in the database
   if (!post) {
     return <Redirect to="/404" />;
@@ -48,7 +50,7 @@ const Edit = ({ history, match }) => {
   return (
     <>
       <h1>Edit Post</h1>
-      <RecipeForm history={history} post={post} />
+      <RecipeForm history={history} post={post} slug={slug} />
     </>
   );
 };

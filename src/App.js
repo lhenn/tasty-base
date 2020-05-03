@@ -28,6 +28,7 @@ const updateUser = (user) =>
     name: user.displayName,
     email: user.email,
     photo: user.photoURL,
+    uid: user.uid,
   });
 
 const onAuthStateChanged = (callback) => {
@@ -49,14 +50,7 @@ const App = () => {
   const [user, setUser] = useState(null);
 
   // Subscribe to listen for auth state changes when application mounts
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(setUser);
-    //getFirebase()
-    // Unsubscribe to the listener when unmounting
-    return () => {
-      unsubscribe();
-    };
-  }, []);
+  useEffect(() => onAuthStateChanged(setUser) , []);
 
   return (
     <UserContext.Provider value={user}>
@@ -68,7 +62,11 @@ const App = () => {
             <Route path="/signin" component={Signin} />
             <Route path="/create" component={Create} />
             <Route path="/404" component={NoMatch} />
-            <Route exact path="/recipes/:slug" component={SelfLoadingRecipePost} />
+            <Route
+              exact
+              path="/recipes/:slug"
+              component={SelfLoadingRecipePost}
+            />
             <Route exact path="/recipes/:slug/edit" component={Edit} />
           </Switch>
         </MainContent>

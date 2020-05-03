@@ -1,39 +1,42 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { getFirebase } from "../firebase";
 import RecipePreview from "../recipes/recipe-preview";
 
 const Home = () => {
   const [loading, setLoading] = useState(true);
-  const [blogPosts, setBlogPosts] = useState([]);
+  const [posts, setPosts] = useState([]);
 
   // TODO: could use on() to listen for changes in real time
-  if (loading && !blogPosts.length) {
+  useEffect(() => {
     getFirebase()
       .database()
-      .ref("/posts")
+      .ref("posts")
       .orderByChild("timestamp")
-      .once("value")
-      .then((snapshot) => {
-        let posts = [];
-        snapshot.forEach((postSnapshot) => {
-          posts.push(postSnapshot.val());
-        });
+      .once(
+        "value",
+        (snapshots) => {
+          let posts = [];
+          snapshots.forEach((snapshot) => {
+            posts.push(snapshot.val());
+          });
 
-        const newestFirst = posts.reverse();
-        setBlogPosts(newestFirst);
-        setLoading(false);
-      });
-  }
+          const newestFirst = posts.reverse();
+          setPosts(newestFirst);
+          setLoading(false);
+        },
+        (err) => console.log("edit: post loading failed with code: ", err.code)
+      );
+  }, []);
 
   if (loading) {
     return <h1>Loading...</h1>;
-  } 
+  }
 
   return (
     <>
       <h1>Blog posts</h1>
-      {blogPosts.map((blogPost, i) => (
-        <RecipePreview key={`post${i}`} post={blogPost} />
+      {posts.map((post, i) => (
+        <RecipePreview key={`post${i}`} post={post} />
       ))}
     </>
   );

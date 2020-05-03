@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useContext, useState } from "react";
 import styled from "styled-components";
 import { getFirebase } from "../firebase";
 import Input from "../forms/input";
@@ -6,6 +6,8 @@ import Label from "../forms/label";
 import TextArea from "../forms/text-area";
 import { DisplayRecipePost } from "./recipe-post";
 import ImageUploader from "../general/image-uploader";
+import { UserContext } from "../App";
+import Button from "../general/button-primary";
 
 const FormGroup = styled.div`
   display: flex;
@@ -32,11 +34,26 @@ const PreviewDiv = styled.div`
 
 // Auto-expanding input rows
 // TODO: learn emptyRow from initialState
-const useInputRows = (emptyRow, initialState = null) => {
-  if (initialState) initialState.push(emptyRow);
-  const [rows, setRows] = useState(
-    initialState === null ? [emptyRow] : initialState
-  );
+const useInputRows = (initialState) => {
+  // Figure out what an empty row looks like
+  let emptyRow = "";
+  if (
+    typeof initialState[0] !== "string" &&
+    !(initialState[0] instanceof String)
+  ) {
+    emptyRow = {};
+    for (const k of Object.keys(initialState[0])) {
+      emptyRow[k] = "";
+    }
+  }
+
+  // Add empty row if last row is not already empty
+  let fullInitialState = [...initialState];
+  if (fullInitialState[fullInitialState.length - 1] !== emptyRow) {
+    fullInitialState.push(emptyRow);
+  }
+
+  const [rows, setRows] = useState(initialState);
 
   // Updates a row or a field in a row
   const updateRow = (index, value, field = null) => {
@@ -177,44 +194,58 @@ const useFormFields = (initialState) => {
   ];
 };
 
-const CreatePostButton = styled.button`
-  border: none;
-  color: #fff;
-  backgroundcolor: #039be5;
-  borderradius: 4px;
-  padding: 8px 12px;
-  fontsize: 0.9rem;
-`;
-
-// Combines all the post data into one object, but does NOT add timestamp
-const combinePostData = (basicInfo, ingredients, instructions) => {
+// Combines all the post data into one object except for author uid and
+// timestamp. These both need to be handled separately.
+const combinePostData = (basicInfo, ingredients, instructions, author) => {
   // Remove last ingredient and instruction, which are always empty
   const newPost = {
     ...basicInfo,
     ingredients: ingredients.slice(0, -1),
     instructions: instructions.slice(0, -1),
+    author,
+    timestamp: Date.now()
   };
+
   return newPost;
 };
 
 // Called when create post button is clicked
-const createPost = (basicInfo, history, ingredients, instructions) => {
-  // Add firebase timestamp and author information
-  const author =
-    getFirebase().auth().currentUser === null
-      ? null
-      : getFirebase().auth().currentUser.uid;
-  const newPost = {
-    ...combinePostData(basicInfo, ingredients, instructions),
-    timestamp: getFirebase().database.ServerValue.TIMESTAMP,
-    author: author,
-  };
-  getFirebase()
-    .database()
-    .ref()
-    .child("/posts")
-    .push(newPost)
-    .then(() => history.push(`/recipes/${newPost.slug}`));
+const CreatePostButton = ({post, slug, history}) => {
+  console.log("CreatePostButton", post);
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const submit = useCallback(() => {
+    console.log("SUBMITTING");
+    // Don't submit multiple times
+    if (isSubmitting) return;
+
+    // Swap Date timestamp out for special firebase one
+    const timestamp = getFirebase().database.ServerValue.TIMESTAMP;
+    const timestampedPost = { ...post, timestamp, };
+    console.log("timestampedPost: ", timestampedPost)
+
+    // Submit the post
+    setIsSubmitting(true);
+    getFirebase()
+      .database()
+      .ref()
+      .child(`/posts/${slug}`)
+      .set(timestampedPost)
+      .then(() => setIsSubmitting(false))
+      .then(() => history.push(`/recipes/${slug}`));
+  }, [
+    isSubmitting,
+    post,
+    slug,
+    history,
+  ]);
+
+  return (
+    <Button onClick={submit} disabled={isSubmitting}>
+      Create
+    </Button>
+  );
 };
 
 const WebSourceInput = styled.input`
@@ -225,50 +256,50 @@ const WebSourceInput = styled.input`
 const urlRegex =
   "^(?:(?:http(?:s)?|ftp)://)(?:\\S+(?::(?:\\S)*)?@)?(?:(?:[a-z0-9\u00a1-\uffff](?:-)*)*(?:[a-z0-9\u00a1-\uffff])+)(?:\\.(?:[a-z0-9\u00a1-\uffff](?:-)*)*(?:[a-z0-9\u00a1-\uffff])+)*(?:\\.(?:[a-z0-9\u00a1-\uffff]){2,})(?::(?:\\d){2,5})?(?:/(?:\\S)*)?$";
 
-const RecipeForm = ({ history, post }) => {
-  const newPost = post === undefined;
+const emptyBasicInfo = {
+  title: "",
+  sourceType: "personal", // TODO: must manually align with an option...
+  source: "",
+  activeTime: 1,
+  downtime: 0,
+  servings: 1,
+  easiness: 10,
+  tastiness: 10,
+  coverImageURL: "",
+  coverImageAlt: "",
+  description: "",
+};
 
+const emptyIngredients = [{ name: "", amount: "" }];
+const emptyInstructions = [""];
+
+const parseIntOrEmpty = (str) => {
+  let val = parseInt(str);
+  return isNaN(val) ? "" : val;
+};
+
+const RecipeForm = ({ history, post, slug }) => {
   // Information shared by all posts
-  const tempBasicInfo = newPost
-    ? {
-        //This is a new post
-        title: "",
-        slug: "",
-        sourceType: "personal", // TODO: must manually align with an option...
-        source: "",
-        activeTime: 1,
-        downtime: 0,
-        servings: 1,
-        easiness: 10,
-        tastiness: 10,
-        coverImageURL: "",
-        coverImageAlt: "",
-        description: "",
-      }
-    : { ...post };
-  const [basicInfo, setBasicInfo] = useFormFields(tempBasicInfo);
+  const [basicInfo, setBasicInfo] = useFormFields(
+    post ? { ...post } : emptyBasicInfo
+  );
+
+  // Information for personal recipes only
+  const [ingredients, updateIngredient, deleteIngredient] = useInputRows(
+    post ? post.ingredients : emptyIngredients
+  );
+  const [instructions, updateInstruction, deleteInstruction] = useInputRows(
+    post ? post.instructions : emptyInstructions
+  );
+
+  const [slugState, setSlugState] = useState(slug ? slug : "");
 
   // URLs and alt text for gallery images
   // const [gallery, setGallery] = useState([{ url: "", alt: "" }]);
 
-  // Information for personal recipes only
-  const [ingredients, updateIngredient, deleteIngredient] = useInputRows(
-    {
-      name: "",
-      amount: "",
-    },
-    post === undefined ? null : post.ingredients
-  );
-
-  const [instructions, updateInstruction, deleteInstruction] = useInputRows(
-    "",
-    post === undefined ? null : post.instructions
-  );
-
-  const parseIntOrEmpty = (str) => {
-    let val = parseInt(str);
-    return isNaN(val) ? "" : val;
-  };
+  // Block until user has authenticated
+  const user = useContext(UserContext);
+  if (!user) return <h1>LOADING USER INFO</h1>
 
   return (
     <>
@@ -288,8 +319,8 @@ const RecipeForm = ({ history, post }) => {
           <Input
             type="text"
             id="slug"
-            value={basicInfo.slug}
-            onChange={(e) => setBasicInfo("slug", e.target.value)}
+            value={slugState}
+            onChange={(e) => setSlugState(e.target.value)}
             required
           />
         </FormGroup>
@@ -441,19 +472,17 @@ const RecipeForm = ({ history, post }) => {
       <Label htmlFor="preview" content="Post preview"></Label>
       <PreviewDiv id="preview">
         <DisplayRecipePost
-          post={combinePostData(basicInfo, ingredients, instructions)}
+          post={combinePostData(basicInfo, ingredients, instructions, user.uid)}
+          authorName={user.displayName}
         />
       </PreviewDiv>
 
       <div style={{ textAlign: "right" }}>
         <CreatePostButton
-          onClick={() =>
-            createPost(basicInfo, history, ingredients, instructions)
-          }
-        >
-          {" "}
-          Create{" "}
-        </CreatePostButton>
+          post={combinePostData(basicInfo, ingredients, instructions, user.uid)}
+          slug={slugState}
+          history={history}
+        />
       </div>
     </>
   );
