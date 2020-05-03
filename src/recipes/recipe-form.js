@@ -203,14 +203,14 @@ const combinePostData = (basicInfo, ingredients, instructions, author) => {
     ingredients: ingredients.slice(0, -1),
     instructions: instructions.slice(0, -1),
     author,
-    timestamp: Date.now()
+    timestamp: Date.now(),
   };
 
   return newPost;
 };
 
 // Called when create post button is clicked
-const CreatePostButton = ({post, slug, history}) => {
+const CreatePostButton = ({ post, slug, history }) => {
   console.log("CreatePostButton", post);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -222,8 +222,8 @@ const CreatePostButton = ({post, slug, history}) => {
 
     // Swap Date timestamp out for special firebase one
     const timestamp = getFirebase().database.ServerValue.TIMESTAMP;
-    const timestampedPost = { ...post, timestamp, };
-    console.log("timestampedPost: ", timestampedPost)
+    const timestampedPost = { ...post, timestamp };
+    console.log("timestampedPost: ", timestampedPost);
 
     // Submit the post
     setIsSubmitting(true);
@@ -232,14 +232,12 @@ const CreatePostButton = ({post, slug, history}) => {
       .ref()
       .child(`/posts/${slug}`)
       .set(timestampedPost)
-      .then(() => setIsSubmitting(false))
+      .then(() => {
+        console.log("CreatePostButton: then");
+        setIsSubmitting(false);
+      })
       .then(() => history.push(`/recipes/${slug}`));
-  }, [
-    isSubmitting,
-    post,
-    slug,
-    history,
-  ]);
+  }, [isSubmitting, post, slug, history]);
 
   return (
     <Button onClick={submit} disabled={isSubmitting}>
@@ -299,7 +297,7 @@ const RecipeForm = ({ history, post, slug }) => {
 
   // Block until user has authenticated
   const user = useContext(UserContext);
-  if (!user) return <h1>LOADING USER INFO</h1>
+  if (!user) return <h1>LOADING USER INFO</h1>;
 
   return (
     <>

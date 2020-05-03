@@ -6,7 +6,8 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [posts, setPosts] = useState([]);
 
-  // TODO: could use on() to listen for changes in real time
+  // Load all posts
+  // TODO: could optimize by not loading every post in full
   useEffect(() => {
     getFirebase()
       .database()
@@ -17,11 +18,11 @@ const Home = () => {
         (snapshots) => {
           let posts = [];
           snapshots.forEach((snapshot) => {
-            posts.push(snapshot.val());
+            posts.push({ slug: snapshot.key, post: snapshot.val() });
           });
 
-          const newestFirst = posts.reverse();
-          setPosts(newestFirst);
+          // Put newest posts first
+          setPosts(posts.reverse());
           setLoading(false);
         },
         (err) => console.log("edit: post loading failed with code: ", err.code)
@@ -35,8 +36,8 @@ const Home = () => {
   return (
     <>
       <h1>Blog posts</h1>
-      {posts.map((post, i) => (
-        <RecipePreview key={`post${i}`} post={post} />
+      {posts.map(({ slug, post }, i) => (
+        <RecipePreview key={`post${i}`} post={post} slug={slug} />
       ))}
     </>
   );

@@ -34,11 +34,13 @@ const updateUser = (user) =>
 const onAuthStateChanged = (callback) => {
   // Subscribe to auth state changes and call the callback.
   // onAuthStateChanged() returns firebase.unsubscribe().
+  console.log("setting user");
   return getFirebase()
     .auth()
     .onAuthStateChanged((user) => {
       if (user) {
         callback(user);
+        console.log("user set!", user);
         updateUser(user);
       } else {
         callback(null);
@@ -47,10 +49,11 @@ const onAuthStateChanged = (callback) => {
 };
 
 const App = () => {
+  console.log("App");
   const [user, setUser] = useState(null);
 
   // Subscribe to listen for auth state changes when application mounts
-  useEffect(() => onAuthStateChanged(setUser) , []);
+  useEffect(() => onAuthStateChanged(setUser), []);
 
   return (
     <UserContext.Provider value={user}>

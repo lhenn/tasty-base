@@ -68,9 +68,8 @@ const Timestamp = ({ timestamp }) => {
   );
 };
 
-const RecipePreview = (props) => {
-  const { post } = props;
-
+// TODO: ADD SLUG!
+const RecipePreview = ({ post, slug }) => {
   return (
     <StyledCard key={post.slug} className="card">
       <StyledImg src={post.coverImageURL} alt={post.coverImageAlt} />
@@ -84,7 +83,7 @@ const RecipePreview = (props) => {
         </Row1>
         <OverviewDiv post={post} />
         <br></br>
-        <Link to={`/recipes/${post.slug}`}>Continue reading...</Link>
+        <Link to={`/recipes/${slug}`}>Continue reading...</Link>
       </CardContent>
     </StyledCard>
   );

@@ -90,7 +90,7 @@ const Timestamp = ({ timestamp }) => {
   const options = { month: "long", day: "numeric", year: "numeric" };
   return (
     <TimestampEM title={date.toLocaleDateString("en-GB", hoverOptions)}>
-      {date.toLocaleDateString("en-GB", options)}{" "}
+      {date.toLocaleDateString("en-GB", options)}
     </TimestampEM>
   );
 };
@@ -106,8 +106,9 @@ const EditButton = ({ slug }) => {
   return <a href={editPath}>edit</a>;
 };
 
-// authorName is either loaded from firebase (for displaying posts) or passed
-// in using context (for previews during post edits/creates)
+// authorName is either loaded from firebase (for SelfLoadingRecipePost) or
+// passed in using context (for previews during post edits/creates when user
+// has permission)
 export const DisplayRecipePost = ({ post, authorName }) => (
   <>
     <MainImg
@@ -135,8 +136,10 @@ const SelfLoadingRecipePost = ({ match }) => {
   const [authorName, setAuthorName] = useState();
   const user = useContext(UserContext);
 
+  // Load recipe post
   useEffect(() => {
-    // Need to store uid in temporary variable since setPost is asynchronous!
+    // Need to store author uid in temporary variable since setPost is
+    // asynchronous!
     let uid = "";
 
     getFirebase()
@@ -145,12 +148,14 @@ const SelfLoadingRecipePost = ({ match }) => {
       .once(
         "value",
         (snapshot) => {
+          console.log("SelfLoadingRecipePost: once");
           // Snapshot consists of key and post data
-          const postData = Object.values(snapshot.val())[0];
+          const postData = snapshot.val();
           setPost(postData);
           uid = postData.author;
         },
-        (err) => console.log("recipe-post: post loading failed with code: ", err.code)
+        (err) =>
+          console.log("recipe-post: post loading failed with code: ", err.code)
       )
       .then(
         // Get author name
@@ -174,7 +179,7 @@ const SelfLoadingRecipePost = ({ match }) => {
     return (
       <>
         <DisplayRecipePost post={post} authorName={authorName} />;
-        {post.author === user.uid && <EditButton slug={post.slug} />}
+        {user && post.author === user.uid && <EditButton slug={slug} />}
       </>
     );
   }
