@@ -35,6 +35,7 @@ const PreviewDiv = styled.div`
 // Auto-expanding input rows
 // TODO: learn emptyRow from initialState
 const useInputRows = (initialState) => {
+  console.log("useInputRows: initialState = ", initialState)
   // Figure out what an empty row looks like
   let emptyRow = "";
   if (
@@ -284,10 +285,10 @@ const RecipeForm = ({ history, post, slug }) => {
 
   // Information for personal recipes only
   const [ingredients, updateIngredient, deleteIngredient] = useInputRows(
-    post ? post.ingredients : emptyIngredients
+    post && post.ingredients ? post.ingredients : emptyIngredients
   );
   const [instructions, updateInstruction, deleteInstruction] = useInputRows(
-    post ? post.instructions : emptyInstructions
+    post && post.instructions ? post.instructions : emptyInstructions
   );
 
   const [slugState, setSlugState] = useState(slug ? slug : "");
