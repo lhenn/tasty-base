@@ -35,7 +35,6 @@ const PreviewDiv = styled.div`
 // Auto-expanding input rows
 // TODO: learn emptyRow from initialState
 const useInputRows = (initialState) => {
-  console.log("useInputRows: initialState = ", initialState)
   // Figure out what an empty row looks like
   let emptyRow = "";
   if (
@@ -212,21 +211,17 @@ const combinePostData = (basicInfo, ingredients, instructions, author) => {
 
 // Called when create post button is clicked
 const CreatePostButton = ({ post, slug, history }) => {
-  console.log("CreatePostButton", post);
-
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const submit = useCallback(() => {
-    console.log("SUBMITTING");
+  const submit = () => {
     // Don't submit multiple times
     if (isSubmitting) return;
 
     // Swap Date timestamp out for special firebase one
     const timestamp = getFirebase().database.ServerValue.TIMESTAMP;
     const timestampedPost = { ...post, timestamp };
-    console.log("timestampedPost: ", timestampedPost);
 
-    // Submit the post
+    // Upload to firebase
     setIsSubmitting(true);
     getFirebase()
       .database()
@@ -234,11 +229,10 @@ const CreatePostButton = ({ post, slug, history }) => {
       .child(`/posts/${slug}`)
       .set(timestampedPost)
       .then(() => {
-        console.log("CreatePostButton: then");
         setIsSubmitting(false);
       })
       .then(() => history.push(`/recipes/${slug}`));
-  }, [isSubmitting, post, slug, history]);
+  };
 
   return (
     <Button onClick={submit} disabled={isSubmitting}>
@@ -300,6 +294,13 @@ const RecipeForm = ({ history, post, slug }) => {
   // Block until user has authenticated
   const user = useContext(UserContext);
   if (!user) return <h1>LOADING USER INFO</h1>;
+
+  const newPost = combinePostData(
+    basicInfo,
+    ingredients,
+    instructions,
+    user.uid
+  );
 
   return (
     <>
@@ -471,18 +472,11 @@ const RecipeForm = ({ history, post, slug }) => {
 
       <Label htmlFor="preview" content="Post preview"></Label>
       <PreviewDiv id="preview">
-        <DisplayRecipePost
-          post={combinePostData(basicInfo, ingredients, instructions, user.uid)}
-          authorName={user.displayName}
-        />
+        <DisplayRecipePost post={newPost} authorName={user.displayName} />
       </PreviewDiv>
 
       <div style={{ textAlign: "right" }}>
-        <CreatePostButton
-          post={combinePostData(basicInfo, ingredients, instructions, user.uid)}
-          slug={slugState}
-          history={history}
-        />
+        <CreatePostButton post={newPost} slug={slugState} history={history} />
       </div>
     </>
   );

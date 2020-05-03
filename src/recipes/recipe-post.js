@@ -148,7 +148,6 @@ const SelfLoadingRecipePost = ({ match }) => {
       .once(
         "value",
         (snapshot) => {
-          console.log("SelfLoadingRecipePost: once");
           // Snapshot consists of key and post data
           const postData = snapshot.val();
           setPost(postData);
@@ -166,7 +165,11 @@ const SelfLoadingRecipePost = ({ match }) => {
           setAuthorName(snapshot.val());
           setLoading(false);
         },
-        (err) => console.log("Author name loading failed with code: ", err.code)
+        (err) =>
+          console.log(
+            "recipe-post: author name loading failed with code: ",
+            err.code
+          )
       );
   }, []);
 

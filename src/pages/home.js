@@ -25,7 +25,7 @@ const Home = () => {
           setPosts(posts.reverse());
           setLoading(false);
         },
-        (err) => console.log("edit: post loading failed with code: ", err.code)
+        (err) => console.log("home: post loading failed with code: ", err.code)
       );
   }, []);
 
