@@ -283,7 +283,8 @@ const RecipeForm = ({ history, post, slug }) => {
     post ? { ...post } : emptyBasicInfo
   );
 
-  // Information for personal recipes only
+  // Information for personal recipes only. If the post exists but is not a
+  // personal recipe, ingredients and instructions won't exist.
   const [ingredients, updateIngredient, deleteIngredient] = useInputRows(
     post && post.ingredients ? post.ingredients : emptyIngredients
   );
