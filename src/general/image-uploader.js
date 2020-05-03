@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import useFileHandlers from "../useFileHandlers";
 
-
 const Input = (props) => (
   <input
     type="file"
@@ -55,59 +54,63 @@ const ThumbnailTooltip = styled.span`
 // Thumbnail component
 // BUG: seems like tooltip sometimes displays for un-uploaded image if an image
 // was already uploaded.
-const Thumbnail = (props) => {
+const Thumbnail = ({
+  downloadUrl,
+  filename,
+  src,
+  wasUploaded,
+  id,
+  // setAsCover,
+  // unsetAsCover,
+}) => {
+  const [isCover, setIsCover] = useState(false);
   const [ttText, setTTText] = useState("");
 
-  // Copy image url to clipboard
-  const onClick = () => {
-    if (props.downloadUrl !== "") {
-      let copyHelper = document.createElement("input");
-      document.body.appendChild(copyHelper);
-      copyHelper.setAttribute("id", "copy-helper");
-      // copyHelper.value = `<img src="${props.downloadUrl}" alt="${props.fileName}">`;
-      copyHelper.value = props.downloadUrl;
-      copyHelper.select();
-      document.execCommand("copy");
-      document.body.removeChild(copyHelper);
-      setTTText("Copied!");
-    }
-  };
+  console.log("thumb for ", filename, "; isCover? ", isCover, "\n");
 
-  // Sets tooltip if image has a download url
-  const onMouse = () => {
-    if (props.downloadUrl !== "") {
-      setTTText("Copy HTML link");
+  // If image has a download url, it can be set/unset as the cover image
+  const onClick = () => {
+    if (downloadUrl !== "" && isCover) {
+      setIsCover(false);
+      setTTText("Unset!");
+      // onSetAsCover(downloadUrl)
+    } else if (downloadUrl !== "" && !isCover) {
+      setIsCover(true);
+      setTTText("Set!");
     } else {
       setTTText("");
     }
   };
 
+  const onMouse = () => {
+    if (downloadUrl !== "" && !isCover) {
+      setTTText("Set as cover");
+    } else if (downloadUrl !== "" && isCover) {
+      setTTText("Unset as cover");
+    } else {
+      setTTText("");
+    }
+  };
+
+  // onMouseLeave={onMouse} // seems unnecessary
   return (
-    <ThumbnailDiv
-      onClick={onClick}
-      onMouseEnter={onMouse}
-      onMouseLeave={onMouse}
-    >
+    <ThumbnailDiv onClick={onClick} onMouseEnter={onMouse}>
+      <ThumbnailImg src={src} alt={filename} wasUploaded={wasUploaded} />
       <ThumbnailTooltip>{ttText}</ThumbnailTooltip>
-      <ThumbnailImg
-        src={props.src}
-        alt={props.fileName}
-        wasUploaded={props.wasUploaded}
-      />
     </ThumbnailDiv>
   );
 };
 
 const ThumbnailContainer = styled.div`
-  display:flex;
-  flex-wrap:wrap;
+  display: flex;
+  flex-wrap: wrap;
 `;
 
-const SubmitBtn = styled.button` 
-  padding:10px;
+const UploadButton = styled.button`
+  padding: 10px;
 `;
 
-const ImageUploader = () => {
+const ImageUploader = ({ onSetAsCover, onUnsetAsCover }) => {
   const {
     files,
     pending,
@@ -123,14 +126,17 @@ const ImageUploader = () => {
     <div className="container">
       <form className="form" onSubmit={onSubmit}>
         {status === "FILES_UPLOADED" && <SuccessContainer />}
-        
-          <Input onChange={onChange} />
-      
+
+        <Input onChange={onChange} />
+
         <ThumbnailContainer>
           {files.map(({ file, src, id }, index) => {
             let wasUploaded = false;
             let downloadUrl = "";
 
+            console.log("file: ", file);
+
+            // Check whether file was uploaded or not
             for (var i in uploaded) {
               if (uploaded[i].file === file) {
                 wasUploaded = true;
@@ -141,19 +147,17 @@ const ImageUploader = () => {
 
             return (
               <Thumbnail
-                key={`thumb${index}`}
-                index={index}
-                src={src}
+                key={`thumb${index}-${file.name}`}
                 downloadUrl={downloadUrl}
-                fileName={file.name}
+                filename={file.name}
+                src={src}
                 wasUploaded={wasUploaded}
+                id={id}
               />
             );
           })}
         </ThumbnailContainer>
-        {status === "LOADED" && <SubmitBtn>Upload</SubmitBtn>}
-
-
+        {status === "LOADED" && <UploadButton>Upload</UploadButton>}
       </form>
     </div>
   );

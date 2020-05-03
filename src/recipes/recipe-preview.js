@@ -71,7 +71,7 @@ const Timestamp = ({ timestamp }) => {
 // TODO: ADD SLUG!
 const RecipePreview = ({ post, slug }) => {
   return (
-    <StyledCard key={post.slug} className="card">
+    <StyledCard>
       <StyledImg src={post.coverImageURL} alt={post.coverImageAlt} />
       <CardContent>
         <Row1>

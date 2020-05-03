@@ -91,6 +91,7 @@ const useInputRows = (initialState) => {
 const DeleteIngredientButton = styled.button``;
 
 const Ingredients = ({ ingredients, updateIngredient, deleteIngredient }) => {
+  // TODO: is there any issue with the key here?
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
       <Label htmlFor="ingredients-list" content="Ingredients: name, quantity" />
