@@ -1,13 +1,14 @@
-import React, { useCallback, useContext, useState } from "react";
+import React, { useContext, useState } from "react";
 import styled from "styled-components";
+import { UserContext } from "../App";
 import { getFirebase } from "../firebase";
 import Input from "../forms/input";
 import Label from "../forms/label";
 import TextArea from "../forms/text-area";
-import { DisplayRecipePost } from "./recipe-post";
-import ImageUploader from "../general/image-uploader";
-import { UserContext } from "../App";
 import Button from "../general/button-primary";
+import ImageUploader from "../general/image-uploader";
+import useFileHandlers, { FILES_UPLOADED } from "../useFileHandlers";
+import { DisplayRecipePost } from "./recipe-post";
 
 const FormGroup = styled.div`
   display: flex;
@@ -184,20 +185,21 @@ const CustomRecipeContent = (props) => {
   );
 };
 
-const useFormFields = (initialState) => {
-  const [fields, setField] = useState(initialState);
-
-  return [
-    fields,
-    (field, value) => {
-      setField({ ...fields, [field]: value });
-    },
-  ];
-};
-
 // Combines all the post data into one object except for author uid and
 // timestamp. These both need to be handled separately.
-const combinePostData = (basicInfo, ingredients, instructions, author) => {
+const combinePostData = (
+  basicInfo,
+  ingredients,
+  instructions,
+  galleryUploaded,
+  author
+) => {
+  // Get gallery dowload URLs
+  let gallery = [];
+  for (var i = 0; i < Object.keys(galleryUploaded).length; i++) {
+    gallery.push(galleryUploaded[i].downloadURL);
+  }
+
   // Remove last ingredient and instruction, which are always empty
   const newPost = {
     ...basicInfo,
@@ -205,6 +207,7 @@ const combinePostData = (basicInfo, ingredients, instructions, author) => {
     instructions: instructions.slice(0, -1),
     author,
     timestamp: Date.now(),
+    gallery,
   };
 
   return newPost;
@@ -274,7 +277,7 @@ const parseIntOrEmpty = (str) => {
 
 const RecipeForm = ({ history, post, slug }) => {
   // Information shared by all posts
-  const [basicInfo, setBasicInfo] = useFormFields(
+  const [basicInfo, setBasicInfo] = useState(
     post ? { ...post } : emptyBasicInfo
   );
 
@@ -289,20 +292,43 @@ const RecipeForm = ({ history, post, slug }) => {
 
   const [slugState, setSlugState] = useState(slug ? slug : "");
 
-  // URLs and alt text for gallery images
-  // const [gallery, setGallery] = useState([{ url: "", alt: "" }]);
+  // Callback for handling cover image changes in ImageUploader
+  // NOTE: for some reason, when I wrapped basicInfo in a custom hook, the
+  // state was not properly updated when thumbnails were set as the cover image
+  // even though I verified the state was supposedly being reset in the hook.
+  // When I either factored coverImageURL out into its own state hook or
+  // changed to what's below, the state was updated properly. I think it has
+  // something to do with a closure capturing a stale value for the
+  // setBasicInfo hook, but I could not figure out where this was happening.
+  const onSetCover = (url, alt) =>
+    setBasicInfo({ ...basicInfo, coverImageURL: url, coverImageAlt: alt });
+
+  // Set up file handlers for ImageUploader
+  const {
+    files: galleryFiles,
+    uploaded: galleryUploaded, // uploaded files
+    status: galleryUploadStatus,
+    onSubmit: onSubmitGallery,
+    onChange: onChangeGallery,
+  } = useFileHandlers();
 
   // Block until user has authenticated
+  // TODO: improve
   const user = useContext(UserContext);
   if (!user) return <h1>LOADING USER INFO</h1>;
 
+  // This object is needed by the create post button and preview
+  // TODO: declare dependencies with useMemo so it always gets synchronized
+  // with the form's state?
   const newPost = combinePostData(
     basicInfo,
     ingredients,
     instructions,
+    galleryUploaded,
     user.uid
   );
 
+  // TODO: <form>?
   return (
     <>
       <FormRow>
@@ -312,7 +338,9 @@ const RecipeForm = ({ history, post, slug }) => {
             type="text"
             id="title"
             value={basicInfo.title}
-            onChange={(e) => setBasicInfo("title", e.target.value)}
+            onChange={(e) =>
+              setBasicInfo({ ...basicInfo, title: e.target.value })
+            }
             required
           />
         </FormGroup>
@@ -327,13 +355,16 @@ const RecipeForm = ({ history, post, slug }) => {
           />
         </FormGroup>
       </FormRow>
+
       <FormRow>
         <FormGroup>
           <Label htmlFor="source-type" content="Source" />
           <select
             value={basicInfo.sourceType}
             id="source-type"
-            onChange={(e) => setBasicInfo("sourceType", e.target.value)}
+            onChange={(e) =>
+              setBasicInfo({ ...basicInfo, sourceType: e.target.value })
+            }
             required
           >
             <option value="personal">Personal</option>
@@ -347,7 +378,9 @@ const RecipeForm = ({ history, post, slug }) => {
               placeholder="https://example.com"
               pattern={urlRegex}
               value={basicInfo.source}
-              onChange={(e) => setBasicInfo("source", e.target.value)}
+              onChange={(e) =>
+                setBasicInfo({ ...basicInfo, source: e.target.value })
+              }
               required
             />
           ) : (
@@ -355,12 +388,15 @@ const RecipeForm = ({ history, post, slug }) => {
               type="text"
               id="source"
               value={basicInfo.source}
-              onChange={(e) => setBasicInfo("source", e.target.value)}
+              onChange={(e) =>
+                setBasicInfo({ ...basicInfo, source: e.target.value })
+              }
               required
             />
           )}
         </FormGroup>
       </FormRow>
+
       <FormRow>
         <FormGroup>
           <Label htmlFor="active-time" content="Active time (minutes)" />
@@ -370,7 +406,10 @@ const RecipeForm = ({ history, post, slug }) => {
             min="1"
             value={basicInfo.activeTime}
             onChange={(e) =>
-              setBasicInfo("activeTime", parseIntOrEmpty(e.target.value))
+              setBasicInfo({
+                ...basicInfo,
+                activeTime: parseIntOrEmpty(e.target.value),
+              })
             }
             required
           />
@@ -383,7 +422,10 @@ const RecipeForm = ({ history, post, slug }) => {
             min="0"
             value={basicInfo.downtime}
             onChange={(e) =>
-              setBasicInfo("downtime", parseIntOrEmpty(e.target.value))
+              setBasicInfo({
+                ...basicInfo,
+                downtime: parseIntOrEmpty(e.target.value),
+              })
             }
             required
           />
@@ -396,12 +438,16 @@ const RecipeForm = ({ history, post, slug }) => {
             min="1"
             value={basicInfo.servings}
             onChange={(e) =>
-              setBasicInfo("servings", parseIntOrEmpty(e.target.value))
+              setBasicInfo({
+                ...basicInfo,
+                servings: parseIntOrEmpty(e.target.value),
+              })
             }
             required
           />
         </FormGroup>
       </FormRow>
+
       <FormRow>
         <FormGroup>
           <Label htmlFor="easiness" content="Easiness rating" />
@@ -412,7 +458,10 @@ const RecipeForm = ({ history, post, slug }) => {
             min="1"
             value={basicInfo.easiness}
             onChange={(e) =>
-              setBasicInfo("easiness", parseIntOrEmpty(e.target.value))
+              setBasicInfo({
+                ...basicInfo,
+                easiness: parseIntOrEmpty(e.target.value),
+              })
             }
             required
           />
@@ -426,7 +475,10 @@ const RecipeForm = ({ history, post, slug }) => {
             min="1"
             value={basicInfo.tastiness}
             onChange={(e) =>
-              setBasicInfo("tastiness", parseIntOrEmpty(e.target.value))
+              setBasicInfo({
+                ...basicInfo,
+                tastiness: parseIntOrEmpty(e.target.value),
+              })
             }
             required
           />
@@ -434,7 +486,17 @@ const RecipeForm = ({ history, post, slug }) => {
       </FormRow>
 
       <Label htmlFor="post-image-uploader" content="Upload images"></Label>
-      <ImageUploader id="post-image-uploader" />
+      <ImageUploader
+        id="post-image-uploader"
+        files={galleryFiles}
+        uploaded={galleryUploaded}
+        status={galleryUploadStatus}
+        uploadFinishedStatus={FILES_UPLOADED}
+        onSubmit={onSubmitGallery}
+        onChange={onChangeGallery}
+        curCover={basicInfo.coverImageURL}
+        onSetCover={onSetCover}
+      />
 
       <FormRow>
         <FormGroup>
@@ -443,8 +505,14 @@ const RecipeForm = ({ history, post, slug }) => {
             type="text"
             id="cover-image-url"
             value={basicInfo.coverImageURL}
-            placeholder="Image URL"
-            onChange={(e) => setBasicInfo("coverImageURL", e.target.value)}
+            placeholder="Cover image URL"
+            onChange={(e) =>
+              setBasicInfo({
+                ...basicInfo,
+                coverImageURL: e.target.value,
+                coverImageAlt: "",
+              })
+            }
           />
         </FormGroup>
       </FormRow>
@@ -455,7 +523,9 @@ const RecipeForm = ({ history, post, slug }) => {
           id="description"
           placeholder="How did you find this recipe? What should we know about it?"
           value={basicInfo.description}
-          onChange={(e) => setBasicInfo("description", e.target.value)}
+          onChange={(e) =>
+            setBasicInfo({ ...basicInfo, description: e.target.value })
+          }
           required
         />
       </ContentDiv>

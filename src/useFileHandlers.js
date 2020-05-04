@@ -11,11 +11,11 @@ const initalState = {
 };
 
 // Different states
-const LOADED = "LOADED";
-const INIT = "INIT"; // use for triggering onStart
-const PENDING = "PENDING";
-const FILES_UPLOADED = "FILES_UPLOADED";
-const UPLOAD_ERROR = "UPLOAD_ERROR";
+export const LOADED = "LOADED";
+export const INIT = "INIT"; // use for triggering onStart
+export const PENDING = "PENDING";
+export const FILES_UPLOADED = "FILES_UPLOADED";
+export const UPLOAD_ERROR = "UPLOAD_ERROR";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -38,7 +38,7 @@ const reducer = (state, action) => {
           ...state.uploaded,
           [action.prev.id]: {
             file: action.prev.file,
-            downloadUrl: action.downloadUrl,
+            downloadURL: action.downloadURL,
           },
         },
       };
@@ -140,11 +140,11 @@ const useFileHandlers = () => {
           }
         },
         () => {
-          uploadTask.snapshot.ref.getDownloadURL().then((downloadUrl) => {
+          uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
             const prev = next;
             logUploadedFile(++countRef.current);
             const pending = state.pending.slice(1);
-            dispatch({ type: "file-uploaded", prev, pending, downloadUrl });
+            dispatch({ type: "file-uploaded", prev, pending, downloadURL });
           });
         }
       );
@@ -154,7 +154,7 @@ const useFileHandlers = () => {
   // Ends uploading
   useEffect(() => {
     if (!state.pending.length && state.uploading) {
-      dispatch({ type: "files-uploaded" });
+      dispatch({ type: "files-uploaded"});
     }
   }, [state.pending.length, state.uploading]);
 

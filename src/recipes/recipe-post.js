@@ -181,7 +181,7 @@ const SelfLoadingRecipePost = ({ match }) => {
   } else {
     return (
       <>
-        <DisplayRecipePost post={post} authorName={authorName} />;
+        <DisplayRecipePost post={post} authorName={authorName} />
         {user && post.author === user.uid && <EditButton slug={slug} />}
       </>
     );

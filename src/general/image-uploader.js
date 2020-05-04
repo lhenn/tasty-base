@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import useFileHandlers from "../useFileHandlers";
 
 const Input = (props) => (
   <input
@@ -12,7 +11,7 @@ const Input = (props) => (
   />
 );
 
-const SuccessContainer = (props) => (
+const SuccessContainer = () => (
   <div className="success-container">
     <div>
       <h2>Congratulations!</h2>
@@ -52,47 +51,38 @@ const ThumbnailTooltip = styled.span`
 `;
 
 // Thumbnail component
-// BUG: seems like tooltip sometimes displays for un-uploaded image if an image
-// was already uploaded.
 const Thumbnail = ({
-  downloadUrl,
-  filename,
+  downloadURL,
   src,
+  filename,
   wasUploaded,
-  id,
-  // setAsCover,
-  // unsetAsCover,
+  curCover,
+  onSetCover,
 }) => {
-  const [isCover, setIsCover] = useState(false);
   const [ttText, setTTText] = useState("");
 
-  console.log("thumb for ", filename, "; isCover? ", isCover, "\n");
-
-  // If image has a download url, it can be set/unset as the cover image
   const onClick = () => {
-    if (downloadUrl !== "" && isCover) {
-      setIsCover(false);
-      setTTText("Unset!");
-      // onSetAsCover(downloadUrl)
-    } else if (downloadUrl !== "" && !isCover) {
-      setIsCover(true);
+    if (wasUploaded && curCover !== downloadURL) {
       setTTText("Set!");
+      onSetCover(downloadURL, filename);
+    } else if (wasUploaded) {
+      setTTText("Unset!");
+      onSetCover("", "");
     } else {
       setTTText("");
     }
   };
 
   const onMouse = () => {
-    if (downloadUrl !== "" && !isCover) {
+    if (wasUploaded && curCover !== downloadURL) {
       setTTText("Set as cover");
-    } else if (downloadUrl !== "" && isCover) {
+    } else if (wasUploaded) {
       setTTText("Unset as cover");
     } else {
       setTTText("");
     }
   };
 
-  // onMouseLeave={onMouse} // seems unnecessary
   return (
     <ThumbnailDiv onClick={onClick} onMouseEnter={onMouse}>
       <ThumbnailImg src={src} alt={filename} wasUploaded={wasUploaded} />
@@ -110,18 +100,19 @@ const UploadButton = styled.button`
   padding: 10px;
 `;
 
-const ImageUploader = ({ onSetAsCover, onUnsetAsCover }) => {
-  const {
-    files,
-    pending,
-    next,
-    uploading,
-    uploaded,
-    status,
-    onSubmit,
-    onChange,
-  } = useFileHandlers();
-
+// Callbacks:
+//  onSetCover: called after an image is set as the cover with the src and alt
+//    props of the image.
+//  onUnsetCover: called after an image is unset as the cover with the src
+const ImageUploader = ({
+  files,
+  uploaded,
+  status,
+  onSubmit,
+  onChange,
+  curCover,
+  onSetCover,
+}) => {
   return (
     <div className="container">
       <form className="form" onSubmit={onSubmit}>
@@ -132,15 +123,13 @@ const ImageUploader = ({ onSetAsCover, onUnsetAsCover }) => {
         <ThumbnailContainer>
           {files.map(({ file, src, id }, index) => {
             let wasUploaded = false;
-            let downloadUrl = "";
-
-            console.log("file: ", file);
+            let downloadURL = "";
 
             // Check whether file was uploaded or not
             for (var i in uploaded) {
               if (uploaded[i].file === file) {
                 wasUploaded = true;
-                downloadUrl = uploaded[id].downloadUrl;
+                downloadURL = uploaded[id].downloadURL;
                 break;
               }
             }
@@ -148,11 +137,12 @@ const ImageUploader = ({ onSetAsCover, onUnsetAsCover }) => {
             return (
               <Thumbnail
                 key={`thumb${index}-${file.name}`}
-                downloadUrl={downloadUrl}
-                filename={file.name}
+                downloadURL={downloadURL}
                 src={src}
+                filename={file.name}
                 wasUploaded={wasUploaded}
-                id={id}
+                curCover={curCover}
+                onSetCover={onSetCover}
               />
             );
           })}
