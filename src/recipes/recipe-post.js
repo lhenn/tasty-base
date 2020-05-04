@@ -22,7 +22,9 @@ const IngredientsUL = styled.ul``;
 const IngredientLI = styled.li``;
 
 const Ingredients = ({ ingredients }) => {
+  console.log("INGREDIENTS: ")
   if (ingredients === undefined || ingredients === null) {
+    console.log('undefined')
     return <></>;
   } else {
     return (
@@ -66,6 +68,7 @@ const DetailsDiv = styled.div`
 `;
 
 const Details = ({ ingredients, instructions }) => {
+  console.log('ingredients in Details:', ingredients)
   return (
     <DetailsDiv>
       <Ingredients ingredients={ingredients} />
@@ -101,15 +104,34 @@ const Author = ({ name }) => {
   return <AuthorSpan>{`Posted by ${name}`}</AuthorSpan>;
 };
 
-const EditButton = ({ slug }) => {
-  const editPath = `/recipes/${slug}/edit`;
-  return <a href={editPath}>edit</a>;
+const GalleryWrapper = styled.div`
+  display: flex;
+`;
+const ThumbnailImg = styled.img`
+  height: 200px;
+  width: 200px;
+  margin:10px;
+  object-fit: cover;
+`;
+const Gallery = ({ gallery }) => {
+  return(
+    <GalleryWrapper>
+    {gallery.map((img) => {
+      return (
+        <a key={img} data-fancybox="gallery" href={img}>
+          <ThumbnailImg src={img} />
+        </a>
+      );
+    })}
+  </GalleryWrapper>
+  )
+ ;
 };
-
 // authorName is either loaded from firebase (for SelfLoadingRecipePost) or
 // passed in using context (for previews during post edits/creates when user
 // has permission)
-export const DisplayRecipePost = ({ post, authorName }) => (
+export const DisplayRecipePost = ({ post, authorName }) => {
+  return (
   <>
     <MainImg
       src={post.coverImageURL}
@@ -126,8 +148,16 @@ export const DisplayRecipePost = ({ post, authorName }) => (
         instructions={post.instructions}
       />
     )}
+    {post.gallery && post.gallery.length > 0 && (
+      <Gallery gallery={post.gallery}/>
+    )}
   </>
-);
+)};
+
+const EditButton = ({ slug }) => {
+  const editPath = `/recipes/${slug}/edit`;
+  return <a href={editPath}>edit</a>;
+};
 
 const SelfLoadingRecipePost = ({ match }) => {
   const slug = match.params.slug;
@@ -135,7 +165,6 @@ const SelfLoadingRecipePost = ({ match }) => {
   const [post, setPost] = useState();
   const [authorName, setAuthorName] = useState();
   const user = useContext(UserContext);
-
   // Load recipe post
   useEffect(() => {
     // Need to store author uid in temporary variable since setPost is
@@ -179,6 +208,7 @@ const SelfLoadingRecipePost = ({ match }) => {
     // Loading is done and post wasn't found in the database
     return <Redirect to="/404" />;
   } else {
+    console.log("THE POST: ", post)
     return (
       <>
         <DisplayRecipePost post={post} authorName={authorName} />
