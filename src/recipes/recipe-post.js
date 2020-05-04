@@ -22,9 +22,7 @@ const IngredientsUL = styled.ul``;
 const IngredientLI = styled.li``;
 
 const Ingredients = ({ ingredients }) => {
-  console.log("INGREDIENTS: ")
   if (ingredients === undefined || ingredients === null) {
-    console.log('undefined')
     return <></>;
   } else {
     return (
@@ -68,7 +66,7 @@ const DetailsDiv = styled.div`
 `;
 
 const Details = ({ ingredients, instructions }) => {
-  console.log('ingredients in Details:', ingredients)
+  console.log("ingredients in Details:", ingredients);
   return (
     <DetailsDiv>
       <Ingredients ingredients={ingredients} />
@@ -110,49 +108,49 @@ const GalleryWrapper = styled.div`
 const ThumbnailImg = styled.img`
   height: 200px;
   width: 200px;
-  margin:10px;
+  margin: 10px;
   object-fit: cover;
 `;
 const Gallery = ({ gallery }) => {
-  return(
+  return (
     <GalleryWrapper>
-    {gallery.map((img) => {
-      return (
-        <a key={img} data-fancybox="gallery" href={img}>
-          <ThumbnailImg src={img} />
-        </a>
-      );
-    })}
-  </GalleryWrapper>
-  )
- ;
+      {gallery.map((img) => {
+        return (
+          <a key={img} data-fancybox="gallery" href={img}>
+            <ThumbnailImg src={img} />
+          </a>
+        );
+      })}
+    </GalleryWrapper>
+  );
 };
 // authorName is either loaded from firebase (for SelfLoadingRecipePost) or
 // passed in using context (for previews during post edits/creates when user
 // has permission)
 export const DisplayRecipePost = ({ post, authorName }) => {
   return (
-  <>
-    <MainImg
-      src={post.coverImageURL}
-      onerror="this.onerror=null; this.src=''" // TODO: add default image?
-    />
-    <h1>{post.title}</h1>
-    <Timestamp timestamp={post.timestamp} />
-    <Author name={authorName} />
-    <OverviewDiv post={post} />
-    <Description>{post.description.replace(/\\n/g, "\n")}</Description>
-    {post.sourceType === "personal" && (
-      <Details
-        ingredients={post.ingredients}
-        instructions={post.instructions}
+    <>
+      <MainImg
+        src={post.coverImageURL}
+        onerror="this.onerror=null; this.src=''" // TODO: add default image?
       />
-    )}
-    {post.gallery && post.gallery.length > 0 && (
-      <Gallery gallery={post.gallery}/>
-    )}
-  </>
-)};
+      <h1>{post.title}</h1>
+      <Timestamp timestamp={post.timestamp} />
+      <Author name={authorName} />
+      <OverviewDiv post={post} />
+      <Description>{post.description.replace(/\\n/g, "\n")}</Description>
+      {post.sourceType === "personal" && (
+        <Details
+          ingredients={post.ingredients}
+          instructions={post.instructions}
+        />
+      )}
+      {post.gallery && post.gallery.length > 0 && (
+        <Gallery gallery={post.gallery} />
+      )}
+    </>
+  );
+};
 
 const EditButton = ({ slug }) => {
   const editPath = `/recipes/${slug}/edit`;
@@ -208,7 +206,6 @@ const SelfLoadingRecipePost = ({ match }) => {
     // Loading is done and post wasn't found in the database
     return <Redirect to="/404" />;
   } else {
-    console.log("THE POST: ", post)
     return (
       <>
         <DisplayRecipePost post={post} authorName={authorName} />
