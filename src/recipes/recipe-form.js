@@ -22,13 +22,13 @@ const FormRow = styled.div`
   margin: 20px 0;
 `;
 
-const ContentDiv = styled.div`
+const ContentWrapper = styled.div`
   display: flex;
   flex-direction: column;
   margin: 20px 0;
 `;
 
-const PreviewDiv = styled.div`
+const PreviewWrapper = styled.div`
   border: 1px solid black;
   margin: 5px 0;
 `;
@@ -164,13 +164,13 @@ const InstructionsList = ({
   );
 };
 
-const CustomRecipeContentDiv = styled.div`
+const CustomRecipeContentWrapper = styled.div`
   display: flex;
 `;
 
 const CustomRecipeContent = (props) => {
   return (
-    <CustomRecipeContentDiv>
+    <CustomRecipeContentWrapper>
       <Ingredients
         ingredients={props.ingredients}
         updateIngredient={props.updateIngredient}
@@ -181,7 +181,7 @@ const CustomRecipeContent = (props) => {
         updateInstruction={props.updateInstruction}
         deleteInstruction={props.deleteInstruction}
       />
-    </CustomRecipeContentDiv>
+    </CustomRecipeContentWrapper>
   );
 };
 
@@ -229,8 +229,7 @@ const CreatePostButton = ({ post, slug, history }) => {
     setIsSubmitting(true);
     getFirebase()
       .database()
-      .ref()
-      .child(`/posts/${slug}`)
+      .ref(`/posts/${slug}`)
       .set(timestampedPost)
       .then(() => {
         setIsSubmitting(false);
@@ -314,7 +313,7 @@ const RecipeForm = ({ history, post, slug }) => {
 
   // Block until user has authenticated
   // TODO: improve
-  const user = useContext(UserContext);
+  const { user } = useContext(UserContext);
   if (!user) return <h1>LOADING USER INFO</h1>;
 
   // This object is needed by the create post button and preview
@@ -517,7 +516,7 @@ const RecipeForm = ({ history, post, slug }) => {
         </FormGroup>
       </FormRow>
 
-      <ContentDiv>
+      <ContentWrapper>
         <Label htmlFor="description" content="Description"></Label>
         <TextArea
           id="description"
@@ -528,7 +527,7 @@ const RecipeForm = ({ history, post, slug }) => {
           }
           required
         />
-      </ContentDiv>
+      </ContentWrapper>
 
       {basicInfo.sourceType === "personal" && (
         <CustomRecipeContent
@@ -542,9 +541,9 @@ const RecipeForm = ({ history, post, slug }) => {
       )}
 
       <Label htmlFor="preview" content="Post preview"></Label>
-      <PreviewDiv id="preview">
+      <PreviewWrapper id="preview">
         <DisplayRecipePost post={newPost} authorName={user.displayName} />
-      </PreviewDiv>
+      </PreviewWrapper>
 
       <div style={{ textAlign: "right" }}>
         <CreatePostButton post={newPost} slug={slugState} history={history} />

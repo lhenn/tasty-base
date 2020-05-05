@@ -5,7 +5,7 @@ import { getFirebase } from "../firebase";
 import RecipeForm from "../recipes/recipe-form";
 
 const Edit = ({ history, match }) => {
-  const user = useContext(UserContext);
+  const {user} = useContext(UserContext);
   const slug = match.params.slug;
   const [loading, setLoading] = useState(true);
   const [post, setCurrentPost] = useState();
@@ -19,7 +19,7 @@ const Edit = ({ history, match }) => {
       .once(
         "value",
         (snapshot) => {
-          // Wait until user has been set
+          // Wait until updateuser has been set
           if (user && snapshot.val().author !== user.uid) {
             setAuthorized(false);
           } else {

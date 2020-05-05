@@ -99,11 +99,7 @@ const useFileHandlers = () => {
       const { next } = state;
       let imgName = state.next.file.name;
 
-      let uploadTask = getFirebase()
-        .storage()
-        .ref()
-        .child(imgName)
-        .put(next.file);
+      let uploadTask = getFirebase().storage().ref(imgName).put(next.file);
 
       uploadTask.on(
         getFirebase().storage.TaskEvent.STATE_CHANGED,
@@ -154,7 +150,7 @@ const useFileHandlers = () => {
   // Ends uploading
   useEffect(() => {
     if (!state.pending.length && state.uploading) {
-      dispatch({ type: "files-uploaded"});
+      dispatch({ type: "files-uploaded" });
     }
   }, [state.pending.length, state.uploading]);
 

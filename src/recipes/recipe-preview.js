@@ -1,22 +1,21 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import styled from "styled-components";
-import OverviewDiv from "./overview.js";
+import OverviewWrapper from "./overview.js";
 import Ratings from "./ratings.js";
 
 const InvisibleLink = styled.a`
-text-decoration: none;
-color:inherit;
-&:hover {
   text-decoration: none;
-  color:inherit;
-}
+  color: inherit;
+  &:hover {
+    text-decoration: none;
+    color: inherit;
+  }
 `;
 const StyledCard = styled.div`
   margin-top: 24px;
-  box-shadow: 10px 10px 5px -10px rgba(0,0,0,0.75);
+  box-shadow: 10px 10px 5px -10px rgba(0, 0, 0, 0.75);
   &:hover {
-    box-shadow: 10px 10px 5px -9px rgba(0,0,0,0.75);
+    box-shadow: 10px 10px 5px -9px rgba(0, 0, 0, 0.75);
   }
 `;
 
@@ -83,20 +82,20 @@ const Timestamp = ({ timestamp }) => {
 const RecipePreview = ({ post, slug }) => {
   return (
     <InvisibleLink href={`/recipes/${slug}`}>
-    <StyledCard >
-      <StyledImg src={post.coverImageURL} alt={post.coverImageAlt} />
-      <CardContent>
-        <Row1>
-          <TitleDate>
-            <Title >{post.title}</Title>
-            <Timestamp timestamp={post.timestamp} />
-          </TitleDate>
-          <Ratings post={post} />
-        </Row1>
-        <OverviewDiv post={post} />
-        <br></br>
-      </CardContent>
-    </StyledCard>
+      <StyledCard>
+        <StyledImg src={post.coverImageURL} alt={post.coverImageAlt} />
+        <CardContent>
+          <Row1>
+            <TitleDate>
+              <Title>{post.title}</Title>
+              <Timestamp timestamp={post.timestamp} />
+            </TitleDate>
+            <Ratings post={post} />
+          </Row1>
+          <OverviewWrapper post={post} />
+          <br></br>
+        </CardContent>
+      </StyledCard>
     </InvisibleLink>
   );
 };

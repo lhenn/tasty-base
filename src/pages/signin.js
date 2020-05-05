@@ -7,7 +7,7 @@ import { getFirebase } from "../firebase";
 
 const Signin = () => {
   // Check if user is already signed in and send to home if so
-  const user = useContext(UserContext);
+  const {user} = useContext(UserContext);
   if(user != null) return <Redirect to="/"/>
 
   // Configure FirebaseUI.

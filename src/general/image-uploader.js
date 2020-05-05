@@ -21,7 +21,7 @@ const SuccessContainer = () => (
 );
 
 // Container for thumbnail
-const ThumbnailDiv = styled.div`
+const ThumbnailWrapper = styled.div`
   width: 120px;
   align-items: center;
   padding: 5px;
@@ -44,7 +44,7 @@ const ThumbnailImg = styled.img`
 const ThumbnailTooltip = styled.span`
   visibility: hidden;
 
-  ${ThumbnailDiv}:hover & {
+  ${ThumbnailWrapper}:hover & {
     visibility: visible;
     opacity: 1;
   }
@@ -73,7 +73,7 @@ const Thumbnail = ({
     }
   };
 
-  const onMouse = () => {
+  const onMouseEnter = () => {
     if (wasUploaded && curCover !== downloadURL) {
       setTTText("Set as cover");
     } else if (wasUploaded) {
@@ -84,10 +84,10 @@ const Thumbnail = ({
   };
 
   return (
-    <ThumbnailDiv onClick={onClick} onMouseEnter={onMouse}>
+    <ThumbnailWrapper onClick={onClick} onMouseEnter={onMouseEnter}>
       <ThumbnailImg src={src} alt={filename} wasUploaded={wasUploaded} />
       <ThumbnailTooltip>{ttText}</ThumbnailTooltip>
-    </ThumbnailDiv>
+    </ThumbnailWrapper>
   );
 };
 

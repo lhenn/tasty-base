@@ -1,9 +1,12 @@
-import React, { useEffect, useState, useContext } from "react";
+import { faBookmark } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React, { useContext, useEffect, useState } from "react";
 import { Redirect } from "react-router-dom";
 import styled from "styled-components";
-import { getFirebase } from "../firebase";
-import OverviewDiv from "./overview";
 import { UserContext } from "../App";
+import { getFirebase } from "../firebase";
+import Button from "../general/button-primary";
+import OverviewWrapper from "./overview";
 
 const MainImg = styled.img`
   height: ${(props) => {
@@ -61,19 +64,16 @@ const Description = styled.p`
   white-space: pre-line;
 `;
 
-const DetailsDiv = styled.div`
+const DetailsWrapper = styled.div`
   display: flex;
 `;
 
-const Details = ({ ingredients, instructions }) => {
-  console.log("ingredients in Details:", ingredients);
-  return (
-    <DetailsDiv>
-      <Ingredients ingredients={ingredients} />
-      <Instructions instructions={instructions} />
-    </DetailsDiv>
-  );
-};
+const Details = ({ ingredients, instructions }) => (
+  <DetailsWrapper>
+    <Ingredients ingredients={ingredients} />
+    <Instructions instructions={instructions} />
+  </DetailsWrapper>
+);
 
 const TimestampEM = styled.em`
   font-size: 18px;
@@ -137,7 +137,7 @@ export const DisplayRecipePost = ({ post, authorName }) => {
       <h1>{post.title}</h1>
       <Timestamp timestamp={post.timestamp} />
       <Author name={authorName} />
-      <OverviewDiv post={post} />
+      <OverviewWrapper post={post} />
       <Description>{post.description.replace(/\\n/g, "\n")}</Description>
       {post.sourceType === "personal" && (
         <Details
@@ -152,9 +152,99 @@ export const DisplayRecipePost = ({ post, authorName }) => {
   );
 };
 
-const EditButton = ({ slug }) => {
+const Edit = ({ slug }) => {
   const editPath = `/recipes/${slug}/edit`;
-  return <a href={editPath}>edit</a>;
+  return (
+    <Button
+      onClick={(e) => {
+        e.preventDefault();
+        window.location.href = editPath;
+      }}
+    >
+      Edit
+    </Button>
+  );
+};
+
+const FavoriteWrapper = styled.div``;
+
+// TODO: should stay shaded when clicked; should be transparent on mouseover
+const FavoriteButton = styled.button`
+  background-color: #037161;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  border: 0;
+  &:hover {
+    cursor: pointer;
+    background-color: #005246;
+  }
+`;
+
+// Tooltip for mousing over to copy image url
+// TODO: maybe unnecessary once we style FavoriteButton better.
+const FavoriteTooltip = styled.span`
+  visibility: hidden;
+
+  ${FavoriteWrapper}:hover & {
+    visibility: visible;
+    opacity: 1;
+  }
+`;
+
+const Favorite = ({ slug, uid, isFavorite, onSetFavorite }) => {
+  console.log("Favorite", slug, uid, isFavorite);
+  const [ttText, setTTText] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => console.log("tt: ", ttText), [ttText]);
+
+  const addFavorite = () => {
+    if (busy) return;
+    // Push to favorite recipes list with timestamp
+    const timestamp = getFirebase().database.ServerValue.TIMESTAMP;
+
+    setBusy(true);
+    getFirebase()
+      .database()
+      .ref(`/users/${uid}/data/favoriteRecipes/${slug}`)
+      .set(timestamp)
+      .then(() => setBusy(false))
+      .catch((err) => console.log("addFavorite failed: ", err));
+  };
+
+  const removeFavorite = () => {
+    if (busy) return;
+
+    setBusy(true);
+    getFirebase()
+      .database()
+      .ref(`/users/${uid}/data/favoriteRecipes/${slug}`)
+      .remove()
+      .then(() => setBusy(false))
+      .catch((err) => console.log("removeFavorite failed: ", err));
+  };
+
+  const onClick = () => {
+    if (!isFavorite) {
+      addFavorite();
+      setTTText("Favorited!");
+    } else {
+      removeFavorite();
+      setTTText("Unfavorited!");
+    }
+  };
+  const onMouseEnter = () =>
+    !isFavorite ? setTTText("Favorite") : setTTText("Unfavorite");
+
+  return (
+    <FavoriteWrapper onClick={onClick} onMouseEnter={onMouseEnter}>
+      <FavoriteButton>
+        <FontAwesomeIcon icon={faBookmark} />
+      </FavoriteButton>
+      <FavoriteTooltip>{ttText}</FavoriteTooltip>
+    </FavoriteWrapper>
+  );
 };
 
 const SelfLoadingRecipePost = ({ match }) => {
@@ -162,11 +252,11 @@ const SelfLoadingRecipePost = ({ match }) => {
   const [loading, setLoading] = useState(true);
   const [post, setPost] = useState();
   const [authorName, setAuthorName] = useState();
-  const user = useContext(UserContext);
-  // Load recipe post
+  const { user, userData } = useContext(UserContext);
+
+  // Load recipe post when component mounts
   useEffect(() => {
-    // Need to store author uid in temporary variable since setPost is
-    // asynchronous!
+    // Need to store author uid in temporary variable since setPost is async!
     let uid = "";
 
     getFirebase()
@@ -181,7 +271,10 @@ const SelfLoadingRecipePost = ({ match }) => {
           uid = postData.author;
         },
         (err) =>
-          console.log("recipe-post: post loading failed with code: ", err.code)
+          console.log(
+            "SelfLoadingRecipePost: post loading failed with code: ",
+            err.code
+          )
       )
       .then(
         // Get author name
@@ -194,11 +287,14 @@ const SelfLoadingRecipePost = ({ match }) => {
         },
         (err) =>
           console.log(
-            "recipe-post: author name loading failed with code: ",
+            "SelfLoadingRecipePost: author name loading failed with code: ",
             err.code
           )
       );
-  }, []);
+  }, [slug, setPost, setAuthorName, setLoading]);
+
+  // DEBUG
+  useEffect(() => console.log("userData: ", userData), [userData]);
 
   if (loading) {
     return <h1>Loading...</h1>;
@@ -208,8 +304,19 @@ const SelfLoadingRecipePost = ({ match }) => {
   } else {
     return (
       <>
+        {user && (
+          <Favorite
+            slug={slug}
+            uid={user.uid}
+            isFavorite={
+              userData &&
+              userData.favoriteRecipes !== null &&
+              userData.favoriteRecipes.hasOwnProperty(slug)
+            }
+          />
+        )}
         <DisplayRecipePost post={post} authorName={authorName} />
-        {user && post.author === user.uid && <EditButton slug={slug} />}
+        {user && post.author === user.uid && <Edit slug={slug} />}
       </>
     );
   }

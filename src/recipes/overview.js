@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 
-const OverviewWrapper = styled.div`
+const Wrapper = styled.div`
   display: flex;
   justify-content: space-between;
   margin: 0;
@@ -30,18 +30,16 @@ const Source = ({ sourceType, source }) => {
   );
 };
 
-const OverviewDiv = ({ post }) => {
+const OverviewWrapper = ({ post }) => {
   return (
-    <OverviewWrapper>
-      <div>
-        <Source sourceType={post.sourceType} source={post.source} />
-        <p>
-          {post.activeTime} min active | {post.downtime} min downtime |{" "}
-          {post.servings} servings
-        </p>
-      </div>
-    </OverviewWrapper>
+    <Wrapper>
+      <Source sourceType={post.sourceType} source={post.source} />
+      <p>
+        {post.activeTime} min active | {post.downtime} min downtime |{" "}
+        {post.servings} servings
+      </p>
+    </Wrapper>
   );
 };
 
-export default OverviewDiv;
+export default OverviewWrapper;

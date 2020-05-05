@@ -23,7 +23,7 @@ const NavInner = styled.nav`
 `;
 
 const NavBar = () => {
-  const user = useContext(UserContext);
+  const {user} = useContext(UserContext);
 
   return (
     <NavWrapper>
