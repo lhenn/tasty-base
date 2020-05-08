@@ -293,9 +293,6 @@ const SelfLoadingRecipePost = ({ match }) => {
       );
   }, [slug, setPost, setAuthorName, setLoading]);
 
-  // DEBUG
-  useEffect(() => console.log("userData: ", userData), [userData]);
-
   if (loading) {
     return <h1>Loading...</h1>;
   } else if (!post) {

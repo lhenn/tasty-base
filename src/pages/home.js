@@ -7,7 +7,6 @@ const Home = () => {
   const [posts, setPosts] = useState([]);
 
   // Load all posts
-  // TODO: could optimize by not loading every post in full
   useEffect(() => {
     getFirebase()
       .database()
@@ -37,7 +36,7 @@ const Home = () => {
   return (
     <>
       <h1>Blog posts</h1>
-      {posts.map(({ slug, post }, i) => (
+      {posts.map(({ slug, post }) => (
         <RecipePreview key={slug} post={post} slug={slug} />
       ))}
     </>

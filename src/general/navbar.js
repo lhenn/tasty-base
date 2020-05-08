@@ -23,7 +23,7 @@ const NavInner = styled.nav`
 `;
 
 const NavBar = () => {
-  const {user} = useContext(UserContext);
+  const { user } = useContext(UserContext);
 
   return (
     <NavWrapper>
@@ -32,7 +32,7 @@ const NavBar = () => {
           <h2>Tasty Base</h2>
           <MutedText text="An Adam&Laura© website" />
         </Link>
-        {user !== null ? <SignedInLinks user={user} /> : <SignedOutLinks />}
+        {user ? <SignedInLinks user={user} /> : <SignedOutLinks />}
       </NavInner>
     </NavWrapper>
   );

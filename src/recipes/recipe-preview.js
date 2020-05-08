@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 import OverviewWrapper from "./overview.js";
 import Ratings from "./ratings.js";
@@ -78,10 +79,9 @@ const Timestamp = ({ timestamp }) => {
   );
 };
 
-// TODO: ADD SLUG!
 const RecipePreview = ({ post, slug }) => {
   return (
-    <InvisibleLink href={`/recipes/${slug}`}>
+    <Link to={`/recipes/${slug}`}>
       <StyledCard>
         <StyledImg src={post.coverImageURL} alt={post.coverImageAlt} />
         <CardContent>
@@ -96,7 +96,7 @@ const RecipePreview = ({ post, slug }) => {
           <br></br>
         </CardContent>
       </StyledCard>
-    </InvisibleLink>
+    </Link>
   );
 };
 

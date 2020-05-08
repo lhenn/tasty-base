@@ -1,9 +1,9 @@
 import React, { createContext, useEffect, useState } from "react";
 import {
   BrowserRouter as Router,
+  Redirect,
   Route,
   Switch,
-  Redirect,
 } from "react-router-dom";
 import styled from "styled-components";
 import "./App.css";
@@ -11,6 +11,7 @@ import { getFirebase } from "./firebase";
 import NavBar from "./general/navbar";
 import Create from "./pages/create";
 import Edit from "./pages/edit";
+import Favorites from "./pages/favorites";
 import Home from "./pages/home";
 import NoMatch from "./pages/no-match";
 import Signin from "./pages/signin";
@@ -42,6 +43,7 @@ const onAuthStateChanged = (callback) => {
     .auth()
     .onAuthStateChanged((user) => {
       if (user) {
+        // Update info in firebase. Later we can let the user customize things.
         updateUser(user);
         callback(user);
       } else {
@@ -84,6 +86,7 @@ const App = () => {
           <Switch>
             <Route exact path="/" component={Home} />
             <Route path="/signin" component={Signin} />
+            <Route path="/fav-recipes" component={Favorites} />}
             <Route path="/create" component={Create} />
             <Route path="/404" component={NoMatch} />
             <Route

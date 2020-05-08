@@ -10,11 +10,15 @@ const UserWrapper = styled.div`
   align-items: center;
 `;
 
-const UserPhoto = styled.img`
+const UserPhotoC = styled.img`
   width: 42px;
   height: 42px;
   border-radius: 50px;
 `;
+
+const UserPhoto = ({ src }) => {
+  return <UserPhotoC src={src} />;
+};
 
 const SignOutLink = styled.button`
   background-color: inherit;
@@ -28,19 +32,19 @@ const SignOutLink = styled.button`
 `;
 
 const SignedInLinks = ({ user }) => {
-  const [showUserOptions, setShowUserOptions] = useState(false);
-  // TODO: useCallback?
   const logout = () => {
     getFirebase().auth().signOut();
   };
-
   return (
     <>
       <Link to="/create">
         <Button>Create a post</Button>
       </Link>
-      <UserWrapper onClick={() => setShowUserOptions(true)}>
-        <UserPhoto src={user.photoURL} />
+      <Link to="/fav-recipes">
+        <Button>Favorites</Button>
+      </Link>
+      <UserWrapper>
+        <UserPhoto src={user.photoURL} alt="user photo" />
         <SignOutLink onClick={logout}>Sign out</SignOutLink>
       </UserWrapper>
     </>
