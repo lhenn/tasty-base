@@ -2,9 +2,9 @@ import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { UserContext } from "../App";
-import MutedText from "./muted-text";
 import SignedInLinks from "./signedin-links";
 import SignedOutLinks from "./signedout-links";
+import Button from 'react-bootstrap/Button';
 
 const NavWrapper = styled.div`
   display: flex;
