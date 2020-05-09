@@ -8,7 +8,7 @@ const SecondaryButton = styled.button`
   border: solid 1 px #775ffb;
   &:hover {
     cursor: pointer;
-    text-decoration:underline;
+   
   }
 `;
 
