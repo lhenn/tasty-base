@@ -126,7 +126,6 @@ const ImageUploader = ({
   curCover,
   onSetCover,
 }) => {
-  useEffect(() => console.log("status: ", status), [status]);
   return (
     <div className="container">
       <form className="form" onSubmit={onSubmit}>

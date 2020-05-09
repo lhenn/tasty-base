@@ -333,10 +333,10 @@ const RecipeForm = ({ history, post, slug }) => {
     <>
       <FormRow>
         <FormGroup>
-          <Label htmlFor="title" content="Title" />
+          <Label htmlFor="recipe-title" content="Recipe title" />
           <Input
             type="text"
-            id="title"
+            id="recipe-title"
             value={basicInfo.title}
             onChange={(e) =>
               setBasicInfo({ ...basicInfo, title: e.target.value })
@@ -363,7 +363,11 @@ const RecipeForm = ({ history, post, slug }) => {
             value={basicInfo.sourceType}
             id="source-type"
             onChange={(e) =>
-              setBasicInfo({ ...basicInfo, sourceType: e.target.value })
+              setBasicInfo({
+                ...basicInfo,
+                source: "",
+                sourceType: e.target.value,
+              })
             }
             required
           >
@@ -371,22 +375,27 @@ const RecipeForm = ({ history, post, slug }) => {
             <option value="web">Web</option>
             <option value="cookbook">Cookbook</option>
           </select>
-          {basicInfo.sourceType === "web" ? (
-            <WebSourceInput
-              type="url"
-              id="source"
-              placeholder="https://example.com"
-              pattern={urlRegex}
-              value={basicInfo.source}
-              onChange={(e) =>
-                setBasicInfo({ ...basicInfo, source: e.target.value })
-              }
-              required
-            />
-          ) : (
+          {
+            // Not so pretty
+            basicInfo.sourceType === "web" && (
+              <WebSourceInput
+                type="url"
+                id="source"
+                placeholder="https://example.com"
+                pattern={urlRegex}
+                value={basicInfo.source}
+                onChange={(e) =>
+                  setBasicInfo({ ...basicInfo, source: e.target.value })
+                }
+                required
+              />
+            )
+          }
+          {basicInfo.sourceType === "cookbook" && (
             <Input
               type="text"
               id="source"
+              placeholder="Title"
               value={basicInfo.source}
               onChange={(e) =>
                 setBasicInfo({ ...basicInfo, source: e.target.value })
