@@ -1,6 +1,8 @@
 import { faBookmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
+import Overlay from "react-bootstrap/Overlay";
+import Tooltip from "react-bootstrap/Tooltip";
 import { Redirect } from "react-router-dom";
 import styled from "styled-components";
 import { UserContext } from "../App";
@@ -166,9 +168,7 @@ const Edit = ({ slug }) => {
   );
 };
 
-const FavoriteWrapper = styled.div``;
-
-// TODO: should stay shaded when clicked; should be transparent on mouseover
+// TODO: change when favorited
 const FavoriteButton = styled.button`
   background-color: #037161;
   color: white;
@@ -181,21 +181,13 @@ const FavoriteButton = styled.button`
   }
 `;
 
-// Tooltip for mousing over to copy image url
-// TODO: maybe unnecessary once we style FavoriteButton better.
-const FavoriteTooltip = styled.span`
-  visibility: hidden;
-
-  ${FavoriteWrapper}:hover & {
-    visibility: visible;
-    opacity: 1;
-  }
-`;
-
-const Favorite = ({ slug, uid, isFavorite, onSetFavorite }) => {
+const Favorite = ({ slug, uid, isFavorite }) => {
   console.log("Favorite", slug, uid, isFavorite);
-  const [ttText, setTTText] = useState("");
+  // Busy when sending favorite/unfavorite data to firebase
   const [busy, setBusy] = useState(false);
+  const [ttText, setTTText] = useState("");
+  const [showTT, setShowTT] = useState(false);
+  const target = useRef(null);
 
   useEffect(() => console.log("tt: ", ttText), [ttText]);
 
@@ -203,47 +195,64 @@ const Favorite = ({ slug, uid, isFavorite, onSetFavorite }) => {
     if (busy) return;
     // Push to favorite recipes list with timestamp
     const timestamp = getFirebase().database.ServerValue.TIMESTAMP;
-
     setBusy(true);
     getFirebase()
       .database()
       .ref(`/users/${uid}/data/favoriteRecipes/${slug}`)
       .set(timestamp)
-      .then(() => setBusy(false))
+      .then(() => {
+        setTTText("Favorited!");
+        setBusy(false);
+      })
       .catch((err) => console.log("addFavorite failed: ", err));
   };
 
   const removeFavorite = () => {
     if (busy) return;
-
     setBusy(true);
     getFirebase()
       .database()
       .ref(`/users/${uid}/data/favoriteRecipes/${slug}`)
       .remove()
-      .then(() => setBusy(false))
+      .then(() => {
+        setTTText("Unfavorited!");
+        setBusy(false);
+      })
       .catch((err) => console.log("removeFavorite failed: ", err));
   };
 
   const onClick = () => {
     if (!isFavorite) {
       addFavorite();
-      setTTText("Favorited!");
     } else {
       removeFavorite();
-      setTTText("Unfavorited!");
     }
   };
-  const onMouseEnter = () =>
+
+  const onMouseEnter = () => {
+    console.log("onMouseEnter")
+    setShowTT(true);
     !isFavorite ? setTTText("Favorite") : setTTText("Unfavorite");
+  };
+  const onMouseLeave = () => {
+    console.log("onMouseLeave")
+    setShowTT(false)
+  };
 
   return (
-    <FavoriteWrapper onClick={onClick} onMouseEnter={onMouseEnter}>
-      <FavoriteButton>
+    <>
+      <FavoriteButton
+        ref={target}
+        onClick={onClick}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+      >
         <FontAwesomeIcon icon={faBookmark} />
       </FavoriteButton>
-      <FavoriteTooltip>{ttText}</FavoriteTooltip>
-    </FavoriteWrapper>
+      <Overlay target={target.current} show={showTT} placement="bottom">
+        {(props) => <Tooltip {...props}>{ttText}</Tooltip>}
+      </Overlay>
+    </>
   );
 };
 
