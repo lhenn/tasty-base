@@ -8,7 +8,7 @@ const UpdatingTooltip = forwardRef(
     }, [children, popper]);
 
     return (
-      <Tooltip ref={ref} content {...props}>
+      <Tooltip ref={ref} {...props}>
         {children}
       </Tooltip>
     );

@@ -1,5 +1,13 @@
-import { useCallback, useEffect, useReducer, useRef } from "react";
+import { useCallback, useEffect, useReducer } from "react";
 import { getFirebase } from "./firebase";
+
+// Different states
+export const IDLE = "IDLE";
+export const LOADED = "LOADED";
+export const INIT = "INIT"; // use for triggering onStart
+export const PENDING = "PENDING";
+export const FILES_UPLOADED = "FILES_UPLOADED";
+export const UPLOAD_ERROR = "UPLOAD_ERROR";
 
 const initalState = {
   files: [], // files being uploaded
@@ -7,15 +15,8 @@ const initalState = {
   next: null, // next item in pending
   uploading: false, // upload in progress?
   uploaded: {}, // object files get inserted into when uploaded
-  status: "idle", // for ui
+  status: IDLE, // for ui
 };
-
-// Different states
-export const LOADED = "LOADED";
-export const INIT = "INIT"; // use for triggering onStart
-export const PENDING = "PENDING";
-export const FILES_UPLOADED = "FILES_UPLOADED";
-export const UPLOAD_ERROR = "UPLOAD_ERROR";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -51,10 +52,10 @@ const reducer = (state, action) => {
   }
 };
 
-const logUploadedFile = (num, color = "green") => {
-  const msg = `%cUploaded ${num} files.`;
-  const style = `color:${color};font-weight:bold;`;
-};
+// const logUploadedFile = (num, color = "green") => {
+//   const msg = `%cUploaded ${num} files.`;
+//   const style = `color:${color};font-weight:bold;`;
+// };
 
 const useFileHandlers = () => {
   const [state, dispatch] = useReducer(reducer, initalState);
@@ -90,7 +91,7 @@ const useFileHandlers = () => {
     }
   }, [state.next, state.pending]);
 
-  const countRef = useRef(0);
+  // const countRef = useRef(0);
 
   // Processes the next pending thumbnail when ready
   // TODO: call off() somewhere?
@@ -104,8 +105,8 @@ const useFileHandlers = () => {
       uploadTask.on(
         getFirebase().storage.TaskEvent.STATE_CHANGED,
         (snapshot) => {
-          let progress =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          // let progress =
+          //   (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
           // console.log("upload is " + progress + "% done");
           switch (snapshot.state) {
             case getFirebase().storage.TaskState.PAUSED:
@@ -138,7 +139,7 @@ const useFileHandlers = () => {
         () => {
           uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
             const prev = next;
-            logUploadedFile(++countRef.current);
+            // logUploadedFile(++countRef.current);
             const pending = state.pending.slice(1);
             dispatch({ type: "file-uploaded", prev, pending, downloadURL });
           });

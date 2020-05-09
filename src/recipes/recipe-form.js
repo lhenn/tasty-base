@@ -197,7 +197,8 @@ const combinePostData = (
   // Get gallery dowload URLs
   let gallery = [];
   for (var i = 0; i < Object.keys(galleryUploaded).length; i++) {
-    gallery.push(galleryUploaded[i].downloadURL);
+    const curDownloadURL = galleryUploaded[i].downloadURL;
+    curDownloadURL !== basicInfo.coverImageURL && gallery.push(curDownloadURL);
   }
 
   // Remove last ingredient and instruction, which are always empty
