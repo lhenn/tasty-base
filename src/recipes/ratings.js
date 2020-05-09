@@ -32,7 +32,6 @@ const Bars = styled.div`
   flex-direction: column;
   justify-content: space-around;
   width: 100px;
-  background-color: #eae8df73;
   font-family: "Playfair Display", serif;
 `;
 

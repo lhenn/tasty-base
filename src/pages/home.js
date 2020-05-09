@@ -35,7 +35,7 @@ const Home = () => {
   // slugs are unique and can thus be used as keys
   return (
     <>
-      <h1>Blog posts</h1>
+      <h1>Recipes</h1>
       {posts.map(({ slug, post }) => (
         <RecipePreview key={slug} post={post} slug={slug} />
       ))}

@@ -7,7 +7,10 @@ const NavItem = styled.div`
   display:flex;
   margin:0 20px;
   font-size:16px;
-  color:white;
+  color:#9791e8;
+  &:hover{
+    color: white;
+  }
 `;
 
 

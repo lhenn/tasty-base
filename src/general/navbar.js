@@ -11,7 +11,7 @@ const NavWrapper = styled.div`
   width: 100%;
   justify-content: center;
   background-color: #252525;
-  padding: 10px 0;
+  padding: 15px 0;
 `;
 
 const NavInner = styled.nav`
