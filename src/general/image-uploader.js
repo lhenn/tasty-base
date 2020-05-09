@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import styled from "styled-components";
+import UpdatingTooltip from "../general/tooltip";
 
 const Input = (props) => (
   <input
@@ -40,16 +42,6 @@ const ThumbnailImg = styled.img`
   }};
 `;
 
-// Tooltip for mousing over to copy image url
-const ThumbnailTooltip = styled.span`
-  visibility: hidden;
-
-  ${ThumbnailWrapper}:hover & {
-    visibility: visible;
-    opacity: 1;
-  }
-`;
-
 // Thumbnail component
 const Thumbnail = ({
   downloadURL,
@@ -60,6 +52,7 @@ const Thumbnail = ({
   onSetCover,
 }) => {
   const [ttText, setTTText] = useState("");
+  const target = useRef(null);
 
   const onClick = () => {
     if (wasUploaded && curCover !== downloadURL) {
@@ -84,10 +77,21 @@ const Thumbnail = ({
   };
 
   return (
-    <ThumbnailWrapper onClick={onClick} onMouseEnter={onMouseEnter}>
-      <ThumbnailImg src={src} alt={filename} wasUploaded={wasUploaded} />
-      <ThumbnailTooltip>{ttText}</ThumbnailTooltip>
-    </ThumbnailWrapper>
+    <OverlayTrigger
+      placement="bottom"
+      trigger={["hover", "focus"]}
+      overlay={
+        <UpdatingTooltip id="favorite-tooltip">{ttText}</UpdatingTooltip>
+      }
+    >
+      <ThumbnailWrapper
+        ref={target}
+        onClick={onClick}
+        onMouseEnter={onMouseEnter}
+      >
+        <ThumbnailImg src={src} alt={filename} wasUploaded={wasUploaded} />
+      </ThumbnailWrapper>
+    </OverlayTrigger>
   );
 };
 
