@@ -52,7 +52,6 @@ const Thumbnail = ({
   onSetCover,
 }) => {
   const [ttText, setTTText] = useState("");
-  const target = useRef(null);
 
   const onClick = () => {
     if (wasUploaded && curCover !== downloadURL) {
@@ -85,7 +84,6 @@ const Thumbnail = ({
       }
     >
       <ThumbnailWrapper
-        ref={target}
         onClick={onClick}
         onMouseEnter={onMouseEnter}
       >
