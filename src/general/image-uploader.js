@@ -1,7 +1,17 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import styled from "styled-components";
+import UpdatingTooltip from "../general/tooltip";
+import SecondaryButton from "../general/button-secondary";
+import {
+  LOADED,
+  INIT,
+  PENDING,
+  FILES_UPLOADED,
+  IDLE,
+} from "../useFileHandlers";
 
-const Input = (props) => (
+const FileInput = (props) => (
   <input
     type="file"
     accept="image/*"
@@ -11,20 +21,12 @@ const Input = (props) => (
   />
 );
 
-const SuccessContainer = () => (
-  <div className="success-container">
-    <div>
-      <h2>Congratulations!</h2>
-      <small>You uploaded your files. Get some rest.</small>
-    </div>
-  </div>
-);
-
 // Container for thumbnail
 const ThumbnailWrapper = styled.div`
   width: 120px;
   align-items: center;
   padding: 5px;
+  ${({ isCover }) => isCover && `background: #17cb05`}
 `;
 
 // Thumbnail image
@@ -38,16 +40,6 @@ const ThumbnailImg = styled.img`
       return 0.3;
     }
   }};
-`;
-
-// Tooltip for mousing over to copy image url
-const ThumbnailTooltip = styled.span`
-  visibility: hidden;
-
-  ${ThumbnailWrapper}:hover & {
-    visibility: visible;
-    opacity: 1;
-  }
 `;
 
 // Thumbnail component
@@ -69,7 +61,7 @@ const Thumbnail = ({
       setTTText("Unset!");
       onSetCover("", "");
     } else {
-      setTTText("");
+      setTTText("Not yet uploaded");
     }
   };
 
@@ -79,15 +71,26 @@ const Thumbnail = ({
     } else if (wasUploaded) {
       setTTText("Unset as cover");
     } else {
-      setTTText("");
+      setTTText("Not yet uploaded");
     }
   };
 
   return (
-    <ThumbnailWrapper onClick={onClick} onMouseEnter={onMouseEnter}>
-      <ThumbnailImg src={src} alt={filename} wasUploaded={wasUploaded} />
-      <ThumbnailTooltip>{ttText}</ThumbnailTooltip>
-    </ThumbnailWrapper>
+    <OverlayTrigger
+      placement="bottom"
+      trigger={["hover", "focus"]}
+      overlay={
+        <UpdatingTooltip id="favorite-tooltip">{ttText}</UpdatingTooltip>
+      }
+    >
+      <ThumbnailWrapper
+        isCover={wasUploaded && curCover === downloadURL}
+        onClick={onClick}
+        onMouseEnter={onMouseEnter}
+      >
+        <ThumbnailImg src={src} alt={filename} wasUploaded={wasUploaded} />
+      </ThumbnailWrapper>
+    </OverlayTrigger>
   );
 };
 
@@ -96,9 +99,19 @@ const ThumbnailContainer = styled.div`
   flex-wrap: wrap;
 `;
 
-const UploadButton = styled.button`
-  padding: 10px;
-`;
+const UploadButton = ({ status }) => {
+  if (status === LOADED) {
+    return <SecondaryButton>Upload</SecondaryButton>;
+  } else if (status === INIT || status === PENDING) {
+    return <SecondaryButton disabled>Uploading...</SecondaryButton>;
+  } else if (status === FILES_UPLOADED) {
+    return <SecondaryButton disabled>Uploaded!</SecondaryButton>;
+  } else if (status === IDLE) {
+    return null;
+  } else {
+    return <SecondaryButton disabled>Error!</SecondaryButton>;
+  }
+};
 
 // Callbacks:
 //  onSetCover: called after an image is set as the cover with the src and alt
@@ -116,9 +129,7 @@ const ImageUploader = ({
   return (
     <div className="container">
       <form className="form" onSubmit={onSubmit}>
-        {status === "FILES_UPLOADED" && <SuccessContainer />}
-
-        <Input onChange={onChange} />
+        <FileInput onChange={onChange} />
 
         <ThumbnailContainer>
           {files.map(({ file, src, id }, index) => {
@@ -147,7 +158,7 @@ const ImageUploader = ({
             );
           })}
         </ThumbnailContainer>
-        {status === "LOADED" && <UploadButton>Upload</UploadButton>}
+        <UploadButton status={status} />
       </form>
     </div>
   );

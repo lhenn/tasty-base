@@ -1,13 +1,13 @@
 import { faBookmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import Overlay from "react-bootstrap/Overlay";
-import Tooltip from "react-bootstrap/Tooltip";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import { Redirect } from "react-router-dom";
 import styled from "styled-components";
 import { UserContext } from "../App";
 import { getFirebase } from "../firebase";
 import Button from "../general/button-primary";
+import UpdatingTooltip from "../general/tooltip";
 import OverviewWrapper from "./overview";
 
 const MainImg = styled.img`
@@ -107,12 +107,14 @@ const Author = ({ name }) => {
 const GalleryWrapper = styled.div`
   display: flex;
 `;
+
 const ThumbnailImg = styled.img`
   height: 200px;
   width: 200px;
   margin: 10px;
   object-fit: cover;
 `;
+
 const Gallery = ({ gallery }) => {
   return (
     <GalleryWrapper>
@@ -126,6 +128,7 @@ const Gallery = ({ gallery }) => {
     </GalleryWrapper>
   );
 };
+
 // authorName is either loaded from firebase (for SelfLoadingRecipePost) or
 // passed in using context (for previews during post edits/creates when user
 // has permission)
@@ -182,14 +185,9 @@ const FavoriteButton = styled.button`
 `;
 
 const Favorite = ({ slug, uid, isFavorite }) => {
-  console.log("Favorite", slug, uid, isFavorite);
   // Busy when sending favorite/unfavorite data to firebase
   const [busy, setBusy] = useState(false);
   const [ttText, setTTText] = useState("");
-  const [showTT, setShowTT] = useState(false);
-  const target = useRef(null);
-
-  useEffect(() => console.log("tt: ", ttText), [ttText]);
 
   const addFavorite = () => {
     if (busy) return;
@@ -230,29 +228,21 @@ const Favorite = ({ slug, uid, isFavorite }) => {
   };
 
   const onMouseEnter = () => {
-    console.log("onMouseEnter")
-    setShowTT(true);
     !isFavorite ? setTTText("Favorite") : setTTText("Unfavorite");
-  };
-  const onMouseLeave = () => {
-    console.log("onMouseLeave")
-    setShowTT(false)
   };
 
   return (
-    <>
-      <FavoriteButton
-        ref={target}
-        onClick={onClick}
-        onMouseEnter={onMouseEnter}
-        onMouseLeave={onMouseLeave}
-      >
+    <OverlayTrigger
+      placement="bottom"
+      trigger={["hover", "focus"]}
+      overlay={
+        <UpdatingTooltip id="favorite-tooltip">{ttText}</UpdatingTooltip>
+      }
+    >
+      <FavoriteButton onClick={onClick} onMouseEnter={onMouseEnter}>
         <FontAwesomeIcon icon={faBookmark} />
       </FavoriteButton>
-      <Overlay target={target.current} show={showTT} placement="bottom">
-        {(props) => <Tooltip {...props}>{ttText}</Tooltip>}
-      </Overlay>
-    </>
+    </OverlayTrigger>
   );
 };
 
