@@ -10,16 +10,21 @@ const NavWrapper = styled.div`
   display: flex;
   width: 100%;
   justify-content: center;
-  background-color: #ebcb0c;
-  padding: 20px 0;
+  background-color: #252525;
+  padding: 10px 0;
 `;
 
 const NavInner = styled.nav`
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   width: 100%;
   max-width: 900px;
+`;
+const LogoWrapper = styled.div`
+  display:flex;
+  flex-grow:1;
+  justify-content:flex-start;
 `;
 
 const NavBar = () => {
@@ -28,10 +33,11 @@ const NavBar = () => {
   return (
     <NavWrapper>
       <NavInner id="nav-bars">
+        <LogoWrapper>
         <Link to="/">
           <h2>Tasty Base</h2>
-          <MutedText text="An Adam&Laura© website" />
         </Link>
+        </LogoWrapper>
         {user ? <SignedInLinks user={user} /> : <SignedOutLinks />}
       </NavInner>
     </NavWrapper>

@@ -2,7 +2,11 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { getFirebase } from "../firebase";
-import Button from "./button-primary";
+import PrimaryButton from "./button-primary";
+import NavItem from "./nav-item";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBookmark } from "@fortawesome/free-solid-svg-icons";
+
 
 const UserWrapper = styled.div`
   display: flex;
@@ -11,8 +15,8 @@ const UserWrapper = styled.div`
 `;
 
 const UserPhotoC = styled.img`
-  width: 42px;
-  height: 42px;
+  width: 35px;
+  height: 35px;
   border-radius: 50px;
 `;
 
@@ -37,16 +41,12 @@ const SignedInLinks = ({ user }) => {
   };
   return (
     <>
-      <Link to="/create">
-        <Button>Create a post</Button>
-      </Link>
-      <Link to="/fav-recipes">
-        <Button>Favorites</Button>
-      </Link>
-      <UserWrapper>
+      <NavItem><UserWrapper>
         <UserPhoto src={user.photoURL} alt="user photo" />
         <SignOutLink onClick={logout}>Sign out</SignOutLink>
-      </UserWrapper>
+      </UserWrapper></NavItem>
+      <NavItem to="/fav-recipes"><FontAwesomeIcon icon={faBookmark} /></NavItem> 
+      <NavItem to="/create"><PrimaryButton>create a post +</PrimaryButton></NavItem>
     </>
   );
 };
