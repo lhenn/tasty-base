@@ -2,6 +2,7 @@
 
 body{
   font-family: 'Source Sans Pro', sans-serif;
+  background-color:whitesmoke !important;
 }
 a, a:hover{
   text-decoration: none !important;

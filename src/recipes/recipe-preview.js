@@ -28,6 +28,7 @@ const StyledImg = styled.img`
 
 const CardContent = styled.div`
   padding: 16px;
+  background-color:white;
 `;
 
 const Row1 = styled.div`
@@ -40,7 +41,6 @@ const Title = styled.span`
   color: black;
   font-size: 48px;
   text-decoration: none;
-  font-family: "Playfair Display", serif;
   background-image: linear-gradient(120deg, #fffa4e 0%, #fffa4e 100%);
   background-repeat: no-repeat;
   background-size: 100% 0.5em;

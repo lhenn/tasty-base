@@ -18,10 +18,10 @@ import Signin from "./pages/signin";
 import SelfLoadingRecipePost from "./recipes/recipe-post";
 
 const MainContent = styled.main`
-  max-width: 900px;
+  max-width: 1000px;
   margin: 20px auto;
   width: 100%;
-  background-color: white;
+  background-color: whitesmoke;
   padding: 20px;
 `;
 
