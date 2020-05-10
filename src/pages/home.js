@@ -1,10 +1,27 @@
 import React, { useEffect, useState } from "react";
+import styled from "styled-components";
 import { getFirebase } from "../firebase";
 import RecipePreview from "../recipes/recipe-preview";
+import DropdownButton from "react-bootstrap/DropdownButton";
+import Dropdown from "react-bootstrap/Dropdown";
+
+const HeaderWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
+const SortByContainer = styled.div`
+  display: flex;
+  align-items: center;
+`;
 
 const Home = () => {
   const [loading, setLoading] = useState(true);
   const [posts, setPosts] = useState([]);
+  const [sortOptions, setSortOptions] = useState([
+    { label: "newest", selected: true },
+    { label: "tastiest", selected: false },
+    { label: "easiest", selected: false }
+  ]);
 
   // Load all posts
   useEffect(() => {
@@ -35,7 +52,19 @@ const Home = () => {
   // slugs are unique and can thus be used as keys
   return (
     <>
-      <h1>Recipes</h1>
+      <HeaderWrapper>
+        <h1>Recipes</h1>
+        <SortByContainer>
+          <span>Sort by: </span>
+          <DropdownButton title={sortOptions.find(option=>option.selected == true).label}>
+            {sortOptions.filter(option=>!option.selected).map(option => {
+              return(
+                <Dropdown.Item key={option.label} >{option.label}</Dropdown.Item>
+              )
+            })}
+          </DropdownButton>
+        </SortByContainer>
+      </HeaderWrapper>
       {posts.map(({ slug, post }) => (
         <RecipePreview key={slug} post={post} slug={slug} />
       ))}
