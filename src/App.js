@@ -1,10 +1,5 @@
 import React, { createContext, useEffect, useState } from "react";
-import {
-  BrowserRouter as Router,
-  Redirect,
-  Route,
-  Switch,
-} from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import styled from "styled-components";
 import "./App.css";
 import { getFirebase } from "./firebase";
@@ -14,6 +9,7 @@ import Edit from "./pages/edit";
 import Favorites from "./pages/favorites";
 import Home from "./pages/home";
 import NoMatch from "./pages/no-match";
+import WishRecipes from "./pages/recipe-wishes";
 import Signin from "./pages/signin";
 import SelfLoadingRecipePost from "./recipes/recipe-post";
 
@@ -43,10 +39,12 @@ const onAuthStateChanged = (callback) => {
     .auth()
     .onAuthStateChanged((user) => {
       if (user) {
+        console.log("onAuthStateChanged: user");
         // Update info in firebase. Later we can let the user customize things.
         updateUser(user);
         callback(user);
       } else {
+        console.log("onAuthStateChanged: no user");
         callback(null);
       }
     });
@@ -69,32 +67,51 @@ const getUserData = (uid, callback) => {
 const App = () => {
   const [user, setUser] = useState(null);
   const [userData, setUserData] = useState(null);
+  const [loadingUser, setLoadingUser] = useState(true);
+  const [loadingUserData, setLoadingUserData] = useState(false);
 
   // Subscribe to listen for auth state changes when application mounts. Note
   // that onAuthStateChanged returns the auth unsubscribe function, so this
   // cleans up after itself.
-  useEffect(() => onAuthStateChanged(setUser), []);
+  useEffect(
+    () =>
+      onAuthStateChanged((u) => {
+        setUser(u);
+        setLoadingUser(false);
+      }),
+    []
+  );
+
   useEffect(() => {
-    if (user) return getUserData(user.uid, setUserData);
+    if (user) {
+      setLoadingUserData(true);
+      return getUserData(user.uid, (ud) => {
+        setUserData(ud);
+        setLoadingUserData(false);
+      });
+    }
   }, [user]);
 
   return (
-    <UserContext.Provider value={{ user, userData }}>
+    <UserContext.Provider
+      value={{ user, loadingUser, userData, loadingUserData }}
+    >
       <Router>
         <NavBar />
         <MainContent>
           <Switch>
             <Route exact path="/" component={Home} />
-            <Route path="/signin" component={Signin} />
-            <Route path="/fav-recipes" component={Favorites} />}
-            <Route path="/create" component={Create} />
-            <Route path="/404" component={NoMatch} />
+            <Route exact path="/signin" component={Signin} />
+            <Route exact path="/fav-recipes" component={Favorites} />
+            <Route exact path="/wish-recipes" component={WishRecipes} />
+            <Route exact path="/create" component={Create} />
             <Route
               exact
               path="/recipes/:slug"
               component={SelfLoadingRecipePost}
             />
             <Route exact path="/recipes/:slug/edit" component={Edit} />
+            <Route path="*" component={NoMatch} />
           </Switch>
         </MainContent>
       </Router>
