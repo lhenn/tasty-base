@@ -12,7 +12,7 @@ const InvisibleLink = styled.a`
     color: inherit;
   }
 `;
-const StyledCard = styled.div`
+const Card = styled.div`
   margin-top: 24px;
   box-shadow: 10px 10px 5px -10px rgba(0, 0, 0, 0.75);
   &:hover {
@@ -82,7 +82,7 @@ const Timestamp = ({ timestamp }) => {
 const RecipePreview = ({ post, slug }) => {
   return (
     <Link to={`/recipes/${slug}`}>
-      <StyledCard>
+      <Card>
         <StyledImg src={post.coverImageURL} alt={post.coverImageAlt} />
         <CardContent>
           <Row1>
@@ -95,7 +95,7 @@ const RecipePreview = ({ post, slug }) => {
           <OverviewWrapper post={post} />
           <br></br>
         </CardContent>
-      </StyledCard>
+      </Card>
     </Link>
   );
 };

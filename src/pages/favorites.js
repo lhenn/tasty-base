@@ -1,9 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
+import { Redirect } from "react-router-dom";
+import { UserContext } from "../App";
 import { getFirebase } from "../firebase";
 import RecipePreview from "../recipes/recipe-preview";
-import { UserContext } from "../App";
 
-const downloadPost = async (slugs) => {
+const downloadPosts = async (slugs) => {
   let posts = [];
 
   for (const slug of slugs) {
@@ -31,37 +32,49 @@ const FavoritesList = ({ posts }) => (
 // TODO: must be inaccessible if user is not logged in, but should show loading
 // message if waiting for authentication
 const Favorites = () => {
-  const [loading, setLoading] = useState(true);
+  // True when downloading favorite posts from firebase
+  const [loading, setLoading] = useState(false);
   const [posts, setPosts] = useState([]);
-  const { user, userData } = useContext(UserContext);
+  const { user, loadingUser, userData, loadingUserData } = useContext(
+    UserContext
+  );
 
   // Load all posts if userData is present
   useEffect(() => {
-    if (!user) {
-      setLoading(true);
-    } else if (userData) {
-      // User is present and has non-empty data: load it
+    if (
+      !loadingUser &&
+      !loadingUserData &&
+      user &&
+      userData &&
+      userData.favoriteRecipes
+    ) {
       setLoading(true);
 
       const favSlugs = Object.keys(userData.favoriteRecipes);
-      downloadPost(favSlugs)
+      downloadPosts(favSlugs)
         .then((favPosts) => {
           setPosts(favPosts);
           setLoading(false);
         })
-        .catch((err) => console.log("Favorites: downloadPost failed: ", err));
-    } else {
-      // User is authenticated, but they have no data
-      setPosts([]);
-      setLoading(false);
+        .catch((err) => console.log("Favorites: downloadPosts failed: ", err));
     }
-  }, [user, userData, setPosts, setLoading]);
+  }, [user, loadingUser, userData, loadingUserData]);
 
-  if (loading) {
+  // User auth and data loading underway
+  if (loadingUser || loadingUserData) {
     return <h1>Loading...</h1>;
   }
 
-  // slugs are unique and can thus be used as keys
+  // User auth completed
+  if (!user) {
+    return <Redirect to="/" />;
+  }
+
+  // User exists and may have favorite posts that are being loaded
+  if (loading) {
+    return <h1>Loading favorites recipes...</h1>;
+  }
+
   return (
     <>
       {posts.length > 0 ? (

@@ -1,4 +1,4 @@
-import { faBookmark, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
+import { faBookmark, faSignOutAlt, faList } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
@@ -46,9 +46,7 @@ const logout = () => {
     .auth()
     .signOut()
     .then(
-      function () {
-        return <Redirect to="/" />;
-      },
+      () => <Redirect to="/" />,
       function (error) {
         console.error("Sign Out Error", error);
       }
@@ -93,6 +91,13 @@ const SignedInLinks = ({ user }) => {
           <FontAwesomeIcon icon={faBookmark} />
         </Link>
       </NavItem>
+
+      <NavItem>
+        <Link to="/wish-recipes">
+          <FontAwesomeIcon icon={faList} />
+        </Link>
+      </NavItem>
+
       <NavItem>
         <Link to="/create">
           <PrimaryButton>create a post +</PrimaryButton>
