@@ -14,6 +14,8 @@ const SortByContainer = styled.div`
   align-items: center;
 `;
 
+
+
 const Home = () => {
   const [loading, setLoading] = useState(true);
   const [posts, setPosts] = useState([]);
@@ -23,6 +25,7 @@ const Home = () => {
     { label: "easiest", selected: false }
   ]);
 
+ 
   // Load all posts
   useEffect(() => {
     getFirebase()
@@ -44,6 +47,16 @@ const Home = () => {
         (err) => console.log("home: post loading failed with code: ", err.code)
       );
   }, []);
+  const sort = (label) => {
+    //TODO: use firebase to sort
+
+    //update the dropdown
+    let updatedSortOptions = [...sortOptions];
+    updatedSortOptions.forEach(option=>option.selected = false);
+    updatedSortOptions.find(option => option.label === label).selected = true;
+    setSortOptions(updatedSortOptions);
+  }
+
 
   if (loading) {
     return <h1>Loading...</h1>;
@@ -59,7 +72,7 @@ const Home = () => {
           <DropdownButton title={sortOptions.find(option=>option.selected == true).label}>
             {sortOptions.filter(option=>!option.selected).map(option => {
               return(
-                <Dropdown.Item key={option.label} >{option.label}</Dropdown.Item>
+                <Dropdown.Item key={option.label} onClick={()=>sort(option.label)}>{option.label}</Dropdown.Item>
               )
             })}
           </DropdownButton>
