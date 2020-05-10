@@ -1,11 +1,15 @@
-import React, { useEffect, useContext, useState } from "react";
-import { getFirebase } from "../firebase";
+import React, { useContext, useEffect, useState } from "react";
 import { Redirect } from "react-router-dom";
-import { UserContext } from "../App";
 import styled from "styled-components";
+import { UserContext } from "../App";
+import { getFirebase } from "../firebase";
 import Input from "../forms/input";
+import mdToHTML from "../forms/md-parse";
 
-const WishLink = styled.a``;
+const WishLink = styled.a`
+  text-decoration: underline !important;
+  color: ;
+`;
 
 const WishCardWrapper = styled.div`
   border: solid 2px black;
@@ -13,30 +17,12 @@ const WishCardWrapper = styled.div`
   margin-top: 10px;
 `;
 
-const WishCard = ({ wish }) => {
-  let linkText = [];
-
-  if (wish.links) {
-    const numLinks = Object.keys(wish.links).length;
-
-    for (var i = 0; i < numLinks; i++) {
-      const [text, href] = Object.entries(wish.links)[i];
-      linkText.push(
-        <WishLink key={text} href={href}>
-          {text}
-        </WishLink>
-      );
-      if (i < numLinks - 1) linkText.push(", ");
-    }
-  }
-
-  return (
-    <WishCardWrapper>
-      <strong>{wish.idea}</strong>
-      {wish.notes !== "" && <p>{wish.notes}</p>}
-    </WishCardWrapper>
-  );
-};
+const WishCard = ({ wish }) => (
+  <WishCardWrapper>
+    <strong>{wish.idea}</strong>
+    {wish.notes !== "" && <p>{mdToHTML(wish.notes, WishLink)}</p>}
+  </WishCardWrapper>
+);
 
 const WishCardsWrapper = styled.div`
   margin-top: 20px;
@@ -58,8 +44,6 @@ const WishCards = ({ wishes }) => {
   }
 };
 
-const Button = styled.button``;
-
 const WishlistHeader = styled.div`
   display: flex;
   justify-content: space-between;
@@ -78,14 +62,16 @@ const Notes = styled.textarea`
   padding: 0 0.38rem;
 `;
 
-const WishForm = ({ uid, setStatus }) => {
+const Button = styled.button``;
+
+const WishForm = ({ uid, status, setStatus }) => {
   const [idea, setIdea] = useState("");
   const [notes, setNotes] = useState("");
 
   useEffect(() => console.log(idea), [idea]);
   useEffect(() => console.log(notes), [notes]);
 
-  const onClick = () => {
+  const create = () => {
     console.log("create clicked");
     setStatus(UPLOADING);
     // push into /users/${uid}/data/wishRecipes
@@ -95,7 +81,10 @@ const WishForm = ({ uid, setStatus }) => {
       .push({ idea, notes })
       .then(() => setStatus(VIEWING))
       .catch((err) => console.log("wish form submission error: ", err));
-    // setStatus(VIEWING) when done
+  };
+
+  const cancel = () => {
+    setStatus(VIEWING);
   };
 
   return (
@@ -110,12 +99,17 @@ const WishForm = ({ uid, setStatus }) => {
       />
       <Notes
         id="notes"
-        placeholder="Notes and [links](https://example.com)"
+        placeholder="Notes, with [links](https://example.com)"
         value={notes}
         onChange={(e) => setNotes(e.target.value)}
       />
       <div style={{ textAlign: "right" }}>
-        <Button onClick={onClick}>Create</Button>
+        <Button onClick={create} disabled={status === UPLOADING}>
+          Create
+        </Button>
+        <Button onClick={cancel} disabled={status === UPLOADING}>
+          Cancel
+        </Button>
       </div>
     </WishCardWrapper>
   );
@@ -167,7 +161,9 @@ const WishRecipes = () => {
           Add wish
         </Button>
       </WishlistHeader>
-      {status !== VIEWING && <WishForm uid={user.uid} setStatus={setStatus} />}
+      {status !== VIEWING && (
+        <WishForm uid={user.uid} status={status} setStatus={setStatus} />
+      )}
       <WishCards wishes={wishes} />
     </>
   );
