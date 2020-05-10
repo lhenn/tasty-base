@@ -15,7 +15,6 @@ const SortByContainer = styled.div`
 `;
 
 
-
 const Home = () => {
   const [loading, setLoading] = useState(true);
   const [posts, setPosts] = useState([]);
