@@ -249,10 +249,6 @@ const WebSourceInput = styled.input`
   border-color: ${(props) => (props.validationFailed ? "red" : "none")};
 `;
 
-// From https://cran.r-project.org/web/packages/rex/vignettes/url_parsing.html
-const urlRegex =
-  "^(?:(?:http(?:s)?|ftp)://)(?:\\S+(?::(?:\\S)*)?@)?(?:(?:[a-z0-9\u00a1-\uffff](?:-)*)*(?:[a-z0-9\u00a1-\uffff])+)(?:\\.(?:[a-z0-9\u00a1-\uffff](?:-)*)*(?:[a-z0-9\u00a1-\uffff])+)*(?:\\.(?:[a-z0-9\u00a1-\uffff]){2,})(?::(?:\\d){2,5})?(?:/(?:\\S)*)?$";
-
 const emptyBasicInfo = {
   title: "",
   sourceType: "personal", // TODO: must manually align with an option...
@@ -382,7 +378,6 @@ const RecipeForm = ({ history, post, slug }) => {
                 type="url"
                 id="source"
                 placeholder="https://example.com"
-                pattern={urlRegex}
                 value={basicInfo.source}
                 onChange={(e) =>
                   setBasicInfo({ ...basicInfo, source: e.target.value })
@@ -522,6 +517,7 @@ const RecipeForm = ({ history, post, slug }) => {
                 coverImageAlt: "",
               })
             }
+            required
           />
         </FormGroup>
       </FormRow>
@@ -530,7 +526,7 @@ const RecipeForm = ({ history, post, slug }) => {
         <Label htmlFor="description" content="Description"></Label>
         <TextArea
           id="description"
-          placeholder="How did you find this recipe? What should we know about it?"
+          placeholder="Description, with [links](https://example.com)"
           value={basicInfo.description}
           onChange={(e) =>
             setBasicInfo({ ...basicInfo, description: e.target.value })

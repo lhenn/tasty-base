@@ -3,10 +3,12 @@
 body{
   font-family: 'Source Sans Pro', sans-serif;
 }
+
 a, a:hover{
   text-decoration: none !important;
   color:inherit !important;
 }
+
 nav a {
   text-decoration: none;
 }

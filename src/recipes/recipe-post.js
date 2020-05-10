@@ -1,11 +1,12 @@
 import { faBookmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import { Redirect } from "react-router-dom";
 import styled from "styled-components";
 import { UserContext } from "../App";
 import { getFirebase } from "../firebase";
+import mdToHTML from "../forms/md-parse";
 import Button from "../general/button-primary";
 import UpdatingTooltip from "../general/tooltip";
 import OverviewWrapper from "./overview";
@@ -129,10 +130,23 @@ const Gallery = ({ gallery }) => {
   );
 };
 
+const DescriptionLink = styled.a`
+  text-decoration: underline !important;
+  color: ;
+`;
+
 // authorName is either loaded from firebase (for SelfLoadingRecipePost) or
 // passed in using context (for previews during post edits/creates when user
 // has permission)
 export const DisplayRecipePost = ({ post, authorName }) => {
+  const descToHTML = (str) => {
+    try {
+      return mdToHTML(str, DescriptionLink);
+    } catch (err) {
+      return str;
+    }
+  };
+
   return (
     <>
       <MainImg
@@ -143,7 +157,9 @@ export const DisplayRecipePost = ({ post, authorName }) => {
       <Timestamp timestamp={post.timestamp} />
       <Author name={authorName} />
       <OverviewWrapper post={post} />
-      <Description>{post.description.replace(/\\n/g, "\n")}</Description>
+      <Description>
+        {descToHTML(post.description.replace(/\\n/g, "\n"))}
+      </Description>
       {post.sourceType === "personal" && (
         <Details
           ingredients={post.ingredients}
