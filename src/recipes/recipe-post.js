@@ -138,40 +138,30 @@ const DescriptionLink = styled.a`
 // authorName is either loaded from firebase (for SelfLoadingRecipePost) or
 // passed in using context (for previews during post edits/creates when user
 // has permission)
-export const DisplayRecipePost = ({ post, authorName }) => {
-  const descToHTML = (str) => {
-    try {
-      return mdToHTML(str, DescriptionLink);
-    } catch (err) {
-      return str;
-    }
-  };
-
-  return (
-    <>
-      <MainImg
-        src={post.coverImageURL}
-        onerror="this.onerror=null; this.src=''" // TODO: add default image?
+export const DisplayRecipePost = ({ post, authorName }) => (
+  <>
+    <MainImg
+      src={post.coverImageURL}
+      onerror="this.onerror=null; this.src=''" // TODO: add default image?
+    />
+    <h1>{post.title}</h1>
+    <Timestamp timestamp={post.timestamp} />
+    <Author name={authorName} />
+    <OverviewWrapper post={post} />
+    <Description>
+      {mdToHTML(post.description.replace(/\\n/g, "\n"), DescriptionLink)}
+    </Description>
+    {post.sourceType === "personal" && (
+      <Details
+        ingredients={post.ingredients}
+        instructions={post.instructions}
       />
-      <h1>{post.title}</h1>
-      <Timestamp timestamp={post.timestamp} />
-      <Author name={authorName} />
-      <OverviewWrapper post={post} />
-      <Description>
-        {descToHTML(post.description.replace(/\\n/g, "\n"))}
-      </Description>
-      {post.sourceType === "personal" && (
-        <Details
-          ingredients={post.ingredients}
-          instructions={post.instructions}
-        />
-      )}
-      {post.gallery && post.gallery.length > 0 && (
-        <Gallery gallery={post.gallery} />
-      )}
-    </>
-  );
-};
+    )}
+    {post.gallery && post.gallery.length > 0 && (
+      <Gallery gallery={post.gallery} />
+    )}
+  </>
+);
 
 const Edit = ({ slug }) => {
   const editPath = `/recipes/${slug}/edit`;

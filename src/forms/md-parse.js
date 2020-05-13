@@ -87,27 +87,32 @@ export const parseMD = (str) => {
  * link component is not provided as the second argument, <a href>...</a> will
  * be used.
  */
-const mdToHTML = (str, LinkComponent) => {
-  const parsed = parseMD(str);
-  return parsed.map((chunk) => {
-    if (typeof chunk === "string") {
-      return chunk;
-    } else {
-      if (LinkComponent) {
-        return (
-          <LinkComponent href={chunk.url} key={chunk.url}>
-            {chunk.text}
-          </LinkComponent>
-        );
+const mdToHTML = (str, LinkComponent, rethrow = false) => {
+  try {
+    const parsed = parseMD(str);
+    return parsed.map((chunk) => {
+      if (typeof chunk === "string") {
+        return chunk;
       } else {
-        return (
-          <a href={chunk.url} key={chunk.url}>
-            {chunk.text}
-          </a>
-        );
+        if (LinkComponent) {
+          return (
+            <LinkComponent href={chunk.url} key={chunk.url}>
+              {chunk.text}
+            </LinkComponent>
+          );
+        } else {
+          return (
+            <a href={chunk.url} key={chunk.url}>
+              {chunk.text}
+            </a>
+          );
+        }
       }
-    }
-  });
+    });
+  } catch (err) {
+    if (rethrow) throw err;
+    else return str;
+  }
 };
 
 export default mdToHTML;
