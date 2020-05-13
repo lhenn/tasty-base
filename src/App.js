@@ -39,12 +39,10 @@ const onAuthStateChanged = (callback) => {
     .auth()
     .onAuthStateChanged((user) => {
       if (user) {
-        console.log("onAuthStateChanged: user");
         // Update info in firebase. Later we can let the user customize things.
         updateUser(user);
         callback(user);
       } else {
-        console.log("onAuthStateChanged: no user");
         callback(null);
       }
     });

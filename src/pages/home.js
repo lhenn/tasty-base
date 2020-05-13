@@ -69,7 +69,7 @@ const Home = () => {
         <h1>Recipes</h1>
         <SortByContainer>
           <span>Sort by: </span>
-          <DropdownButton title={sortOptions.find(option=>option.selected == true).label}>
+          <DropdownButton title={sortOptions.find(option=>option.selected === true).label}>
             {sortOptions.filter(option=>!option.selected).map(option => {
               return(
                 <Dropdown.Item key={option.label} onClick={()=>sort(option.label)}>{option.label}</Dropdown.Item>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import styled from "styled-components";
 import UpdatingTooltip from "../general/tooltip";

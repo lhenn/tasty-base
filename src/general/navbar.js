@@ -5,7 +5,6 @@ import { UserContext } from "../App";
 import LogoSource from "../assets/tasty-base-3.png";
 import SignedInLinks from "./signedin-links";
 import SignedOutLinks from "./signedout-links";
-import Button from 'react-bootstrap/Button';
 
 const NavWrapper = styled.div`
   display: flex;
@@ -14,7 +13,6 @@ const NavWrapper = styled.div`
   background-color: white;
   padding: 5px 0;
   box-shadow: 0px 10px 5px -10px rgba(0, 0, 0, 0.75);
-
 `;
 
 const NavInner = styled.nav`
@@ -25,12 +23,12 @@ const NavInner = styled.nav`
   max-width: 1000px;
 `;
 const LogoWrapper = styled.div`
-  display:flex;
-  flex-grow:1;
-  justify-content:flex-start;
+  display: flex;
+  flex-grow: 1;
+  justify-content: flex-start;
 `;
 const Logo = styled.img`
-  width:160px;
+  width: 160px;
 `;
 
 const NavBar = () => {
@@ -40,9 +38,9 @@ const NavBar = () => {
     <NavWrapper>
       <NavInner id="nav-bars">
         <LogoWrapper>
-        <Link to="/">
-          <Logo src={LogoSource}/>
-        </Link>
+          <Link to="/">
+            <Logo src={LogoSource} />
+          </Link>
         </LogoWrapper>
         {user ? <SignedInLinks user={user} /> : <SignedOutLinks />}
       </NavInner>

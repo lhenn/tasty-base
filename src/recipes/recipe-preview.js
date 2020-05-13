@@ -4,14 +4,6 @@ import styled from "styled-components";
 import OverviewWrapper from "./overview.js";
 import Ratings from "./ratings.js";
 
-const InvisibleLink = styled.a`
-  text-decoration: none;
-  color: inherit;
-  &:hover {
-    text-decoration: none;
-    color: inherit;
-  }
-`;
 const Card = styled.div`
   margin-top: 24px;
   box-shadow: 10px 10px 5px -10px rgba(0, 0, 0, 0.75);
@@ -28,7 +20,7 @@ const StyledImg = styled.img`
 
 const CardContent = styled.div`
   padding: 16px;
-  background-color:white;
+  background-color: white;
 `;
 
 const Row1 = styled.div`
