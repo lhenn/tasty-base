@@ -1,5 +1,5 @@
 
-
+/*general*/
 body{
   font-family: 'Source Sans Pro', sans-serif;
   background-color:whitesmoke !important;
@@ -18,10 +18,20 @@ nav a h2 {
   color: #ffffff;
   margin: 0;
 }
-
-
-
 .card-content a {
   display: inline-block;
   margin-top: 12px;
+}
+
+/* override bootstrap components */
+.btn-primary, .dropdown-toggle{
+  background-image: linear-gradient(45deg,#738fce,#8377c7);
+    color: white;
+    padding: 7px 15px;
+    border-radius: 50px !important;
+    margin-left: 10px;
+    font-size: 15px;
+    border:0 !important;
+    font-weight: bold;
+    border: 0;
 }
