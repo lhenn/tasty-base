@@ -70,6 +70,9 @@ const App = () => {
   const [loadingUser, setLoadingUser] = useState(true);
   const [loadingUserData, setLoadingUserData] = useState(false);
 
+  const [loadingPosts, setLoadingPosts] = useState(true);
+  const [posts, setPosts] = useState([]);
+
   // Subscribe to listen for auth state changes when application mounts. Note
   // that onAuthStateChanged returns the auth unsubscribe function, so this
   // cleans up after itself.
@@ -82,6 +85,7 @@ const App = () => {
     []
   );
 
+  // Load user data once user is authenticated
   useEffect(() => {
     if (user) {
       setLoadingUserData(true);
@@ -92,6 +96,31 @@ const App = () => {
     }
   }, [user]);
 
+  const fetchPosts = (sortBy = "timestamp", order = "reverse") => {
+    setLoadingPosts(true);
+    getFirebase()
+      .database()
+      .ref("posts")
+      .orderByChild(sortBy)
+      .once(
+        "value",
+        (snapshots) => {
+          let posts = [];
+          snapshots.forEach((snapshot) => {
+            posts.push({ slug: snapshot.key, post: snapshot.val() });
+          });
+
+          // Put newest posts first
+          order === "reverse" ? setPosts(posts.reverse()) : setPosts(posts);
+          setLoadingPosts(false);
+        },
+        (err) => console.log("home: post loading failed with code: ", err.code)
+      );
+  };
+
+  // Load all posts when App mounts
+  useEffect(fetchPosts, []);
+
   return (
     <UserContext.Provider
       value={{ user, loadingUser, userData, loadingUserData }}
@@ -100,7 +129,17 @@ const App = () => {
         <NavBar />
         <MainContent>
           <Switch>
-            <Route exact path="/" component={Home} />
+            <Route
+              exact
+              path="/"
+              render={() => (
+                <Home
+                  posts={posts}
+                  loadingPosts={loadingPosts}
+                  fetchPosts={fetchPosts}
+                />
+              )}
+            />
             <Route exact path="/signin" component={Signin} />
             <Route exact path="/fav-recipes" component={Favorites} />
             <Route exact path="/wish-recipes" component={WishRecipes} />

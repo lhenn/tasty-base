@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import styled from "styled-components";
-import { getFirebase } from "../firebase";
 import RecipePreview from "../recipes/recipe-preview";
 
 const HeaderWrapper = styled.div`
@@ -15,47 +14,32 @@ const SortByContainer = styled.div`
   align-items: center;
 `;
 
-const Home = () => {
-  const [loading, setLoading] = useState(true);
-  const [posts, setPosts] = useState([]);
+const Home = ({ loadingPosts, posts, fetchPosts }) => {
   const [sortOptions, setSortOptions] = useState([
     { label: "newest", selected: true },
     { label: "tastiest", selected: false },
     { label: "easiest", selected: false },
   ]);
 
-  // Load all posts
-  useEffect(() => {
-    getFirebase()
-      .database()
-      .ref("posts")
-      .orderByChild("timestamp")
-      .once(
-        "value",
-        (snapshots) => {
-          let posts = [];
-          snapshots.forEach((snapshot) => {
-            posts.push({ slug: snapshot.key, post: snapshot.val() });
-          });
+  const labelToFetchOptions = {
+    newest: ("timestamp", "reverse"),
+    tastiest: ("tastiness", "forward"),
+    easiest: ("easiness", "forward"),
+  };
 
-          // Put newest posts first
-          setPosts(posts.reverse());
-          setLoading(false);
-        },
-        (err) => console.log("home: post loading failed with code: ", err.code)
-      );
-  }, []);
   const sort = (label) => {
-    //TODO: use firebase to sort
+    // Fetch sorted data. Currently we could do sorting on front end, but that
+    // won't scale when we have more posts.
+    fetchPosts(labelToFetchOptions[label]);
 
-    //update the dropdown
+    // Update the dropdown
     let updatedSortOptions = [...sortOptions];
     updatedSortOptions.forEach((option) => (option.selected = false));
     updatedSortOptions.find((option) => option.label === label).selected = true;
     setSortOptions(updatedSortOptions);
   };
 
-  if (loading) {
+  if (loadingPosts) {
     return <h1>Loading...</h1>;
   }
 
