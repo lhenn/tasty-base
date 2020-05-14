@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from "react";
+import Dropdown from "react-bootstrap/Dropdown";
+import DropdownButton from "react-bootstrap/DropdownButton";
 import styled from "styled-components";
 import { getFirebase } from "../firebase";
 import RecipePreview from "../recipes/recipe-preview";
-import DropdownButton from "react-bootstrap/DropdownButton";
-import Dropdown from "react-bootstrap/Dropdown";
 
 const HeaderWrapper = styled.div`
   display: flex;
   justify-content: space-between;
 `;
+
 const SortByContainer = styled.div`
   display: flex;
   align-items: center;
 `;
-
 
 const Home = () => {
   const [loading, setLoading] = useState(true);
@@ -21,10 +21,9 @@ const Home = () => {
   const [sortOptions, setSortOptions] = useState([
     { label: "newest", selected: true },
     { label: "tastiest", selected: false },
-    { label: "easiest", selected: false }
+    { label: "easiest", selected: false },
   ]);
 
- 
   // Load all posts
   useEffect(() => {
     getFirebase()
@@ -51,11 +50,10 @@ const Home = () => {
 
     //update the dropdown
     let updatedSortOptions = [...sortOptions];
-    updatedSortOptions.forEach(option=>option.selected = false);
-    updatedSortOptions.find(option => option.label === label).selected = true;
+    updatedSortOptions.forEach((option) => (option.selected = false));
+    updatedSortOptions.find((option) => option.label === label).selected = true;
     setSortOptions(updatedSortOptions);
-  }
-
+  };
 
   if (loading) {
     return <h1>Loading...</h1>;
@@ -68,12 +66,21 @@ const Home = () => {
         <h1>Recipes</h1>
         <SortByContainer>
           <span>Sort by: </span>
-          <DropdownButton title={sortOptions.find(option=>option.selected === true).label}>
-            {sortOptions.filter(option=>!option.selected).map(option => {
-              return(
-                <Dropdown.Item key={option.label} onClick={()=>sort(option.label)}>{option.label}</Dropdown.Item>
-              )
-            })}
+          <DropdownButton
+            title={sortOptions.find((option) => option.selected === true).label}
+          >
+            {sortOptions
+              .filter((option) => !option.selected)
+              .map((option) => {
+                return (
+                  <Dropdown.Item
+                    key={option.label}
+                    onClick={() => sort(option.label)}
+                  >
+                    {option.label}
+                  </Dropdown.Item>
+                );
+              })}
           </DropdownButton>
         </SortByContainer>
       </HeaderWrapper>

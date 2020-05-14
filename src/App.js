@@ -3,7 +3,9 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import styled from "styled-components";
 import "./App.css";
 import { getFirebase } from "./firebase";
+import Footer from "./general/footer";
 import NavBar from "./general/navbar";
+import About from "./pages/about";
 import Create from "./pages/create";
 import Edit from "./pages/edit";
 import Favorites from "./pages/favorites";
@@ -103,6 +105,7 @@ const App = () => {
             <Route exact path="/fav-recipes" component={Favorites} />
             <Route exact path="/wish-recipes" component={WishRecipes} />
             <Route exact path="/create" component={Create} />
+            <Route exact path="/about" component={About} />
             <Route
               exact
               path="/recipes/:slug"
@@ -112,6 +115,7 @@ const App = () => {
             <Route path="*" component={NoMatch} />
           </Switch>
         </MainContent>
+        <Footer />
       </Router>
     </UserContext.Provider>
   );
