@@ -9,6 +9,7 @@ import About from "./pages/about";
 import Create from "./pages/create";
 import Edit from "./pages/edit";
 import Favorites from "./pages/favorites";
+import Graph from "./pages/graph";
 import Home from "./pages/home";
 import NoMatch from "./pages/no-match";
 import WishRecipes from "./pages/recipe-wishes";
@@ -21,6 +22,7 @@ const MainContent = styled.main`
   width: 100%;
   background-color: whitesmoke;
   padding: 20px;
+  min-height: 80vh;
 `;
 
 export const UserContext = createContext(null);
@@ -145,6 +147,11 @@ const App = () => {
             <Route exact path="/wish-recipes" component={WishRecipes} />
             <Route exact path="/create" component={Create} />
             <Route exact path="/about" component={About} />
+            <Route
+              exact
+              path="/graph"
+              render={() => <Graph posts={posts} loadingPosts={loadingPosts} />}
+            />
             <Route
               exact
               path="/recipes/:slug"

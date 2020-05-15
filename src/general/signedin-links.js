@@ -1,4 +1,8 @@
-import { faBookmark, faSignOutAlt, faList } from "@fortawesome/free-solid-svg-icons";
+import {
+  faBookmark,
+  faList,
+  faSignOutAlt,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
@@ -77,6 +81,25 @@ const UserPhoto = ({ user }) => {
   );
 };
 
+// Taken from https://github.com/plotly/plotly-icons/tree/master/src/svg
+// TODO: make THICKer
+const StyledSVG = styled.svg`
+  fill: currentColor;
+`;
+
+const ScatterIcon = () => (
+  <StyledSVG
+    version="1.1"
+    xmlns="http://www.w3.org/2000/svg"
+    width="20"
+    height="20"
+    viewBox="0 0 32 32"
+  >
+    <title>scatter-axes</title>
+    <path d="M29.375 28.375h-24.313c-0.75 0-1.438-0.625-1.438-1.375v-24.375c0-0.563-0.438-1-1-1s-1 0.438-1 1v24.375c0 1.875 1.5 3.375 3.438 3.375h24.375c0.563 0 1-0.438 1-1s-0.5-1-1.063-1zM10.938 22.063c0 1-0.813 1.75-1.75 1.75s-1.75-0.75-1.75-1.75c0-0.938 0.813-1.688 1.75-1.688s1.75 0.75 1.75 1.688zM17.25 12.813c0 1-0.75 1.75-1.75 1.75-0.938 0-1.688-0.75-1.688-1.75 0-0.938 0.75-1.688 1.688-1.688 1 0 1.75 0.75 1.75 1.688zM19.438 19.625c0 1-0.75 1.75-1.688 1.75-1 0-1.75-0.75-1.75-1.75 0-0.938 0.75-1.688 1.75-1.688 0.938 0 1.688 0.75 1.688 1.688zM24.313 14.063c0 0.938-0.75 1.688-1.75 1.688-0.938 0-1.688-0.75-1.688-1.688s0.75-1.75 1.688-1.75c1 0 1.75 0.813 1.75 1.75zM27 7.5c0 0.938-0.813 1.688-1.75 1.688s-1.75-0.75-1.75-1.688c0-0.938 0.813-1.75 1.75-1.75s1.75 0.813 1.75 1.75z" />
+  </StyledSVG>
+);
+
 const SignedInLinks = ({ user }) => {
   return (
     <>
@@ -84,6 +107,12 @@ const SignedInLinks = ({ user }) => {
         <UserWrapper>
           <UserPhoto user={user} />
         </UserWrapper>
+      </NavItem>
+
+      <NavItem>
+        <Link to="/graph">
+          <ScatterIcon />
+        </Link>
       </NavItem>
 
       <NavItem>
