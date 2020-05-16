@@ -1,5 +1,5 @@
-import React, { useState } from "react";
 import { ResponsiveScatterPlot } from "@nivo/scatterplot";
+import React, { useState } from "react";
 import styled from "styled-components";
 import RecipePreview from "../recipes/recipe-preview";
 
@@ -29,7 +29,7 @@ const Tooltip = ({ post }) => {
   );
 };
 
-const jitter = (x, amount = 0.3, xMin = 0, xMax = 100, step = 10) => {
+const jitter = (x, amount = 0.3, xMin = 1, xMax = 10, step = 1) => {
   if (xMax - x > 0.5 * step && x - xMin > 0.5 * step) {
     return x + amount * step * (Math.random() - 0.5);
   } else if (x - xMin < 0.5 * step) {
@@ -39,63 +39,65 @@ const jitter = (x, amount = 0.3, xMin = 0, xMax = 100, step = 10) => {
   }
 };
 
+const Scatterplot = React.memo(({ posts, setPreviewIndex }) => {
+  console.log("Scatterplot rerender");
+
+  const data = Object.values(posts).map(({ post, slug }) => {
+    const x = jitter(post.easiness);
+    const y = jitter(post.tastiness);
+    return { id: slug, data: [{ x, y }] };
+  });
+
+  return (
+    <div style={{ height: 500, width: "70%" }}>
+      <ResponsiveScatterPlot
+        data={data}
+        margin={{ top: 60, right: 140, bottom: 70, left: 90 }}
+        xScale={{ type: "linear", min: 1, max: 10 }}
+        yScale={{ type: "linear", min: 1, max: 10 }}
+        axisBottom={{
+          orient: "bottom",
+          legend: "Ease",
+          legendPosition: "middle",
+          legendOffset: 60,
+        }}
+        axisLeft={{
+          orient: "bottom",
+          legend: "Taste",
+          legendPosition: "middle",
+          legendOffset: -60,
+        }}
+        animate={false}
+        blendMode={"multiply"}
+        onClick={(node) => setPreviewIndex(node.index)}
+        tooltip={({ node }) => <Tooltip post={posts[node.index]} />}
+      />
+    </div>
+  );
+});
+
 // Make sure parent container have a defined height when using
 // responsive component, otherwise height will be 0 and
 // no chart will be rendered.
 const Graph = ({ posts, loadingPosts }) => {
-  const [previewing, setPreviewing] = useState(null);
+  const [previewIndex, setPreviewIndex] = useState(null);
 
-  if (loadingPosts) {
+  console.log("Graph rerender");
+
+  if (loadingPosts || !posts) {
     return <h1>Loading posts...</h1>;
   }
 
-  const data = [
-    {
-      id: "recipes",
-      data: Object.values(posts).map((p) => {
-        const x = jitter(p.post.easiness * 10);
-        const y = jitter(p.post.tastiness * 10);
-        return { x, y };
-      }),
-    },
-  ];
-
-  const onClick = (node) => {
-    console.log(posts[node.index]);
-    if (!previewing) {
-      setPreviewing(posts[node.index]);
-    } else {
-      setPreviewing(null);
-    }
-  };
-
   return (
-    <div style={{ display: "flex"}}>
-      <div style={{ height: 500,  width:'70%' }}>
-        <ResponsiveScatterPlot
-          data={data}
-          margin={{ top: 60, right: 140, bottom: 70, left: 90 }}
-          xScale={{ type: "linear", min: 0, max: 100 }}
-          yScale={{ type: "linear", min: 0, max: 100 }}
-          axisBottom={{
-            orient: "bottom",
-            legend: "Ease",
-            legendPosition: "middle",
-            legendOffset: 60,
-          }}
-          axisLeft={{
-            orient: "bottom",
-            legend: "Taste",
-            legendPosition: "middle",
-            legendOffset: -60,
-          }}
-          animate={false}
-          onClick={onClick}
-          tooltip={({ node }) => <Tooltip post={posts[node.index]} />}
-        />
-      </div>
-      {previewing && (
-        <RecipePreview post={previewing.post} slug={previewing.slug} />
+    <div style={{ display: "flex" }}>
+      <Scatterplot posts={posts} setPreviewIndex={setPreviewIndex} />
+      {previewIndex !== null && (
+        <div style={{ width: "30%" }}>
+          <RecipePreview
+            post={posts[previewIndex].post}
+            slug={posts[previewIndex].slug}
+          />
+        </div>
       )}
     </div>
   );
