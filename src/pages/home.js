@@ -20,10 +20,9 @@ const PostsContainer = styled.div`
 const Column = styled.div``;
 
 const Home = ({ loadingPosts, posts, fetchPosts }) => {
-  const breakpoints = useBreakpoint();
 
-  console.log(breakpoints);
   let numCols;
+  const breakpoints = useBreakpoint();
   if (!breakpoints.small && !breakpoints.medium) numCols = 3;
   else if (!breakpoints.small && breakpoints.medium) numCols = 2;
   else numCols = 1;
@@ -55,16 +54,9 @@ const Home = ({ loadingPosts, posts, fetchPosts }) => {
   if (loadingPosts) {
     return <h1>Loading...</h1>;
   }
+
   //split up posts for each column
-
-  //add to column(s)
-  console.log("the posts: ", posts);
-
-  let Cols = [];
-  let Col1Posts = [];
-  let Col2Posts = [];
-  let Col3Posts = [];
-  let PostsByCol = [[], [], []];
+  let PostsByCol = [[],[],[]];
 
   posts.forEach((post, index) => {
     if (numCols === 3) {
@@ -72,12 +64,14 @@ const Home = ({ loadingPosts, posts, fetchPosts }) => {
       else if ((index + 2) % 3 === 0) PostsByCol[1].push(post);
       else PostsByCol[0].push(post);
     } else if (numCols === 2) {
-      (index + 1) % 2 == 0
+      (index + 1) % 2 === 0
         ? PostsByCol[1].push(post)
         : PostsByCol[0].push(post);
     } else PostsByCol[0].push(post);
   });
-  console.log("posts by col", PostsByCol);
+
+  //add divided posts to column(s)
+  let Cols = [];
 
   for (let i = 0; i < numCols; i++) {
     Cols.push(
