@@ -117,21 +117,3 @@ const Home = ({ loadingPosts, posts, fetchPosts }) => {
 
 export default Home;
 
-// <Column>
-//           {posts
-//             .filter((post, index) => {
-//               return index % 2 === 0;
-//             })
-//             .map(({ slug, post }) => (
-//               <RecipePreview key={slug} post={post} slug={slug} />
-//             ))}
-//         </Column>
-//         <Column>
-//           {posts
-//             .filter((post, index) => {
-//               return index % 2 !== 0;
-//             })
-//             .map(({ slug, post }) => (
-//               <RecipePreview key={slug} post={post} slug={slug} />
-//             ))}
-//         </Column>
