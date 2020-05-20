@@ -1,14 +1,9 @@
 import React, { useState } from "react";
-import {useBreakpoint} from '../App.js';
+import { useBreakpoint } from "../App.js";
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import styled from "styled-components";
 import RecipePreview from "../recipes/recipe-preview";
-
-//Breakpoints:
-//3 columns, min-width: 1350px
-//2 columns, min-width: 850px
-
 
 const HeaderWrapper = styled.div`
   display: flex;
@@ -27,16 +22,12 @@ const Column = styled.div``;
 const Home = ({ loadingPosts, posts, fetchPosts }) => {
   const breakpoints = useBreakpoint();
 
-  const matchingList = Object.keys(breakpoints).map(media => (
-    <li key={media}>{media} ---- {breakpoints[media] ? 'Yes' : 'No'}</li>
-  ));
-
   console.log(breakpoints);
   let numCols;
-  if(!breakpoints.small && !breakpoints.medium) numCols = 3;
-  else if(!breakpoints.small && breakpoints.medium) numCols = 2;
-  else numCols = 1
-  
+  if (!breakpoints.small && !breakpoints.medium) numCols = 3;
+  else if (!breakpoints.small && breakpoints.medium) numCols = 2;
+  else numCols = 1;
+
   const [sortOptions, setSortOptions] = useState([
     { label: "newest", selected: true },
     { label: "tastiest", selected: false },
@@ -61,7 +52,44 @@ const Home = ({ loadingPosts, posts, fetchPosts }) => {
     setSortOptions(updatedSortOptions);
   };
 
+  if (loadingPosts) {
+    return <h1>Loading...</h1>;
+  }
+  //split up posts for each column
 
+  //add to column(s)
+  console.log("the posts: ", posts);
+
+  let Cols = [];
+  let Col1Posts = [];
+  let Col2Posts = [];
+  let Col3Posts = [];
+  let PostsByCol = [[], [], []];
+
+  posts.forEach((post, index) => {
+    if (numCols === 3) {
+      if ((index + 1) % 3 === 0) PostsByCol[2].push(post);
+      else if ((index + 2) % 3 === 0) PostsByCol[1].push(post);
+      else PostsByCol[0].push(post);
+    } else if (numCols === 2) {
+      (index + 1) % 2 == 0
+        ? PostsByCol[1].push(post)
+        : PostsByCol[0].push(post);
+    } else PostsByCol[0].push(post);
+  });
+  console.log("posts by col", PostsByCol);
+
+  for (let i = 0; i < numCols; i++) {
+    Cols.push(
+      <Column key={i}>
+        {PostsByCol[i].map(({ slug, post }) => (
+          <RecipePreview key={slug} post={post} slug={slug} />
+        ))}
+      </Column>
+    );
+  }
+
+  // slugs are unique and can thus be used as keys
   return (
     <>
       <HeaderWrapper>
@@ -87,31 +115,29 @@ const Home = ({ loadingPosts, posts, fetchPosts }) => {
         </SortByContainer>
       </HeaderWrapper>
       <PostsContainer>
-     <ol>
-      {numCols} columns
-    </ol>
-        <Column>
-          {posts
-            .filter((post, index) => {
-              return index % 2 === 0;
-            })
-            .map(({ slug, post }) => (
-              <RecipePreview key={slug} post={post} slug={slug} />
-            ))}
-        </Column>
-        <Column>
-          {posts
-            .filter((post, index) => {
-              return index % 2 !== 0;
-            })
-            .map(({ slug, post }) => (
-              <RecipePreview key={slug} post={post} slug={slug} />
-            ))}
-        </Column>
-       
+        {Cols}
       </PostsContainer>
     </>
   );
 };
 
 export default Home;
+
+// <Column>
+//           {posts
+//             .filter((post, index) => {
+//               return index % 2 === 0;
+//             })
+//             .map(({ slug, post }) => (
+//               <RecipePreview key={slug} post={post} slug={slug} />
+//             ))}
+//         </Column>
+//         <Column>
+//           {posts
+//             .filter((post, index) => {
+//               return index % 2 !== 0;
+//             })
+//             .map(({ slug, post }) => (
+//               <RecipePreview key={slug} post={post} slug={slug} />
+//             ))}
+//         </Column>
