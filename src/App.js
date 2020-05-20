@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import styled from "styled-components";
 import "./App.css";
@@ -66,6 +66,76 @@ const getUserData = (uid, callback) => {
   return () => userDataRef.off();
 };
 
+
+const defaultValue = {};
+export const BreakpointContext = createContext({});
+
+const BreakpointProvider = ({children, queries}) => {
+  //State in which we maintain matching query
+  const [queryMatch, setQueryMatch] = useState({});
+  
+  //Get matching query
+  useEffect(() => {
+    const mediaQueryLists = {};
+    const keys = Object.keys(queries);
+    let isAttached = false;
+
+    const handleQueryListener = () => {
+      const updatedMatches = keys.reduce((acc, media) => {
+        acc[media] = !!(mediaQueryLists[media] && mediaQueryLists[media].matches);
+        return acc;
+      }, {})
+      setQueryMatch(updatedMatches)
+    }
+    if (window && window.matchMedia) {
+      const matches = {};
+      keys.forEach(media => {
+        if (typeof queries[media] === 'string') {
+          mediaQueryLists[media] = window.matchMedia(queries[media]);
+          matches[media] = mediaQueryLists[media].matches
+        } else {
+          matches[media] = false
+        }
+      });
+      setQueryMatch(matches);
+      isAttached = true;
+      keys.forEach(media => {
+        if(typeof queries[media] === 'string') {
+          mediaQueryLists[media].addListener(handleQueryListener)
+        }
+      });
+    }
+
+    return () => {
+      if(isAttached) {
+        keys.forEach(media => {
+          if(typeof queries[media] === 'string') {
+            mediaQueryLists[media].removeListener(handleQueryListener)
+          }
+        });
+      }
+    }
+  }, [queries]);
+
+  return (
+    <BreakpointContext.Provider value={queryMatch}>
+      {children}
+    </BreakpointContext.Provider>
+  )
+
+}
+
+export const useBreakpoint = () => {
+  const context = useContext(BreakpointContext);
+  if(context === defaultValue) {
+    throw new Error('useBreakpoint must be used within BreakpointProvider');
+  }
+  return context;
+}
+
+
+
+
 const App = () => {
   const [user, setUser] = useState(null);
   const [userData, setUserData] = useState(null);
@@ -123,10 +193,17 @@ const App = () => {
   // Load all posts when App mounts
   useEffect(fetchPosts, []);
 
+  // define the breakpoints
+const queries = {
+  small: "(max-width: 850px)",
+  medium: "(max-width: 1350px)"
+}
+
   return (
     <UserContext.Provider
       value={{ user, loadingUser, userData, loadingUserData }}
     >
+      <BreakpointProvider queries={queries}>
       <Router>
         <NavBar />
         <MainContent>
@@ -163,6 +240,7 @@ const App = () => {
         </MainContent>
         <Footer />
       </Router>
+      </BreakpointProvider>
     </UserContext.Provider>
   );
 };

@@ -45,6 +45,7 @@ const SignOutLink = styled.button`
   }
 `;
 
+
 const logout = () => {
   getFirebase()
     .auth()

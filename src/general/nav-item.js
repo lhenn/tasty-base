@@ -5,8 +5,8 @@ const NavItem = styled.div`
   margin: 0 20px;
   font-size: 16px;
   color: #9791e8;
-  &:hover {
-    color: white;
+  &:hover{
+    cursor:pointer;
   }
 `;
 

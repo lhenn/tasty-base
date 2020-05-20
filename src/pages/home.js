@@ -1,8 +1,14 @@
 import React, { useState } from "react";
+import {useBreakpoint} from '../App.js';
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import styled from "styled-components";
 import RecipePreview from "../recipes/recipe-preview";
+
+//Breakpoints:
+//3 columns, min-width: 1350px
+//2 columns, min-width: 850px
+
 
 const HeaderWrapper = styled.div`
   display: flex;
@@ -13,8 +19,24 @@ const SortByContainer = styled.div`
   display: flex;
   align-items: center;
 `;
+const PostsContainer = styled.div`
+  display: flex;
+`;
+const Column = styled.div``;
 
 const Home = ({ loadingPosts, posts, fetchPosts }) => {
+  const breakpoints = useBreakpoint();
+
+  const matchingList = Object.keys(breakpoints).map(media => (
+    <li key={media}>{media} ---- {breakpoints[media] ? 'Yes' : 'No'}</li>
+  ));
+
+  console.log(breakpoints);
+  let numCols;
+  if(!breakpoints.small && !breakpoints.medium) numCols = 3;
+  else if(!breakpoints.small && breakpoints.medium) numCols = 2;
+  else numCols = 1
+  
   const [sortOptions, setSortOptions] = useState([
     { label: "newest", selected: true },
     { label: "tastiest", selected: false },
@@ -39,11 +61,7 @@ const Home = ({ loadingPosts, posts, fetchPosts }) => {
     setSortOptions(updatedSortOptions);
   };
 
-  if (loadingPosts) {
-    return <h1>Loading...</h1>;
-  }
 
-  // slugs are unique and can thus be used as keys
   return (
     <>
       <HeaderWrapper>
@@ -68,9 +86,30 @@ const Home = ({ loadingPosts, posts, fetchPosts }) => {
           </DropdownButton>
         </SortByContainer>
       </HeaderWrapper>
-      {posts.map(({ slug, post }) => (
-        <RecipePreview key={slug} post={post} slug={slug} />
-      ))}
+      <PostsContainer>
+     <ol>
+      {numCols} columns
+    </ol>
+        <Column>
+          {posts
+            .filter((post, index) => {
+              return index % 2 === 0;
+            })
+            .map(({ slug, post }) => (
+              <RecipePreview key={slug} post={post} slug={slug} />
+            ))}
+        </Column>
+        <Column>
+          {posts
+            .filter((post, index) => {
+              return index % 2 !== 0;
+            })
+            .map(({ slug, post }) => (
+              <RecipePreview key={slug} post={post} slug={slug} />
+            ))}
+        </Column>
+       
+      </PostsContainer>
     </>
   );
 };
