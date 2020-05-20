@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import Ratings from "./ratings.js";
@@ -83,14 +83,16 @@ const Icon = styled(FontAwesomeIcon)`
 // NEW STYLES END
 const RecipePreview = ({ post, slug }) => {
   const [authorName, setAuthorName] = useState("");
-
   // Get author name
-  getFirebase()
+  useEffect( () => {
+    let isMounted = true;
+    getFirebase()
     .database()
     .ref(`/users/${post.author}/name`)
     .once("value")
     .then(
       (snapshot) => {
+        if(!isMounted) return;
         setAuthorName(snapshot.val());
       },
       (err) =>
@@ -99,6 +101,10 @@ const RecipePreview = ({ post, slug }) => {
           err.code
         )
     );
+    return () => {
+      isMounted = false;
+    }
+  }, []);
 
   return (
     <Link to={`/recipes/${slug}`}>

@@ -24,7 +24,7 @@ const About = () => {
           important since he was previously using a giant text file.
         </li>
         <li>Realistic taste and ease ratings for each recipe.</li>
-        <li>No life stories you have to scroll through to get to recipes.</li>
+        <li>No advertisements or life stories you have to scroll through to get to recipes.</li>
       </ul>
       <p>There are several cool features we'll be adding soon:</p>
       <ul>
