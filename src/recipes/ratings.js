@@ -82,7 +82,7 @@ const Ratings = (props) => {
               {" "}
               &nbsp;{easePercent}%
             </BarSection>
-            <BarSection color="#fb6e5f5e" percentage={100 - tastePercent}>
+            <BarSection color="#fb6e5f5e" percentage={100 - easePercent}>
               &nbsp;
             </BarSection>
           </BarWrapper>

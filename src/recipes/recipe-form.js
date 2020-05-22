@@ -8,7 +8,7 @@ import TextArea from "../forms/text-area";
 import Button from "../general/button-primary";
 import ImageUploader from "../general/image-uploader";
 import useFileHandlers, { FILES_UPLOADED } from "../useFileHandlers";
-import { DisplayRecipePost } from "./recipe-post";
+import DisplayRecipePost  from "./display-recipe";
 
 const FormGroup = styled.div`
   display: flex;
