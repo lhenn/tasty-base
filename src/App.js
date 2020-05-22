@@ -17,7 +17,7 @@ import Signin from "./pages/signin";
 import SelfLoadingRecipePost from "./recipes/recipe-post";
 
 const MainContent = styled.main`
-  max-width: 1000px;
+  max-width: 1100px;
   margin: 20px auto;
   width: 100%;
   background-color: whitesmoke;
@@ -169,6 +169,7 @@ const App = () => {
   }, [user]);
 
   const fetchPosts = (sortBy = "timestamp", order = "reverse") => {
+    let isMounted = true;
     setLoadingPosts(true);
     getFirebase()
       .database()
@@ -177,6 +178,7 @@ const App = () => {
       .once(
         "value",
         (snapshots) => {
+          if(!isMounted) return;
           let posts = [];
           snapshots.forEach((snapshot) => {
             posts.push({ slug: snapshot.key, post: snapshot.val() });
@@ -188,6 +190,7 @@ const App = () => {
         },
         (err) => console.log("home: post loading failed with code: ", err.code)
       );
+        return () => isMounted = false;
   };
 
   // Load all posts when App mounts

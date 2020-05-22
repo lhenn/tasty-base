@@ -25,17 +25,19 @@ const Timestamp = ({ timestamp }) => {
 };
 // NEW STYLES START
 const Card = styled.div`
-  margin: 15px;
-  display: inline-flex;
+  margin: 10px;
+  display: flex;
   flex-direction:column;
   box-shadow: 10px 10px 5px -10px rgba(0, 0, 0, 0.75);
   &:hover {
     box-shadow: 10px 10px 5px -9px rgba(0, 0, 0, 0.75);
   }
-  width: 400px;
+ width:95%;
+ 
 `;
 const StyledImg = styled.img`
   height: 250px;
+  width:inherit;
   object-fit: cover;
 
 `;
@@ -104,7 +106,7 @@ const RecipePreview = ({ post, slug }) => {
     return () => {
       isMounted = false;
     }
-  }, []);
+  }, [post]);
 
   return (
     <Link to={`/recipes/${slug}`}>
