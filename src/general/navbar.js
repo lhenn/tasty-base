@@ -20,7 +20,7 @@ const NavInner = styled.nav`
   justify-content: flex-end;
   align-items: center;
   width: 100%;
-  max-width: 1000px;
+  max-width: 1100px;
 `;
 const LogoWrapper = styled.div`
   display: flex;

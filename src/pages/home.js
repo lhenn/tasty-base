@@ -17,9 +17,15 @@ const SortByContainer = styled.div`
 
 const PostsContainer = styled.div`
   display: flex;
+  justify-content: center;
 `;
 
-const Column = styled.div``;
+const Column = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  width: 100%;
+`;
 
 const Home = ({ loadingPosts, posts, fetchPosts }) => {
   const [sortBy, setSortBy] = useState("newest");
