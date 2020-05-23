@@ -1,8 +1,9 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useCallback, useEffect, useState } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import styled from "styled-components";
 import "./App.css";
-import { getFirebase } from "./firebase";
+import { BreakpointProvider } from "./breakpoint-hooks";
+import { fetchPosts, getFirebase } from "./firebase";
 import Footer from "./general/footer";
 import NavBar from "./general/navbar";
 import About from "./pages/about";
@@ -25,7 +26,7 @@ const MainContent = styled.main`
   min-height: 80vh;
 `;
 
-export const UserContext = createContext(null);
+export const UserContext = createContext(null); // for user info and userData
 
 // Update the user's information in Firebase whenever they log in
 const updateUser = (user) => {
@@ -66,183 +67,115 @@ const getUserData = (uid, callback) => {
   return () => userDataRef.off();
 };
 
+// Layout sizes
+export const SMALL = "small";
+export const MEDIUM = "medium";
+export const LARGE = "large";
 
-const defaultValue = {};
-export const BreakpointContext = createContext({});
+// Helper to convert media query matches to layout sizes
+// TODO: build into BreakpointProvider???
+export const getLayoutSize = (matches) => {
+  if (!matches.small && !matches.medium) return LARGE;
+  else if (!matches.small && matches.medium) return MEDIUM;
+  else return SMALL;
+};
 
-const BreakpointProvider = ({children, queries}) => {
-  //State in which we maintain matching query
-  const [queryMatch, setQueryMatch] = useState({});
-  
-  //Get matching query
-  useEffect(() => {
-    const mediaQueryLists = {};
-    const keys = Object.keys(queries);
-    let isAttached = false;
-
-    const handleQueryListener = () => {
-      const updatedMatches = keys.reduce((acc, media) => {
-        acc[media] = !!(mediaQueryLists[media] && mediaQueryLists[media].matches);
-        return acc;
-      }, {})
-      setQueryMatch(updatedMatches)
-    }
-    if (window && window.matchMedia) {
-      const matches = {};
-      keys.forEach(media => {
-        if (typeof queries[media] === 'string') {
-          mediaQueryLists[media] = window.matchMedia(queries[media]);
-          matches[media] = mediaQueryLists[media].matches
-        } else {
-          matches[media] = false
-        }
-      });
-      setQueryMatch(matches);
-      isAttached = true;
-      keys.forEach(media => {
-        if(typeof queries[media] === 'string') {
-          mediaQueryLists[media].addListener(handleQueryListener)
-        }
-      });
-    }
-
-    return () => {
-      if(isAttached) {
-        keys.forEach(media => {
-          if(typeof queries[media] === 'string') {
-            mediaQueryLists[media].removeListener(handleQueryListener)
-          }
-        });
-      }
-    }
-  }, [queries]);
-
-  return (
-    <BreakpointContext.Provider value={queryMatch}>
-      {children}
-    </BreakpointContext.Provider>
-  )
-
-}
-
-export const useBreakpoint = () => {
-  const context = useContext(BreakpointContext);
-  if(context === defaultValue) {
-    throw new Error('useBreakpoint must be used within BreakpointProvider');
-  }
-  return context;
-}
-
-
-
+// Define the breakpoints
+const queries = {
+  small: "(max-width: 850px)",
+  medium: "(max-width: 1350px)",
+};
 
 const App = () => {
-  const [user, setUser] = useState(null);
-  const [userData, setUserData] = useState(null);
-  const [loadingUser, setLoadingUser] = useState(true);
-  const [loadingUserData, setLoadingUserData] = useState(false);
+  const [user, setUser] = useState({ value: null, loading: true });
+  const [userData, setUserData] = useState({ value: null, loading: false });
+  const [posts, setPosts] = useState({ value: [], loading: true });
 
-  const [loadingPosts, setLoadingPosts] = useState(true);
-  const [posts, setPosts] = useState([]);
+  const userContextValue = {
+    user: user.value,
+    loadingUser: user.loading,
+    userData: userData.value,
+    loadingUserData: userData.loading,
+  };
+
+  // TODO: make cancellable
+  // TODO: enable cancellation of previous Promise if new one is started while
+  // it's still resolving
+  const updatePosts = useCallback(
+    (sortBy = "timestamp", order = "reverse") => {
+      if (!posts.loading) setPosts({ value: [], loading: true });
+      fetchPosts(sortBy, order).then(
+        (posts) => {
+          setPosts({ value: posts, loading: false });
+        },
+        (err) => console.log("app: problem with post loading:", err)
+      );
+    },
+    [posts.loading, setPosts]
+  );
 
   // Subscribe to listen for auth state changes when application mounts. Note
   // that onAuthStateChanged returns the auth unsubscribe function, so this
   // cleans up after itself.
-  useEffect(
-    () =>
-      onAuthStateChanged((u) => {
-        setUser(u);
-        setLoadingUser(false);
-      }),
-    []
-  );
+  useEffect(() => {
+    // console.log("App mount");
+    // Load all posts when App mounts
+    updatePosts();
+    const unsubscribeAuth = onAuthStateChanged((newUser) => {
+      setUser({ value: newUser, loading: false });
+    });
+    return unsubscribeAuth;
+  }, []);
 
   // Load user data once user is authenticated
   useEffect(() => {
-    if (user) {
-      setLoadingUserData(true);
-      return getUserData(user.uid, (ud) => {
-        setUserData(ud);
-        setLoadingUserData(false);
+    if (user.value) {
+      setUserData({ value: null, loading: true });
+      return getUserData(user.value.uid, (ud) => {
+        setUserData({ value: ud, loading: false });
       });
     }
   }, [user]);
 
-  const fetchPosts = (sortBy = "timestamp", order = "reverse") => {
-    let isMounted = true;
-    setLoadingPosts(true);
-    getFirebase()
-      .database()
-      .ref("posts")
-      .orderByChild(sortBy)
-      .once(
-        "value",
-        (snapshots) => {
-          if(!isMounted) return;
-          let posts = [];
-          snapshots.forEach((snapshot) => {
-            posts.push({ slug: snapshot.key, post: snapshot.val() });
-          });
-
-          // Put newest posts first
-          order === "reverse" ? setPosts(posts.reverse()) : setPosts(posts);
-          setLoadingPosts(false);
-        },
-        (err) => console.log("home: post loading failed with code: ", err.code)
-      );
-        return () => isMounted = false;
-  };
-
-  // Load all posts when App mounts
-  useEffect(fetchPosts, []);
-
-  // define the breakpoints
-const queries = {
-  small: "(max-width: 850px)",
-  medium: "(max-width: 1350px)"
-}
-
   return (
-    <UserContext.Provider
-      value={{ user, loadingUser, userData, loadingUserData }}
-    >
+    <UserContext.Provider value={userContextValue}>
       <BreakpointProvider queries={queries}>
-      <Router>
-        <NavBar />
-        <MainContent>
-          <Switch>
-            <Route
-              exact
-              path="/"
-              render={() => (
-                <Home
-                  posts={posts}
-                  loadingPosts={loadingPosts}
-                  fetchPosts={fetchPosts}
-                />
-              )}
-            />
-            <Route exact path="/signin" component={Signin} />
-            <Route exact path="/fav-recipes" component={Favorites} />
-            <Route exact path="/wish-recipes" component={WishRecipes} />
-            <Route exact path="/create" component={Create} />
-            <Route exact path="/about" component={About} />
-            <Route
-              exact
-              path="/graph"
-              render={() => <Graph posts={posts} loadingPosts={loadingPosts} />}
-            />
-            <Route
-              exact
-              path="/recipes/:slug"
-              component={SelfLoadingRecipePost}
-            />
-            <Route exact path="/recipes/:slug/edit" component={Edit} />
-            <Route path="*" component={NoMatch} />
-          </Switch>
-        </MainContent>
-        <Footer />
-      </Router>
+        <Router>
+          <NavBar />
+          <MainContent>
+            <Switch>
+              <Route
+                exact
+                path="/"
+                render={() => (
+                  <Home
+                    posts={posts.value}
+                    loadingPosts={posts.loading}
+                    fetchPosts={updatePosts}
+                  />
+                )}
+              />
+              <Route exact path="/signin" component={Signin} />
+              <Route exact path="/fav-recipes" component={Favorites} />
+              <Route exact path="/wish-recipes" component={WishRecipes} />
+              <Route exact path="/create" component={Create} />
+              <Route exact path="/about" component={About} />
+              <Route
+                exact
+                path="/graph"
+                render={() => <Graph posts={posts} />}
+              />
+              <Route
+                exact
+                path="/recipes/:slug"
+                component={SelfLoadingRecipePost}
+              />
+              <Route exact path="/recipes/:slug/edit" component={Edit} />
+              <Route path="*" component={NoMatch} />
+            </Switch>
+          </MainContent>
+          <Footer />
+        </Router>
       </BreakpointProvider>
     </UserContext.Provider>
   );

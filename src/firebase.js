@@ -1,8 +1,4 @@
 import firebase from "firebase/app";
-// Commenting these doesn't seem to break anything. Not sure why we had them
-// before.
-// import database from "firebase/database";
-// import storage from "firebase/storage";
 
 const config = {
   apiKey: "AIzaSyAZOwNwikvL7sAd_KhjYpsozA-UQBW_CGw",
@@ -23,6 +19,47 @@ export const getFirebase = () => {
 
   firebase.initializeApp(config);
   firebaseCache = firebase;
-  
+
   return firebase;
 };
+
+// Returns a Promise
+export const starPost = (uid, slug) =>
+  getFirebase()
+    .database()
+    .ref(`/users/${uid}/data/starredRecipes/${slug}`)
+    .set(getFirebase().database.ServerValue.TIMESTAMP);
+
+export const unstarPost = (uid, slug) =>
+  getFirebase()
+    .database()
+    .ref(`/users/${uid}/data/starredRecipes/${slug}`)
+    .remove();
+
+// NOTE: callers should not refetch posts if there is a pending fetch!
+export const fetchPosts = (sortBy = "timestamp", order = "reverse") =>
+  getFirebase()
+    .database()
+    .ref("posts")
+    .orderByChild(sortBy)
+    .once("value")
+    .then(
+      (snapshots) => {
+        let posts = [];
+        snapshots.forEach((snapshot) => {
+          posts.push({ slug: snapshot.key, post: snapshot.val() });
+        });
+        // Put newest posts first
+        if (order === "reverse") return posts.reverse();
+        else return posts;
+      },
+      (err) => console.log("home: post loading failed with code: ", err.code)
+    )
+    .then(
+      (posts) => {
+        // TODO: get Set of unique author UIDs
+        // TODO: get displayNames for these UIDs and inject into posts
+        return posts;
+      },
+      (err) => console.log("post author loading failed with code:", err.code)
+    );

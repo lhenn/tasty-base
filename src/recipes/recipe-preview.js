@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import { Title, AuthorDate, Icons } from "./general-recipe";
-import Ratings from "./ratings.js";
 import { getFirebase } from "../firebase";
+import useCancellablePromises from "../promise-hooks";
+import { AuthorDate, Icons, Title } from "./general-recipe";
+import Ratings from "./ratings.js";
 
 // NEW STYLES START
 const Card = styled.div`
@@ -41,16 +42,21 @@ const BottomRow = styled.div`
 // NEW STYLES END
 const RecipePreview = ({ post, slug }) => {
   const [authorName, setAuthorName] = useState("");
+  const { addPromise } = useCancellablePromises();
+
+  useEffect(() => {
+    console.log("preview mounting!");
+    return () => console.log("preview unmounting!");
+  }, []);
+
   // Get author name
   useEffect(() => {
-    let isMounted = true;
-    getFirebase()
+    const authorNamePromise = getFirebase()
       .database()
       .ref(`/users/${post.author}/name`)
       .once("value")
       .then(
         (snapshot) => {
-          if (!isMounted) return;
           setAuthorName(snapshot.val());
         },
         (err) =>
@@ -59,10 +65,9 @@ const RecipePreview = ({ post, slug }) => {
             err.code
           )
       );
-    return () => {
-      isMounted = false;
-    };
-  }, [post]);
+
+    addPromise(authorNamePromise);
+  }, [slug, post]);
 
   return (
     <Link to={`/recipes/${slug}`}>
