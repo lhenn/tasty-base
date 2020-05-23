@@ -5,7 +5,6 @@ import { Title, AuthorDate, Icons } from "./general-recipe";
 import Ratings from "./ratings.js";
 import { getFirebase } from "../firebase";
 
-// NEW STYLES START
 const Card = styled.div`
   margin: 10px;
   display: flex;
@@ -38,7 +37,6 @@ const BottomRow = styled.div`
   align-items: flex-end;
 `;
 
-// NEW STYLES END
 const RecipePreview = ({ post, slug }) => {
   const [authorName, setAuthorName] = useState("");
   // Get author name

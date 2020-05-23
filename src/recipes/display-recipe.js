@@ -3,24 +3,46 @@ import styled from "styled-components";
 import { Title, AuthorDate, Icons } from "./general-recipe";
 import Ratings from "./ratings.js";
 import mdToHTML from "../forms/md-parse";
+import { useBreakpoint } from "../App.js";
 import OverviewWrapper from "./overview";
 
 const Container = styled.div`
-  background-color:white;
+  background-color: white;
+  box-shadow: 10px 10px 5px -10px rgba(0, 0, 0, 0.75);
+
 `;
 const MainImg = styled.img`
-  height: ${(props) => (
-    props.src === "" ? "0px" : 
-    "300px"
-  )
-  };
+  height: 300px;
   width: 100%;
   object-fit: cover;
 `;
 const InnerContainer = styled.div`
-  padding:20px;
+ 
 `;
+const OverviewRow = styled.div`
+  display: flex;
 
+`;
+const OverviewCol1 = styled.div`
+padding:20px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+ 
+`;
+const OverviewCol2 = styled.div`
+padding:20px;
+  display: flex;
+  flex-direction: column;
+  align-items:flex-end;
+  justify-content: space-between;
+  border-radius: 0 0 0 520px;
+  background-color: #dfdce6;
+  width:250px;
+`;
+const SourceLabel = styled.span`
+color:grey;
+`;
 const DescriptionLink = styled.a`
   text-decoration: underline !important;
   color: ;
@@ -28,11 +50,9 @@ const DescriptionLink = styled.a`
 const Description = styled.p`
   white-space: pre-line;
 `;
-
 const DetailsWrapper = styled.div`
   display: flex;
 `;
-
 
 const IngredientsUL = styled.ul``;
 
@@ -78,40 +98,48 @@ const Details = ({ ingredients, instructions }) => (
     <Instructions instructions={instructions} />
   </DetailsWrapper>
 );
-const GalleryWrapper = styled.div`
-  display: flex;
-`;
+
 const Gallery = ({ gallery }) => {
-    return (
-      <GalleryWrapper>
-        {gallery.map((img) => {
-          return (
-            <a key={img} data-fancybox="gallery" href={img}>
-              <ThumbnailImg src={img} />
-            </a>
-          );
-        })}
-      </GalleryWrapper>
-    );
-  };
+  return (
+    <div>
+      {gallery.map((img) => {
+        return (
+          <a key={img} data-fancybox="gallery" href={img}>
+            <ThumbnailImg src={img} />
+          </a>
+        );
+      })}
+    </div>
+  );
+};
 const ThumbnailImg = styled.img`
   height: 200px;
   width: 200px;
   margin: 10px;
   object-fit: cover;
+  display:inline-flex;
 `;
 // authorName is either loaded from firebase (for SelfLoadingRecipePost) or
 // passed in using context (for previews during post edits/creates when user
 // has permission)
-const DisplayRecipePost = ({ post, authorName }) => (
-    <Container>
-      <MainImg
-        src={post.coverImageURL}
-        onerror="this.onerror=null; this.src=''" // TODO: add default image?
-      />
-      <Title title={post.title}/>
-      <AuthorDate authorName={authorName} timestamp={post.timestamp}/>
-      <OverviewWrapper post={post} />
+const DisplayRecipePost = ({ post, authorName }) => {
+    const breakpoints = useBreakpoint();
+    return(
+  <Container>
+    {post.coverImageURL !== "" ? <MainImg src={post.coverImageURL} /> : null}
+    <InnerContainer>
+      <OverviewRow>
+        <OverviewCol1>
+          <Title title={post.title} />
+          <AuthorDate authorName={authorName} timestamp={post.timestamp} />
+          <p><SourceLabel>source: </SourceLabel>{post.source}</p>
+        </OverviewCol1>
+        <OverviewCol2>
+          <Ratings post={post} />
+          <Icons />
+        </OverviewCol2>
+      </OverviewRow>
+
       <Description>
         {mdToHTML(post.description.replace(/\\n/g, "\n"), DescriptionLink)}
       </Description>
@@ -124,7 +152,8 @@ const DisplayRecipePost = ({ post, authorName }) => (
       {post.gallery && post.gallery.length > 0 && (
         <Gallery gallery={post.gallery} />
       )}
-    </Container>
-  );
+    </InnerContainer>
+  </Container>
+)};
 
-  export default DisplayRecipePost;
+export default DisplayRecipePost;
