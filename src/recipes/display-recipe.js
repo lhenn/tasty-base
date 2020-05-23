@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Title, AuthorDate, Icons } from "./general-recipe";
 import Ratings from "./ratings.js";
 import mdToHTML from "../forms/md-parse";
-import { useBreakpoint } from "../App.js";
+import { useBreakpoint } from "../breakpoint-hooks";
 import OverviewWrapper from "./overview";
 
 const Container = styled.div`
