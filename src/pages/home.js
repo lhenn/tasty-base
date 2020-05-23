@@ -1,9 +1,10 @@
-import React, { useState } from "react";
-import { useBreakpoint } from "../App.js";
+import React, { memo, useState } from "react";
+import { useBreakpoint } from "../breakpoint-hooks";
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import styled from "styled-components";
 import RecipePreview from "../recipes/recipe-preview";
+import { getLayoutSize, SMALL, MEDIUM, LARGE } from "../App";
 
 const HeaderWrapper = styled.div`
   display: flex;
@@ -27,55 +28,68 @@ const Column = styled.div`
   width: 100%;
 `;
 
-const Home = ({ loadingPosts, posts, fetchPosts }) => {
-  const [sortBy, setSortBy] = useState("newest");
+// Sort button labels and corresponding arguments for fetchPosts
+const sorts = {
+  newest: ["timestamp", "reverse"],
+  tastiest: ["tastiness", "reverse"],
+  easiest: ["easiness", "reverse"],
+};
 
-  const breakpoints = useBreakpoint();
-
-  if (loadingPosts) {
-    return <h1>Loading...</h1>;
-  }
-
-  // Sort button labels and corresponding arguments for fetchPosts
-  const sorts = {
-    newest: ["timestamp", "reverse"],
-    tastiest: ["tastiness", "reverse"],
-    easiest: ["easiness", "reverse"],
-  };
-
-  // Fetch sorted data. Currently we could do sorting on front end, but that
-  // won't scale when we have more posts.
-  const sort = (newSortBy) => {
-    fetchPosts(...sorts[newSortBy]);
-    setSortBy(newSortBy); // update the dropdown
-  };
-
-  const sortButtons = Object.keys(sorts)
-    .filter((s) => s !== sortBy)
-    .map((s) => (
-      <Dropdown.Item key={s} onClick={() => sort(s)}>
-        {s}
-      </Dropdown.Item>
-    ));
+// Column layout for (sorted) posts
+const Columns = ({ posts }) => {
+  const matches = useBreakpoint();
 
   // Media query
-  let numCols;
-  if (!breakpoints.small && !breakpoints.medium) numCols = 3;
-  else if (!breakpoints.small && breakpoints.medium) numCols = 2;
-  else numCols = 1;
+  const layoutSize = getLayoutSize(matches);
+  const numCols =
+    layoutSize === SMALL
+      ? 1
+      : layoutSize === MEDIUM
+      ? 2
+      : layoutSize === LARGE
+      ? 3
+      : console.log("invalid layout size");
 
   // Split up posts for each column. NOTE: using Array(...).fill([]) gives an
   // array where all elements reference the same initially empty array...
   const postsByCol = [...Array(numCols)].map(() => []);
   posts.forEach((post, index) => postsByCol[index % numCols].push(post));
 
-  const columns = postsByCol.map((col, i) => (
+  return postsByCol.map((col, i) => (
     <Column key={`col ${i} of ${numCols}`}>
       {col.map(({ slug, post }) => (
         <RecipePreview key={slug} post={post} slug={slug} />
       ))}
     </Column>
   ));
+};
+
+const Home = memo(({ loadingPosts, posts, fetchPosts }) => {
+  console.log("    rerender home",  loadingPosts, posts, fetchPosts );
+  const [sortBy, setSortBy] = useState("newest");
+
+  // Fetch sorted data if not busy loading posts. Currently we could do sorting
+  // on front end, but that won't scale when we have more posts.
+  const fetchSortedPosts = (newSortBy) => {
+    if (!loadingPosts) {
+      fetchPosts(...sorts[newSortBy]);
+      setSortBy(newSortBy); // update the dropdown
+    }
+  };
+
+  const sortButtons = Object.keys(sorts)
+    .filter((sb) => sb !== sortBy)
+    .map((sb) => (
+      <Dropdown.Item key={sb} onClick={() => fetchSortedPosts(sb)}>
+        {sb}
+      </Dropdown.Item>
+    ));
+
+  const content = loadingPosts ? (
+    <h1>Loading posts...</h1>
+  ) : (
+    <Columns posts={posts} />
+  );
 
   // Slugs are unique and can thus be used as keys
   return (
@@ -87,9 +101,9 @@ const Home = ({ loadingPosts, posts, fetchPosts }) => {
           <DropdownButton title={sortBy}>{sortButtons}</DropdownButton>
         </SortByContainer>
       </HeaderWrapper>
-      <PostsContainer>{columns}</PostsContainer>
+      <PostsContainer>{content}</PostsContainer>
     </>
   );
-};
+});
 
 export default Home;

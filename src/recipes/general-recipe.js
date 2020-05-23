@@ -52,6 +52,7 @@ const Icon = styled(FontAwesomeIcon)`
   }
 `;
 
+// TODO: pass props
 export const Icons = () => (
   <IconsWrapper>
     <Icon icon={faStar} />
