@@ -1,10 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Redirect } from "react-router-dom";
 import { UserContext } from "../App";
-import { getFirebase } from "../firebase";
+import { fetchPost } from "../firebase";
 import Button from "../general/button-primary";
 import DisplayRecipePost from "./display-recipe";
 import Star from "./star";
+import useCancellablePromises from "../promise-hooks";
 
 const Edit = ({ slug }) => {
   const editPath = `/recipes/${slug}/edit`;
@@ -20,63 +21,39 @@ const Edit = ({ slug }) => {
   );
 };
 
-const SelfLoadingRecipePost = ({ match }) => {
-  const slug = match.params.slug;
-  const [loading, setLoading] = useState(true);
-  const [post, setPost] = useState();
-  const [authorName, setAuthorName] = useState();
+const SelfLoadingRecipePost = ({ slug }) => {
+  console.log("SelfLoadingRecipePost render");
+  const [{ content, loading }, setContent] = useState({
+    content: {},
+    loading: true,
+  });
   const { user } = useContext(UserContext);
+  const { addPromise } = useCancellablePromises();
 
   // Load recipe post when component mounts
   useEffect(() => {
-    // Need to store author uid in temporary variable since setPost is async!
-    let uid = "";
-
-    getFirebase()
-      .database()
-      .ref(`posts/${slug}`)
-      .once(
-        "value",
-        (snapshot) => {
-          // Snapshot consists of key and post data
-          const postData = snapshot.val();
-          setPost(postData);
-          uid = postData.author;
-        },
-        (err) =>
-          console.log(
-            "SelfLoadingRecipePost: post loading failed with code: ",
-            err.code
-          )
-      )
-      .then(
-        // Get author name
-        () => getFirebase().database().ref(`/users/${uid}/name`).once("value")
-      )
-      .then(
-        (snapshot) => {
-          setAuthorName(snapshot.val());
-          setLoading(false);
-        },
-        (err) =>
-          console.log(
-            "SelfLoadingRecipePost: author name loading failed with code: ",
-            err.code
-          )
-      );
-  }, [slug, setPost, setAuthorName, setLoading]);
+    console.log("SelfLoadingRecipePost MOUNT");
+    addPromise(fetchPost(slug)).then(
+      (post) => {
+        console.log("got it!:", post);
+        setContent({ loading: false, content: post.content });
+      },
+      (err) => console.log("SelfLoadingRecipePost failed with code:", err)
+    );
+    return () => console.log("SelfLoadingRecipePost UNMOUNT");
+  }, []);
 
   if (loading) {
     return <h1>Loading...</h1>;
-  } else if (!post) {
+  } else if (!content) {
     // Loading is done and post wasn't found in the database
     return <Redirect to="/404" />;
   } else {
     return (
       <>
         {user && <Star slug={slug} />}
-        <DisplayRecipePost post={post} authorName={authorName} />
-        {user?.uid === post.author && <Edit slug={slug} />}
+        <DisplayRecipePost content={content} />
+        {user?.uid === content.author && <Edit slug={slug} />}
       </>
     );
   }

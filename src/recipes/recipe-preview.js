@@ -1,8 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import { getFirebase } from "../firebase";
-import useCancellablePromises from "../promise-hooks";
 import { AuthorDate, Icons, Title } from "./general-recipe";
 import Ratings from "./ratings.js";
 
@@ -38,52 +36,25 @@ const BottomRow = styled.div`
   align-items: flex-end;
 `;
 
-const RecipePreview = ({ post, slug }) => {
-  const [authorName, setAuthorName] = useState("");
-  const { addPromise } = useCancellablePromises();
-
-  useEffect(() => {
-    console.log("preview mounting!");
-    return () => console.log("preview unmounting!");
-  }, []);
-
-  // Get author name
-  useEffect(() => {
-    const authorNamePromise = getFirebase()
-      .database()
-      .ref(`/users/${post.author}/name`)
-      .once("value")
-      .then(
-        (snapshot) => {
-          setAuthorName(snapshot.val());
-        },
-        (err) =>
-          console.log(
-            "SelfLoadingRecipePost: author name loading failed with code: ",
-            err.code
-          )
-      );
-
-    addPromise(authorNamePromise);
-  }, [slug, post]);
-
-  return (
-    <Link to={`/recipes/${slug}`}>
-      <Card>
-        {post.coverImageURL && (
-          <StyledImg src={post.coverImageURL} alt={post.coverImageAlt} />
-        )}
-        <CardContent>
-          <Title title={post.title} />
-          <AuthorDate authorName={authorName} timestamp={post.timestamp} />
-          <BottomRow>
-            <Ratings post={post} />
-            <Icons />
-          </BottomRow>
-        </CardContent>
-      </Card>
-    </Link>
-  );
-};
+const RecipePreview = ({ post: { content, slug } }) => (
+  <Link to={`/recipes/${slug}`}>
+    <Card>
+      {content.coverImageURL && (
+        <StyledImg src={content.coverImageURL} alt={content.coverImageAlt} />
+      )}
+      <CardContent>
+        <Title title={content.title} />
+        <AuthorDate
+          authorName={content.authorName}
+          timestamp={content.timestamp}
+        />
+        <BottomRow>
+          <Ratings tastiness={content.tastiness} easiness={content.easiness} />
+          <Icons />
+        </BottomRow>
+      </CardContent>
+    </Card>
+  </Link>
+);
 
 export default RecipePreview;

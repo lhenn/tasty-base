@@ -8,7 +8,7 @@ import TextArea from "../forms/text-area";
 import Button from "../general/button-primary";
 import ImageUploader from "../general/image-uploader";
 import useFileHandlers, { FILES_UPLOADED } from "../useFileHandlers";
-import DisplayRecipePost  from "./display-recipe";
+import DisplayRecipePost from "./display-recipe";
 
 const FormGroup = styled.div`
   display: flex;
@@ -187,35 +187,36 @@ const CustomRecipeContent = (props) => {
 
 // Combines all the post data into one object except for author uid and
 // timestamp. These both need to be handled separately.
-const combinePostData = (
+const makeContent = (
   basicInfo,
   ingredients,
   instructions,
   galleryUploaded,
-  author
+  author,
+  authorName
 ) => {
   // Get gallery dowload URLs
   let gallery = [];
   for (var i = 0; i < Object.keys(galleryUploaded).length; i++) {
     const curDownloadURL = galleryUploaded[i].downloadURL;
-    curDownloadURL !== basicInfo.coverImageURL && gallery.push(curDownloadURL);
+    if (curDownloadURL !== basicInfo.coverImageURL)
+      gallery.push(curDownloadURL);
   }
 
   // Remove last ingredient and instruction, which are always empty
-  const newPost = {
+  return {
     ...basicInfo,
     ingredients: ingredients.slice(0, -1),
     instructions: instructions.slice(0, -1),
     author,
+    authorName,
     timestamp: Date.now(),
     gallery,
   };
-
-  return newPost;
 };
 
 // Called when create post button is clicked
-const CreatePostButton = ({ post, slug, history }) => {
+const CreatePostButton = ({ content, slug, history }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const submit = () => {
@@ -223,15 +224,17 @@ const CreatePostButton = ({ post, slug, history }) => {
     if (isSubmitting) return;
 
     // Swap Date timestamp out for special firebase one
-    const timestamp = getFirebase().database.ServerValue.TIMESTAMP;
-    const timestampedPost = { ...post, timestamp };
+    const timestampedContent = {
+      ...content,
+      timestamp: getFirebase().database.ServerValue.TIMESTAMP,
+    };
 
     // Upload to firebase
     setIsSubmitting(true);
     getFirebase()
       .database()
       .ref(`/posts/${slug}`)
-      .set(timestampedPost)
+      .set(timestampedContent)
       .then(() => {
         setIsSubmitting(false);
       })
@@ -271,19 +274,19 @@ const parseIntOrEmpty = (str) => {
   return isNaN(val) ? "" : val;
 };
 
-const RecipeForm = ({ history, post, slug }) => {
+const RecipeForm = ({ history, content, slug }) => {
   // Information shared by all posts
   const [basicInfo, setBasicInfo] = useState(
-    post ? { ...post } : emptyBasicInfo
+    content ? { ...content } : emptyBasicInfo
   );
 
   // Information for personal recipes only. If the post exists but is not a
   // personal recipe, ingredients and instructions won't exist.
   const [ingredients, updateIngredient, deleteIngredient] = useInputRows(
-    post && post.ingredients ? post.ingredients : emptyIngredients
+    content?.ingredient ?? emptyIngredients
   );
   const [instructions, updateInstruction, deleteInstruction] = useInputRows(
-    post && post.instructions ? post.instructions : emptyInstructions
+    content?.instructions ?? emptyInstructions
   );
 
   const [slugState, setSlugState] = useState(slug ? slug : "");
@@ -316,12 +319,13 @@ const RecipeForm = ({ history, post, slug }) => {
   // This object is needed by the create post button and preview
   // TODO: declare dependencies with useMemo so it always gets synchronized
   // with the form's state?
-  const newPost = combinePostData(
+  const newContent = makeContent(
     basicInfo,
     ingredients,
     instructions,
     galleryUploaded,
-    user.uid
+    user.uid,
+    user.displayName
   );
 
   // TODO: <form>?
@@ -548,11 +552,11 @@ const RecipeForm = ({ history, post, slug }) => {
 
       <Label htmlFor="preview" content="Post preview"></Label>
       <PreviewWrapper id="preview">
-        <DisplayRecipePost post={newPost} authorName={user.displayName} />
+        <DisplayRecipePost content={newContent} />
       </PreviewWrapper>
 
       <div style={{ textAlign: "right" }}>
-        <CreatePostButton post={newPost} slug={slugState} history={history} />
+        <CreatePostButton content={newContent} slug={slugState} history={history} />
       </div>
     </>
   );

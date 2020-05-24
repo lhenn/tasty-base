@@ -12,6 +12,7 @@ const config = {
   appId: "1:1019826146813:web:c9fd1d77989f7f72d0dd94",
 };
 
+// TODO: is this caching step really necessary?
 let firebaseCache;
 
 export const getFirebase = () => {
@@ -25,7 +26,6 @@ export const getFirebase = () => {
   return firebase;
 };
 
-// Returns a Promise
 export const starPost = (uid, slug) =>
   getFirebase()
     .database()
@@ -38,30 +38,55 @@ export const unstarPost = (uid, slug) =>
     .ref(`/users/${uid}/data/starredRecipes/${slug}`)
     .remove();
 
-// NOTE: callers should not refetch posts if there is a pending fetch!
-export const fetchPosts = (sortBy = "timestamp", order = "reverse") =>
-  getFirebase()
+// TODO: restructure database to make name queries batchable?
+const fetchName = async (uid) => {
+  const name = await getFirebase()
     .database()
-    .ref("posts")
+    .ref(`/users/${uid}/name`)
+    .once("value");
+  return name.val();
+};
+
+export const fetchPosts = async (sortBy = "timestamp", order = "reverse") => {
+  const snapshots = await getFirebase()
+    .database()
+    .ref("/posts")
     .orderByChild(sortBy)
-    .once("value")
-    .then(
-      (snapshots) => {
-        let posts = [];
-        snapshots.forEach((snapshot) => {
-          posts.push({ slug: snapshot.key, post: snapshot.val() });
-        });
-        // Put newest posts first
-        if (order === "reverse") return posts.reverse();
-        else return posts;
-      },
-      (err) => console.log("home: post loading failed with code: ", err.code)
+    .once("value");
+
+  const authors = new Set();
+  const posts = [];
+  snapshots.forEach((snap) => {
+    const content = snap.val();
+    authors.add(content.author);
+    posts.push({ slug: snap.key, content });
+  });
+
+  // Get corresponding display names
+  const authorNames = {};
+  await Promise.all(
+    [...authors].map((uid) =>
+      fetchName(uid).then((name) => (authorNames[uid] = name))
     )
-    .then(
-      (posts) => {
-        // TODO: get Set of unique author UIDs
-        // TODO: get displayNames for these UIDs and inject into posts
-        return posts;
-      },
-      (err) => console.log("post author loading failed with code:", err.code)
-    );
+  );
+
+  posts.forEach(
+    ({ content }) => (content["authorName"] = authorNames[content.author])
+  );
+
+  return order === "reverse" ? posts.reverse() : posts;
+};
+
+export const fetchPost = async (slug) => {
+  const postSnapshot = await getFirebase()
+    .database()
+    .ref(`posts/${slug}`)
+    .once("value"); // this returns a Promise
+
+  const content = postSnapshot.val();
+
+  const authorName = await fetchName(content.author);
+  content["authorName"] = authorName;
+
+  return { slug, content };
+};

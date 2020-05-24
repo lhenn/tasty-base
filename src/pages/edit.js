@@ -8,14 +8,14 @@ const Edit = ({ history, match }) => {
   const {user} = useContext(UserContext);
   const slug = match.params.slug;
   const [loading, setLoading] = useState(true);
-  const [post, setCurrentPost] = useState();
+  const [content, setCurrentPost] = useState();
   const [authorized, setAuthorized] = useState();
 
-  // Load the post
+  // Load the content
   useEffect(() => {
     getFirebase()
       .database()
-      .ref(`posts/${slug}`)
+      .ref(`/posts/${slug}`)
       .once(
         "value",
         (snapshot) => {
@@ -28,7 +28,7 @@ const Edit = ({ history, match }) => {
           }
           setLoading(false);
         },
-        (err) => console.log("edit: post loading failed with code: ", err.code)
+        (err) => console.log("edit: content loading failed with code: ", err.code)
       );
   }, [slug, user]);
 
@@ -41,7 +41,7 @@ const Edit = ({ history, match }) => {
   }
 
   // Loading is done and post wasn't found in the database
-  if (!post) {
+  if (!content) {
     return <Redirect to="/404" />;
   }
 
@@ -49,7 +49,7 @@ const Edit = ({ history, match }) => {
   return (
     <>
       <h1>Edit Post</h1>
-      <RecipeForm history={history} post={post} slug={slug} />
+      <RecipeForm history={history} content={content} slug={slug} />
     </>
   );
 };

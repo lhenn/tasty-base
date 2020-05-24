@@ -9,39 +9,34 @@ import OverviewWrapper from "./overview";
 const Container = styled.div`
   background-color: white;
   box-shadow: 10px 10px 5px -10px rgba(0, 0, 0, 0.75);
-
 `;
 const MainImg = styled.img`
   height: 300px;
   width: 100%;
   object-fit: cover;
 `;
-const InnerContainer = styled.div`
- 
-`;
+const InnerContainer = styled.div``;
 const OverviewRow = styled.div`
   display: flex;
-
 `;
 const OverviewCol1 = styled.div`
-padding:20px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
- 
 `;
 const OverviewCol2 = styled.div`
-padding:20px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
-  align-items:flex-end;
+  align-items: flex-end;
   justify-content: space-between;
   border-radius: 0 0 0 520px;
   background-color: #dfdce6;
-  width:250px;
+  width: 250px;
 `;
 const SourceLabel = styled.span`
-color:grey;
+  color: grey;
 `;
 const DescriptionLink = styled.a`
   text-decoration: underline !important;
@@ -117,43 +112,53 @@ const ThumbnailImg = styled.img`
   width: 200px;
   margin: 10px;
   object-fit: cover;
-  display:inline-flex;
+  display: inline-flex;
 `;
+
 // authorName is either loaded from firebase (for SelfLoadingRecipePost) or
 // passed in using context (for previews during post edits/creates when user
 // has permission)
-const DisplayRecipePost = ({ post, authorName }) => {
-    const breakpoints = useBreakpoint();
-    return(
-  <Container>
-    {post.coverImageURL !== "" ? <MainImg src={post.coverImageURL} /> : null}
-    <InnerContainer>
-      <OverviewRow>
-        <OverviewCol1>
-          <Title title={post.title} />
-          <AuthorDate authorName={authorName} timestamp={post.timestamp} />
-          <p><SourceLabel>source: </SourceLabel>{post.source}</p>
-        </OverviewCol1>
-        <OverviewCol2>
-          <Ratings post={post} />
-          <Icons />
-        </OverviewCol2>
-      </OverviewRow>
+const DisplayRecipePost = ({ content }) => {
+  // const breakpoints = useBreakpoint();
+  return (
+    <Container>
+      {content.coverImageURL !== "" ? (
+        <MainImg src={content.coverImageURL} />
+      ) : null}
+      <InnerContainer>
+        <OverviewRow>
+          <OverviewCol1>
+            <Title title={content.title} />
+            <AuthorDate
+              authorName={content.authorName}
+              timestamp={content.timestamp}
+            />
+            <p>
+              <SourceLabel>source: </SourceLabel>
+              {content.source}
+            </p>
+          </OverviewCol1>
+          <OverviewCol2>
+            <Ratings content={content} />
+            <Icons />
+          </OverviewCol2>
+        </OverviewRow>
 
-      <Description>
-        {mdToHTML(post.description.replace(/\\n/g, "\n"), DescriptionLink)}
-      </Description>
-      {post.sourceType === "personal" && (
-        <Details
-          ingredients={post.ingredients}
-          instructions={post.instructions}
-        />
-      )}
-      {post.gallery && post.gallery.length > 0 && (
-        <Gallery gallery={post.gallery} />
-      )}
-    </InnerContainer>
-  </Container>
-)};
+        <Description>
+          {mdToHTML(content.description.replace(/\\n/g, "\n"), DescriptionLink)}
+        </Description>
+        {content.sourceType === "personal" && (
+          <Details
+            ingredients={content.ingredients}
+            instructions={content.instructions}
+          />
+        )}
+        {content.gallery && content.gallery.length > 0 && (
+          <Gallery gallery={content.gallery} />
+        )}
+      </InnerContainer>
+    </Container>
+  );
+};
 
 export default DisplayRecipePost;

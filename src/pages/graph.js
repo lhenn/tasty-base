@@ -15,15 +15,15 @@ const StyledTooltip = styled.div`
   display: inline-block;
 `;
 
-const Tooltip = ({ post }) => {
+const Tooltip = ({ post: { content } }) => {
   return (
     <StyledTooltip>
       <StyledTooltipText>
-        <strong>{post.post.title}</strong>
+        <strong>{content.title}</strong>
         <br />
-        {`Ease: ${post.post.easiness}`}
+        {`Ease: ${content.easiness}`}
         <br />
-        {`Taste: ${post.post.tastiness}`}
+        {`Taste: ${content.tastiness}`}
       </StyledTooltipText>
     </StyledTooltip>
   );
@@ -40,11 +40,9 @@ const jitter = (x, amount = 0.3, xMin = 1, xMax = 10, step = 1) => {
 };
 
 const Scatterplot = React.memo(({ posts, setPreviewIndex }) => {
-  console.log("Scatterplot rerender");
-
-  const data = Object.values(posts).map(({ post, slug }) => {
-    const x = jitter(post.easiness);
-    const y = jitter(post.tastiness);
+  const data = Object.values(posts).map(({ slug, content }) => {
+    const x = jitter(content.easiness);
+    const y = jitter(content.tastiness);
     return { id: slug, data: [{ x, y }] };
   });
 
@@ -82,8 +80,6 @@ const Scatterplot = React.memo(({ posts, setPreviewIndex }) => {
 const Graph = ({ posts, loadingPosts }) => {
   const [previewIndex, setPreviewIndex] = useState(null);
 
-  console.log("Graph rerender");
-
   if (loadingPosts || !posts) {
     return <h1>Loading posts...</h1>;
   }
@@ -93,10 +89,7 @@ const Graph = ({ posts, loadingPosts }) => {
       <Scatterplot posts={posts} setPreviewIndex={setPreviewIndex} />
       {previewIndex !== null && (
         <div style={{ width: "30%" }}>
-          <RecipePreview
-            post={posts[previewIndex].post}
-            slug={posts[previewIndex].slug}
-          />
+          <RecipePreview post={posts[previewIndex]} />
         </div>
       )}
     </div>

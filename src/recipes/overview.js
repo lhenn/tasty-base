@@ -30,13 +30,13 @@ const Source = ({ sourceType, source }) => {
   );
 };
 
-const OverviewWrapper = ({ post }) => {
+const OverviewWrapper = ({ content }) => {
   return (
     <Wrapper>
-      <Source sourceType={post.sourceType} source={post.source} />
+      <Source sourceType={content.sourceType} source={content.source} />
       <p>
-        {post.activeTime} min active | {post.downtime} min downtime |{" "}
-        {post.servings} servings
+        {content.activeTime} min active | {content.downtime} min downtime |{" "}
+        {content.servings} servings
       </p>
     </Wrapper>
   );

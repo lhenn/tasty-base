@@ -28,7 +28,7 @@ const Column = styled.div`
   width: 100%;
 `;
 
-// Sort button labels and corresponding arguments for fetchPosts
+// Sort button labels and corresponding arguments for updatePosts
 const sorts = {
   newest: ["timestamp", "reverse"],
   tastiest: ["tastiness", "reverse"],
@@ -57,22 +57,21 @@ const Columns = ({ posts }) => {
 
   return postsByCol.map((col, i) => (
     <Column key={`col ${i} of ${numCols}`}>
-      {col.map(({ slug, post }) => (
-        <RecipePreview key={slug} post={post} slug={slug} />
+      {col.map((post) => (
+        <RecipePreview key={post.slug} post={post} />
       ))}
     </Column>
   ));
 };
 
-const Home = memo(({ loadingPosts, posts, fetchPosts }) => {
-  console.log("    rerender home",  loadingPosts, posts, fetchPosts );
+const Home = memo(({ loadingPosts, posts, updatePosts }) => {
   const [sortBy, setSortBy] = useState("newest");
 
   // Fetch sorted data if not busy loading posts. Currently we could do sorting
   // on front end, but that won't scale when we have more posts.
   const fetchSortedPosts = (newSortBy) => {
     if (!loadingPosts) {
-      fetchPosts(...sorts[newSortBy]);
+      updatePosts(...sorts[newSortBy]);
       setSortBy(newSortBy); // update the dropdown
     }
   };
@@ -85,7 +84,7 @@ const Home = memo(({ loadingPosts, posts, fetchPosts }) => {
       </Dropdown.Item>
     ));
 
-  const content = loadingPosts ? (
+  const postContent = loadingPosts ? (
     <h1>Loading posts...</h1>
   ) : (
     <Columns posts={posts} />
@@ -101,7 +100,7 @@ const Home = memo(({ loadingPosts, posts, fetchPosts }) => {
           <DropdownButton title={sortBy}>{sortButtons}</DropdownButton>
         </SortByContainer>
       </HeaderWrapper>
-      <PostsContainer>{content}</PostsContainer>
+      <PostsContainer>{postContent}</PostsContainer>
     </>
   );
 });

@@ -12,7 +12,7 @@ const downloadPosts = async (slugs) => {
       .database()
       .ref(`posts/${slug}`)
       .once("value");
-    posts.push({ slug, post: snapshot.val() });
+    posts.push({ slug, content: snapshot.val() });
   }
 
   return posts;
@@ -22,8 +22,8 @@ const FavoritesList = ({ posts }) => (
   <>
     <h1>Favorite recipes</h1>
     <div>
-      {posts.map(({ slug, post }) => (
-        <RecipePreview key={slug} post={post} slug={slug} />
+      {posts.map((post) => (
+        <RecipePreview key={post.slug} post={post} />
       ))}
     </div>
   </>

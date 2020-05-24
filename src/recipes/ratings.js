@@ -56,11 +56,10 @@ const NumVotes = styled.div`
 `;
 
 //Once multiple ratings available, figure out how to be more specific with props (rather than passing whole post)
-const Ratings = ({post}) => {
-
+const Ratings = ({ tastiness, easiness }) => {
   //obviously will need to fix this later if multiple ratings involved
-  const tastePercent = post.tastiness * 10;
-  const easePercent = post.easiness * 10;
+  const tastePercent = tastiness * 10;
+  const easePercent = easiness * 10;
   return (
     <RatingsContainer>
       <RatingsInner>

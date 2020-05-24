@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useEffect, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import styled from "styled-components";
 import "./App.css";
@@ -87,58 +87,62 @@ const queries = {
 };
 
 const App = () => {
-  const [user, setUser] = useState({ value: null, loading: true });
-  const [userData, setUserData] = useState({ value: null, loading: false });
-  const [posts, setPosts] = useState({ value: [], loading: true });
+  const [{ user, loadingUser }, setUser] = useState({
+    user: null,
+    loadingUser: true,
+  });
+  const [{ userData, loadingUserData }, setUserData] = useState({
+    userData: null,
+    loadingUserData: false,
+  });
+  const [{ posts, loadingPosts }, setPosts] = useState({
+    posts: [],
+    loadingPosts: false,
+  });
 
-  const userContextValue = {
-    user: user.value,
-    loadingUser: user.loading,
-    userData: userData.value,
-    loadingUserData: userData.loading,
-  };
-
-  // TODO: make cancellable
   // TODO: enable cancellation of previous Promise if new one is started while
-  // it's still resolving
-  const updatePosts = useCallback(
-    (sortBy = "timestamp", order = "reverse") => {
-      if (!posts.loading) setPosts({ value: [], loading: true });
+  // it's still resolving. Probably need state variable to keep track of any
+  // pending post updates as a cancellable Promise.
+  const updatePosts = (sortBy = "timestamp", order = "reverse") => {
+    if (loadingPosts) {
+      console.log("cannot call updatePosts: already loading posts!");
+    } else {
+      setPosts({ posts: [], loadingPosts: true });
       fetchPosts(sortBy, order).then(
-        (posts) => {
-          setPosts({ value: posts, loading: false });
+        (newPosts) => {
+          setPosts({ posts: newPosts, loadingPosts: false });
         },
         (err) => console.log("app: problem with post loading:", err)
       );
-    },
-    [posts.loading, setPosts]
-  );
+    }
+  };
 
   // Subscribe to listen for auth state changes when application mounts. Note
   // that onAuthStateChanged returns the auth unsubscribe function, so this
   // cleans up after itself.
   useEffect(() => {
-    // console.log("App mount");
     // Load all posts when App mounts
     updatePosts();
     const unsubscribeAuth = onAuthStateChanged((newUser) => {
-      setUser({ value: newUser, loading: false });
+      setUser({ user: newUser, loadingUser: false });
     });
     return unsubscribeAuth;
   }, []);
 
   // Load user data once user is authenticated
   useEffect(() => {
-    if (user.value) {
-      setUserData({ value: null, loading: true });
-      return getUserData(user.value.uid, (ud) => {
-        setUserData({ value: ud, loading: false });
+    if (user) {
+      setUserData({ userData: null, loadingUserData: true });
+      return getUserData(user.uid, (newUserData) => {
+        setUserData({ userData: newUserData, loadingUserData: false });
       });
     }
   }, [user]);
 
   return (
-    <UserContext.Provider value={userContextValue}>
+    <UserContext.Provider
+      value={{ user, loadingUser, userData, loadingUserData }}
+    >
       <BreakpointProvider queries={queries}>
         <Router>
           <NavBar />
@@ -149,9 +153,9 @@ const App = () => {
                 path="/"
                 render={() => (
                   <Home
-                    posts={posts.value}
-                    loadingPosts={posts.loading}
-                    fetchPosts={updatePosts}
+                    posts={posts}
+                    loadingPosts={loadingPosts}
+                    updatePosts={updatePosts}
                   />
                 )}
               />
@@ -163,12 +167,18 @@ const App = () => {
               <Route
                 exact
                 path="/graph"
-                render={() => <Graph posts={posts} />}
+                render={() => (
+                  <Graph posts={posts} loadingPosts={loadingPosts} />
+                )}
               />
               <Route
                 exact
                 path="/recipes/:slug"
-                component={SelfLoadingRecipePost}
+                render={({
+                  match: {
+                    params: { slug },
+                  },
+                }) => <SelfLoadingRecipePost slug={slug} />}
               />
               <Route exact path="/recipes/:slug/edit" component={Edit} />
               <Route path="*" component={NoMatch} />
