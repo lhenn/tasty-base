@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import styled from "styled-components";
 import { UserContext } from "../App";
-import { getFirebase } from "../firebase";
+import { getTimestamp, submitPost } from "../firebase";
 import {PrimaryButton} from "../general/buttons";
 import ImageUploader from "../general/image-uploader";
 import useFileHandlers, { FILES_UPLOADED } from "../useFileHandlers";
