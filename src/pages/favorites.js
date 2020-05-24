@@ -1,22 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Redirect } from "react-router-dom";
 import { UserContext } from "../App";
-import { getFirebase } from "../firebase";
+import { fetchPosts } from "../firebase";
 import RecipePreview from "../recipes/recipe-preview";
-
-const downloadPosts = async (slugs) => {
-  let posts = [];
-
-  for (const slug of slugs) {
-    const snapshot = await getFirebase()
-      .database()
-      .ref(`posts/${slug}`)
-      .once("value");
-    posts.push({ slug, content: snapshot.val() });
-  }
-
-  return posts;
-};
+import useCancellablePromises from "../promise-hooks";
 
 const FavoritesList = ({ posts }) => (
   <>
@@ -32,33 +19,29 @@ const FavoritesList = ({ posts }) => (
 // TODO: must be inaccessible if user is not logged in, but should show loading
 // message if waiting for authentication
 const Favorites = () => {
-  // True when downloading favorite posts from firebase
-  const [loading, setLoading] = useState(false);
-  const [posts, setPosts] = useState([]);
+  const [{ posts, loadingPosts }, setPosts] = useState({
+    posts: [],
+    loadingPosts: false,
+  });
   const { user, loadingUser, userData, loadingUserData } = useContext(
     UserContext
   );
 
+  const { addPromise } = useCancellablePromises();
+
   // Load all posts if userData is present
   useEffect(() => {
-    if (
-      !loadingUser &&
-      !loadingUserData &&
-      user &&
-      userData &&
-      userData.favoriteRecipes
-    ) {
-      setLoading(true);
-
-      const favSlugs = Object.keys(userData.favoriteRecipes);
-      downloadPosts(favSlugs)
-        .then((favPosts) => {
-          setPosts(favPosts);
-          setLoading(false);
-        })
-        .catch((err) => console.log("Favorites: downloadPosts failed: ", err));
+    if (!loadingUserData && userData?.favoriteRecipes) {
+      setPosts({ posts: [], loadingPosts: true });
+      // Values are timestamps
+      addPromise(fetchPosts(Object.keys(userData.favoriteRecipes))).then(
+        (favPosts) => {
+          setPosts({ posts: favPosts, loadingPosts: false });
+        },
+        (err) => console.log("Favorites: fetchPosts failed: ", err)
+      );
     }
-  }, [user, loadingUser, userData, loadingUserData]);
+  }, [userData, loadingUserData, addPromise]);
 
   // User auth and data loading underway
   if (loadingUser || loadingUserData) {
@@ -71,7 +54,7 @@ const Favorites = () => {
   }
 
   // User exists and may have favorite posts that are being loaded
-  if (loading) {
+  if (loadingPosts) {
     return <h1>Loading favorites recipes...</h1>;
   }
 

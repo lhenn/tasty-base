@@ -1,36 +1,34 @@
 import React, { useEffect, useContext, useState } from "react";
 import { Redirect } from "react-router-dom";
 import { UserContext } from "../App";
-import { getFirebase } from "../firebase";
+import { fetchPost } from "../firebase";
 import RecipeForm from "../recipes/recipe-form";
+import useCancellablePromises from "../promise-hooks";
 
 const Edit = ({ history, match }) => {
-  const {user} = useContext(UserContext);
+  const { user } = useContext(UserContext);
   const slug = match.params.slug;
   const [loading, setLoading] = useState(true);
-  const [content, setCurrentPost] = useState();
+  const [content, setContent] = useState();
   const [authorized, setAuthorized] = useState();
+  const { addPromise } = useCancellablePromises();
 
   // Load the content
   useEffect(() => {
-    getFirebase()
-      .database()
-      .ref(`/posts/${slug}`)
-      .once(
-        "value",
-        (snapshot) => {
-          // Wait until updateuser has been set
-          if (user && snapshot.val().author !== user.uid) {
-            setAuthorized(false);
-          } else {
-            setAuthorized(true);
-            setCurrentPost(snapshot.val());
-          }
-          setLoading(false);
-        },
-        (err) => console.log("edit: content loading failed with code: ", err.code)
-      );
-  }, [slug, user]);
+    addPromise(fetchPost(slug)).then(
+      ({ content }) => {
+        // Wait until updateuser has been set
+        if (user && content.author !== user.uid) {
+          setAuthorized(false);
+        } else {
+          setAuthorized(true);
+          setContent(content);
+        }
+        setLoading(false);
+      },
+      (err) => console.log("edit: content loading failed with code: ", err.code)
+    );
+  }, [slug, user, addPromise]);
 
   if (loading) {
     return <h1>Loading...</h1>;

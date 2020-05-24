@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import styled from "styled-components";
 import "./App.css";
 import { BreakpointProvider } from "./breakpoint-hooks";
-import { fetchPosts, getFirebase } from "./firebase";
+import { fetchSortedPosts, getFirebase } from "./firebase";
 import Footer from "./general/footer";
 import NavBar from "./general/navbar";
 import About from "./pages/about";
@@ -108,7 +108,7 @@ const App = () => {
       console.log("cannot call updatePosts: already loading posts!");
     } else {
       setPosts({ posts: [], loadingPosts: true });
-      fetchPosts(sortBy, order).then(
+      fetchSortedPosts(sortBy, order).then(
         (newPosts) => {
           setPosts({ posts: newPosts, loadingPosts: false });
         },
