@@ -51,8 +51,7 @@ const SelfLoadingRecipePost = ({ slug }) => {
   } else {
     return (
       <>
-        {user && <Star slug={slug} />}
-        <DisplayRecipePost content={content} />
+        <DisplayRecipePost content={content} slug={slug} />
         {user?.uid === content.author && <Edit slug={slug} />}
       </>
     );

@@ -1,22 +1,11 @@
 import { faStar } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Icon } from "./general-recipe";
 import React, { useContext, useState } from "react";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
-import styled from "styled-components";
 import { UserContext } from "../App";
 import { starPost, unstarPost } from "../firebase";
 import UpdatingTooltip from "../general/tooltip";
 
-// TODO: change when starred
-const StarIcon = styled(FontAwesomeIcon)`
-  color: lightgrey;
-  font-size: 26px;
-  padding: 5px;
-  margin: 20px 5px;
-  &:hover {
-    color: #9791e8;
-  }
-`;
 
 const Star = ({ slug }) => {
   // Busy when sending star/unstar data to firebase
@@ -26,7 +15,7 @@ const Star = ({ slug }) => {
     UserContext
   );
 
-  if (loadingUser || loadingUserData) return <StarIcon icon={faStar} />;
+  if (loadingUser || loadingUserData) return <Icon icon={faStar} />;
 
   const isStarred = userData?.starredRecipes?.hasOwnProperty(slug);
 
@@ -66,7 +55,7 @@ const Star = ({ slug }) => {
       trigger={["hover", "focus"]}
       overlay={<UpdatingTooltip id="star-tooltip">{ttText}</UpdatingTooltip>}
     >
-      <StarIcon icon={faStar} onClick={onClick} onMouseEnter={onMouseEnter} />
+      <Icon icon={faStar} onClick={onClick} onMouseEnter={onMouseEnter} />
     </OverlayTrigger>
   );
 };

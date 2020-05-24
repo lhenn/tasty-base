@@ -1,7 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
+import { UserContext } from "../App";
 import styled from "styled-components";
 import { Title, AuthorDate, Icons } from "./general-recipe";
 import Ratings from "./ratings.js";
+import Star from "./star";
+import Check from "./check";
 import mdToHTML from "../forms/md-parse";
 import { useBreakpoint } from "../breakpoint-hooks";
 import OverviewWrapper from "./overview";
@@ -118,7 +121,9 @@ const ThumbnailImg = styled.img`
 // authorName is either loaded from firebase (for SelfLoadingRecipePost) or
 // passed in using context (for previews during post edits/creates when user
 // has permission)
-const DisplayRecipePost = ({ content }) => {
+const DisplayRecipePost = ({ content, slug }) => {
+  const { user } = useContext(UserContext);
+
   // const breakpoints = useBreakpoint();
   return (
     <Container>
@@ -140,7 +145,10 @@ const DisplayRecipePost = ({ content }) => {
           </OverviewCol1>
           <OverviewCol2>
             <Ratings content={content} />
-            <Icons />
+            <div>
+              {user && <Star slug={slug} />}
+              {user && <Check slug={slug} />}
+            </div>
           </OverviewCol2>
         </OverviewRow>
 

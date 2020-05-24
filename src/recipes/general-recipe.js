@@ -42,7 +42,9 @@ export const AuthorDate = ({ authorName, timestamp }) => {
 const IconsWrapper = styled.div`
   display: flex;
 `;
-const Icon = styled(FontAwesomeIcon)`
+
+// TODO: change styling when starred
+export const Icon = styled(FontAwesomeIcon)`
   color: lightgrey;
   font-size: 26px;
   padding: 5px;
@@ -52,6 +54,7 @@ const Icon = styled(FontAwesomeIcon)`
   }
 `;
 
+//Might end up removing this(?)
 // TODO: pass props
 export const Icons = () => (
   <IconsWrapper>
