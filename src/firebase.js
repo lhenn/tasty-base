@@ -47,22 +47,13 @@ const fetchName = async (uid) => {
   return name.val();
 };
 
-export const fetchPosts = async (sortBy = "timestamp", order = "reverse") => {
-  const snapshots = await getFirebase()
-    .database()
-    .ref("/posts")
-    .orderByChild(sortBy)
-    .once("value");
-
+// Determines author display names and inserts them into an array of posts
+// TODO: might be poor form to mutate posts
+const insertAuthorNames = async (posts) => {
   const authors = new Set();
-  const posts = [];
-  snapshots.forEach((snap) => {
-    const content = snap.val();
-    authors.add(content.author);
-    posts.push({ slug: snap.key, content });
-  });
+  posts.forEach(({ content: { author } }) => authors.add(author));
 
-  // Get corresponding display names
+  // Get mapping from uids to names
   const authorNames = {};
   await Promise.all(
     [...authors].map((uid) =>
@@ -74,19 +65,50 @@ export const fetchPosts = async (sortBy = "timestamp", order = "reverse") => {
     ({ content }) => (content["authorName"] = authorNames[content.author])
   );
 
+  return posts;
+};
+
+export const fetchSortedPosts = async (
+  sortBy = "timestamp",
+  order = "reverse"
+) => {
+  const snapshots = await getFirebase()
+    .database()
+    .ref("/posts")
+    .orderByChild(sortBy)
+    .once("value");
+
+  // For some strange reason, can't just do snapshots.val()
+  const posts = [];
+  snapshots.forEach((snap) => {
+    posts.push({ slug: snap.key, content: snap.val() });
+  });
+
+  await insertAuthorNames(posts);
+
   return order === "reverse" ? posts.reverse() : posts;
 };
 
+// Fetches a post (or posts) given a slug (or slugs)
 export const fetchPost = async (slug) => {
-  const postSnapshot = await getFirebase()
+  const content = await getFirebase()
     .database()
     .ref(`posts/${slug}`)
-    .once("value"); // this returns a Promise
-
-  const content = postSnapshot.val();
-
-  const authorName = await fetchName(content.author);
-  content["authorName"] = authorName;
-
+    .once("value")
+    .then((snapshot) => snapshot.val());
+  content["authorName"] = await fetchName(content.author);
   return { slug, content };
+};
+
+export const fetchPosts = async (slugs) => {
+  const posts = await Promise.all(
+    slugs.map((slug) =>
+      getFirebase()
+        .database()
+        .ref(`/posts/${slug}`)
+        .once("value")
+        .then((snapshot) => ({ slug, content: snapshot.val() }))
+    )
+  );
+  return await insertAuthorNames(posts);
 };

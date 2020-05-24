@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 const makeCancellable = (promise) => {
   let hasCanceled = false;
@@ -6,11 +6,9 @@ const makeCancellable = (promise) => {
   const wrappedPromise = new Promise((resolve, reject) => {
     promise.then(
       (result) => {
-        console.log("success. cancelled?", hasCanceled);
         hasCanceled ? reject({ isCanceled: true }) : resolve(result);
       },
       (error) => {
-        console.log("error. cancelled?", hasCanceled);
         hasCanceled ? reject({ isCanceled: true }) : reject(error);
       }
     );
@@ -51,17 +49,18 @@ const useCancellablePromises = () => {
   useEffect(() => {
     // Cancel all promises on unmount
     return () => {
-      console.log("cancelling promises");
       promises.current.forEach((p) => p.cancel());
       promises.current = [];
     };
   }, []);
 
-  const addPromise = (p) => {
+  // Since the identity of promises won't change (since it's a ref), this also
+  // ensures the identity of addPromise is stable
+  const addPromise = useCallback((p) => {
     const promise = makeCancellable(p);
     promises.current.push(promise);
     return promise.promise;
-  };
+  }, [promises]);
 
   return { addPromise };
 };

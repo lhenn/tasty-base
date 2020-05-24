@@ -22,7 +22,6 @@ const Edit = ({ slug }) => {
 };
 
 const SelfLoadingRecipePost = ({ slug }) => {
-  console.log("SelfLoadingRecipePost render");
   const [{ content, loading }, setContent] = useState({
     content: {},
     loading: true,
@@ -32,15 +31,10 @@ const SelfLoadingRecipePost = ({ slug }) => {
 
   // Load recipe post when component mounts
   useEffect(() => {
-    console.log("SelfLoadingRecipePost MOUNT");
     addPromise(fetchPost(slug)).then(
-      (post) => {
-        console.log("got it!:", post);
-        setContent({ loading: false, content: post.content });
-      },
-      (err) => console.log("SelfLoadingRecipePost failed with code:", err)
+      (post) => setContent({ loading: false, content: post.content }),
+      (err) => console.log("SelfLoadingRecipePost failed:", err)
     );
-    return () => console.log("SelfLoadingRecipePost UNMOUNT");
   }, []);
 
   if (loading) {
