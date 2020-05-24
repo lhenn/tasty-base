@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import styled from "styled-components";
 import { UserContext } from "../App";
-import { getFirebase } from "../firebase";
+import { getTimestamp, submitPost } from "../firebase";
 import Input from "../forms/input";
 import Label from "../forms/label";
 import TextArea from "../forms/text-area";
@@ -9,6 +9,7 @@ import Button from "../general/button-primary";
 import ImageUploader from "../general/image-uploader";
 import useFileHandlers, { FILES_UPLOADED } from "../useFileHandlers";
 import DisplayRecipePost from "./display-recipe";
+import useCancellablePromises from "../promise-hooks";
 
 const FormGroup = styled.div`
   display: flex;
@@ -218,6 +219,7 @@ const makeContent = (
 // Called when create post button is clicked
 const CreatePostButton = ({ content, slug, history }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { addPromise } = useCancellablePromises();
 
   const submit = () => {
     // Don't submit multiple times
@@ -226,18 +228,13 @@ const CreatePostButton = ({ content, slug, history }) => {
     // Swap Date timestamp out for special firebase one
     const timestampedContent = {
       ...content,
-      timestamp: getFirebase().database.ServerValue.TIMESTAMP,
+      timestamp: getTimestamp(),
     };
 
     // Upload to firebase
     setIsSubmitting(true);
-    getFirebase()
-      .database()
-      .ref(`/posts/${slug}`)
-      .set(timestampedContent)
-      .then(() => {
-        setIsSubmitting(false);
-      })
+    addPromise(submitPost(slug, timestampedContent))
+      .then(() => setIsSubmitting(false))
       .then(() => history.push(`/recipes/${slug}`));
   };
 
@@ -277,7 +274,12 @@ const parseIntOrEmpty = (str) => {
 const RecipeForm = ({ history, content, slug }) => {
   // Information shared by all posts
   const [basicInfo, setBasicInfo] = useState(
-    content ? { ...content } : emptyBasicInfo
+    content
+      ? Object.keys(emptyBasicInfo).reduce((acc, key) => {
+          acc[key] = content[key];
+          return acc;
+        }, {})
+      : emptyBasicInfo
   );
 
   // Information for personal recipes only. If the post exists but is not a
@@ -556,7 +558,11 @@ const RecipeForm = ({ history, content, slug }) => {
       </PreviewWrapper>
 
       <div style={{ textAlign: "right" }}>
-        <CreatePostButton content={newContent} slug={slugState} history={history} />
+        <CreatePostButton
+          content={newContent}
+          slug={slugState}
+          history={history}
+        />
       </div>
     </>
   );

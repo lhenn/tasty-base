@@ -89,13 +89,13 @@ export const fetchSortedPosts = async (
   return order === "reverse" ? posts.reverse() : posts;
 };
 
-// Fetches a post (or posts) given a slug (or slugs)
 export const fetchPost = async (slug) => {
-  const content = await getFirebase()
+  const snapshot = await getFirebase()
     .database()
     .ref(`posts/${slug}`)
     .once("value")
-    .then((snapshot) => snapshot.val());
+  // Unclear why this doesn't work in a then...
+  const content = snapshot.val()
   content["authorName"] = await fetchName(content.author);
   return { slug, content };
 };
@@ -112,3 +112,8 @@ export const fetchPosts = async (slugs) => {
   );
   return await insertAuthorNames(posts);
 };
+
+export const submitPost = async (slug, content) =>
+  await getFirebase().database().ref(`/posts/${slug}`).set(content);
+
+export const getTimestamp = () => getFirebase().database.ServerValue.TIMESTAMP
