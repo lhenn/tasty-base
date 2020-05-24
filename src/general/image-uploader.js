@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import styled from "styled-components";
 import UpdatingTooltip from "../general/tooltip";
-import SecondaryButton from "../general/button-secondary";
+import {SecondaryButton} from "../general/buttons";
 import {
   LOADED,
   INIT,

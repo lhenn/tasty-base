@@ -42,13 +42,19 @@ export const checkPost = (uid, slug) =>
   getFirebase()
     .database()
     .ref(`/users/${uid}/data/checkedRecipes/${slug}`)
-    .set(getFirebase().database.ServerValue.TIMESTAMP);
+    .set({ timestamp: getFirebase().database.ServerValue.TIMESTAMP });
 
 export const uncheckPost = (uid, slug) =>
   getFirebase()
     .database()
     .ref(`/users/${uid}/data/checkedRecipes/${slug}`)
     .remove();
+export const ratePost = (uid, slug, ease, taste) =>
+  getFirebase()
+    .database()
+    .ref(`/users/${uid}/data/checkedRecipes/${slug}`)
+    .update({ ease, taste});
+
 // TODO: restructure database to make name queries batchable?
 const fetchName = async (uid) => {
   const name = await getFirebase()

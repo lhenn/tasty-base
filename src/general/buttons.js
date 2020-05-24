@@ -1,6 +1,7 @@
+import React from "react";
 import styled from "styled-components";
 
-const PrimaryButton = styled.button`
+export const PrimaryButton = styled.button`
 background-image: linear-gradient(45deg, #738fce, #8377c7);
   color: white;
   padding: 7px 15px;
@@ -16,4 +17,14 @@ background-image: linear-gradient(45deg, #738fce, #8377c7);
   }
 `;
 
-export default PrimaryButton;
+export const SecondaryButton = styled.button`
+  background-color: inherit;
+  color: #775ffb;
+  padding: 10px;
+  border-radius: 50px;
+  border: solid 1 px #775ffb;
+  &:hover {
+    cursor: pointer;
+   
+  }
+`;

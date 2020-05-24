@@ -5,7 +5,7 @@ import { Redirect } from "react-router-dom";
 import styled from "styled-components";
 import { UserContext } from "../App";
 import { getFirebase } from "../firebase";
-import Input from "../forms/input";
+import {Input} from "../forms/general-forms";
 import mdToHTML from "../forms/md-parse";
 
 const WishLink = styled.a`

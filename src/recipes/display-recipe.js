@@ -35,7 +35,7 @@ const OverviewCol2 = styled.div`
   align-items: flex-end;
   justify-content: space-between;
   border-radius: 0 0 0 520px;
-  background-color: #dfdce6;
+  background-color: #e4e4e4;
   width: 250px;
 `;
 const SourceLabel = styled.span`

@@ -2,25 +2,12 @@ import React, { useContext, useState } from "react";
 import styled from "styled-components";
 import { UserContext } from "../App";
 import { getFirebase } from "../firebase";
-import Input from "../forms/input";
-import Label from "../forms/label";
-import TextArea from "../forms/text-area";
-import Button from "../general/button-primary";
+import {PrimaryButton} from "../general/buttons";
 import ImageUploader from "../general/image-uploader";
 import useFileHandlers, { FILES_UPLOADED } from "../useFileHandlers";
 import DisplayRecipePost from "./display-recipe";
+import { FormRow, FormGroup, Label, Input, TextArea } from "../forms/general-forms";
 
-const FormGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin-right: 10px;
-  flex-grow: 1;
-`;
-
-const FormRow = styled.div`
-  display: flex;
-  margin: 20px 0;
-`;
 
 const ContentWrapper = styled.div`
   display: flex;
@@ -242,9 +229,9 @@ const CreatePostButton = ({ content, slug, history }) => {
   };
 
   return (
-    <Button onClick={submit} disabled={isSubmitting}>
+    <PrimaryButton onClick={submit} disabled={isSubmitting}>
       Create
-    </Button>
+    </PrimaryButton>
   );
 };
 

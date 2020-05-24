@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { Redirect } from "react-router-dom";
 import { UserContext } from "../App";
 import { fetchPost } from "../firebase";
-import Button from "../general/button-primary";
+import {PrimaryButton} from "../general/buttons";
 import DisplayRecipePost from "./display-recipe";
 import Star from "./star";
 import useCancellablePromises from "../promise-hooks";
@@ -10,14 +10,14 @@ import useCancellablePromises from "../promise-hooks";
 const Edit = ({ slug }) => {
   const editPath = `/recipes/${slug}/edit`;
   return (
-    <Button
+    <PrimaryButton
       onClick={(e) => {
         e.preventDefault();
         window.location.href = editPath;
       }}
     >
       Edit
-    </Button>
+    </PrimaryButton>
   );
 };
 

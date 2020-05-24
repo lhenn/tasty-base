@@ -10,7 +10,7 @@ import Tooltip from "react-bootstrap/Tooltip";
 import { Link, Redirect } from "react-router-dom";
 import styled from "styled-components";
 import { getFirebase } from "../firebase";
-import PrimaryButton from "./button-primary";
+import {PrimaryButton} from "./buttons";
 import NavItem from "./nav-item";
 
 const UserWrapper = styled.div`
