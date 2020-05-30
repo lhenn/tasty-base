@@ -60,36 +60,42 @@ const Description = styled.p`
 
 const DetailsWrapper = styled.div`
   display: flex;
-  justify-content: space-between;
+  padding: 25px 0 25px 0;
 `;
 
-const IngredientsUL = styled.ul``;
+const IngredientsWrapper = styled.div`
+  width: 35%;
+  border-right: 2px solid #000000;
+  margin-right: 20px;
+`;
 
-const IngredientLI = styled.li``;
+const Ingredients = ({ ingredients }) => {
+  if (!ingredients) return null;
+  return (
+    <IngredientsWrapper>
+      <h2 style={{ fontSize: "30px" }}>Ingredients</h2>
+      {ingredients.map((ingredient, i) => (
+        <p key={`ingredient-${i}`}>
+          {ingredient.amount} {ingredient.name}
+        </p>
+      ))}
+    </IngredientsWrapper>
+  );
+};
 
-const Ingredients = ({ ingredients }) => (
-  <IngredientsUL>
-    <h2 style={{ fontSize: "30px" }}>Ingredients</h2>
-    {ingredients.map((ingredient, i) => (
-      <IngredientLI key={`ingredient-${i}`}>
-        {ingredient.amount} {ingredient.name}
-      </IngredientLI>
-    ))}
-  </IngredientsUL>
-);
-
-const InstructionsOL = styled.ol``;
-
-const InstructionsLI = styled.li``;
-
-const Instructions = ({ instructions }) => (
-  <InstructionsOL>
-    <h2 style={{ fontSize: "30px" }}>Instructions</h2>
-    {instructions.map((instruction, i) => (
-      <InstructionsLI key={`instruction-${i}`}>{instruction}</InstructionsLI>
-    ))}
-  </InstructionsOL>
-);
+const Instructions = ({ instructions }) => {
+  if (!instructions) return null;
+  return (
+    <div>
+      <h2 style={{ fontSize: "30px" }}>Instructions</h2>
+      {instructions.map((instruction, i) => (
+        <p style={{ marginBottom: "30px" }} key={`instruction-${i}`}>
+          {instruction}
+        </p>
+      ))}
+    </div>
+  );
+};
 
 const Details = ({ ingredients, instructions }) => (
   <DetailsWrapper>
@@ -181,12 +187,12 @@ const Overview = ({ content }) => {
   );
 };
 
-// authorName is either loaded from firebase (for SelfLoadingRecipePost) or
-// passed in using context (for previews during post edits/creates when user
-// has permission)
 const DisplayRecipePost = ({ content, slug }) => {
   const { user } = useContext(UserContext);
-  console.log(content);
+
+  // {content.gallery && content.gallery.length > 0 && (
+  //     <Gallery gallery={content.gallery} />
+  //   );}
 
   // const breakpoints = useBreakpoint();
   return (
@@ -200,25 +206,21 @@ const DisplayRecipePost = ({ content, slug }) => {
           </div>
         )}
       </Header>
+
       {content.coverImageURL !== "" ? (
         <CoverImage src={content.coverImageURL} alt="cover image" />
       ) : null}
+
       <Overview content={content} />
+
       <Description>
         {mdToHTML(content.description.replace(/\\n/g, "\n"), DescriptionLink)}
       </Description>
 
-      <InnerContainer>
-        {content.sourceType === "personal" && (
-          <Details
-            ingredients={content.ingredients}
-            instructions={content.instructions}
-          />
-        )}
-        {content.gallery && content.gallery.length > 0 && (
-          <Gallery gallery={content.gallery} />
-        )}
-      </InnerContainer>
+      <Details
+        ingredients={content.ingredients}
+        instructions={content.instructions}
+      />
     </Container>
   );
 };

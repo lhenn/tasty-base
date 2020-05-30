@@ -100,18 +100,18 @@ const Rating = ({ name, value, color }) => {
   const dots = [];
   for (var d = 0; d < numDots; d++) {
     if (d < Math.floor(numFilledDots))
-      dots.push(<ShadedDot color={color} key={`${name}_${d}`} />);
+      dots.push(<ShadedDot color={color} key={`${name}-${d}`} />);
     else if (d === Math.floor(numFilledDots))
       dots.push(
         <ShadedDot
           color={color}
           percentVisible={(numFilledDots % 1) * 100}
-          key={`${name}_${d}`}
+          key={`${name}-${d}`}
         />
       );
     else
       dots.push(
-        <ShadedDot color={color} percentVisible={0} key={`${name}_${d}`} />
+        <ShadedDot color={color} percentVisible={0} key={`${name}-${d}`} />
       );
   }
 
