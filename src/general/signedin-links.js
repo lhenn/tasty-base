@@ -10,7 +10,7 @@ import Tooltip from "react-bootstrap/Tooltip";
 import { Link, Redirect } from "react-router-dom";
 import styled from "styled-components";
 import { getFirebase } from "../firebase";
-import {PrimaryButton} from "./buttons";
+import { PrimaryButton } from "./buttons";
 import NavItem from "./nav-item";
 
 const UserWrapper = styled.div`
@@ -44,7 +44,6 @@ const SignOutLink = styled.button`
     cursor: pointer;
   }
 `;
-
 
 const logout = () => {
   getFirebase()
@@ -130,7 +129,7 @@ const SignedInLinks = ({ user }) => {
 
       <NavItem>
         <Link to="/create">
-          <PrimaryButton>create a post +</PrimaryButton>
+          <PrimaryButton>recipe +</PrimaryButton>
         </Link>
       </NavItem>
     </>

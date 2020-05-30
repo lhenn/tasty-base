@@ -1,33 +1,36 @@
 import React, { useContext } from "react";
-import { UserContext } from "../App";
 import styled from "styled-components";
-import { Title, AuthorDate, Icons } from "./general-recipe";
+import { UserContext } from "../App";
+import mdToHTML from "../forms/md-parse";
+import Check from "./check";
+import { AuthorDate, Title, Source } from "./general-recipe";
 import Ratings from "./ratings.js";
 import Star from "./star";
-import Check from "./check";
-import mdToHTML from "../forms/md-parse";
-import { useBreakpoint } from "../breakpoint-hooks";
-import OverviewWrapper from "./overview";
 
+// box-shadow: 10px 10px 5px -10px rgba(0, 0, 0, 0.75);
 const Container = styled.div`
   background-color: white;
-  box-shadow: 10px 10px 5px -10px rgba(0, 0, 0, 0.75);
 `;
-const MainImg = styled.img`
-  height: 300px;
+
+const CoverImage = styled.img`
+  height: 400px;
   width: 100%;
   object-fit: cover;
 `;
+
 const InnerContainer = styled.div``;
+
 const OverviewRow = styled.div`
   display: flex;
 `;
+
 const OverviewCol1 = styled.div`
   padding: 20px;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
 `;
+
 const OverviewCol2 = styled.div`
   padding: 20px;
   display: flex;
@@ -38,58 +41,56 @@ const OverviewCol2 = styled.div`
   background-color: #e4e4e4;
   width: 250px;
 `;
+
 const SourceLabel = styled.span`
   color: grey;
 `;
+
 const DescriptionLink = styled.a`
   text-decoration: underline !important;
   color: ;
 `;
+
 const Description = styled.p`
   white-space: pre-line;
+  text-align: center;
+  background: #e8e8e8;
+  padding: 25px 15% 25px 15%;
 `;
+
 const DetailsWrapper = styled.div`
   display: flex;
+  justify-content: space-between;
 `;
 
 const IngredientsUL = styled.ul``;
 
 const IngredientLI = styled.li``;
 
-const Ingredients = ({ ingredients }) => {
-  if (ingredients === undefined || ingredients === null) {
-    return <></>;
-  } else {
-    return (
-      <IngredientsUL>
-        {ingredients.map((ingredient, i) => (
-          <IngredientLI key={`ingredient-${i}`}>
-            {ingredient.amount} {ingredient.name}
-          </IngredientLI>
-        ))}
-      </IngredientsUL>
-    );
-  }
-};
+const Ingredients = ({ ingredients }) => (
+  <IngredientsUL>
+    <h2 style={{ fontSize: "30px" }}>Ingredients</h2>
+    {ingredients.map((ingredient, i) => (
+      <IngredientLI key={`ingredient-${i}`}>
+        {ingredient.amount} {ingredient.name}
+      </IngredientLI>
+    ))}
+  </IngredientsUL>
+);
+
 const InstructionsOL = styled.ol``;
 
 const InstructionsLI = styled.li``;
 
-const Instructions = ({ instructions }) => {
-  if (instructions === undefined || instructions === null) {
-    return <></>;
-  } else {
-    return (
-      <InstructionsOL>
-        {instructions.map((instruction, i) => (
-          <InstructionsLI key={`instruction-${i}`}>
-            {instruction}
-          </InstructionsLI>
-        ))}
-      </InstructionsOL>
-    );
-  }
-};
+const Instructions = ({ instructions }) => (
+  <InstructionsOL>
+    <h2 style={{ fontSize: "30px" }}>Instructions</h2>
+    {instructions.map((instruction, i) => (
+      <InstructionsLI key={`instruction-${i}`}>{instruction}</InstructionsLI>
+    ))}
+  </InstructionsOL>
+);
+
 const Details = ({ ingredients, instructions }) => (
   <DetailsWrapper>
     <Ingredients ingredients={ingredients} />
@@ -110,6 +111,7 @@ const Gallery = ({ gallery }) => {
     </div>
   );
 };
+
 const ThumbnailImg = styled.img`
   height: 200px;
   width: 200px;
@@ -118,43 +120,95 @@ const ThumbnailImg = styled.img`
   display: inline-flex;
 `;
 
+const Header = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
+
+const OverviewWrapper = styled.div`
+  margin: 25px 0px 25px 0px;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+`;
+
+const OverviewFirstColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+`;
+
+const OverviewColumn = styled.div`
+  border-left: 2px solid #000000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+`;
+
+const Overview = ({ content }) => {
+  const {
+    authorName,
+    timestamp,
+    sourceType,
+    source,
+    activeTime: time, // TODO: change after simplifying recipe post
+    servings,
+    tastiness: taste,
+    easiness: ease,
+  } = content;
+
+  const middleCol = time || servings;
+
+  return (
+    <OverviewWrapper>
+      <OverviewFirstColumn>
+        <AuthorDate authorName={authorName} timestamp={timestamp} />
+        <Source sourceType={sourceType} source={source} />
+      </OverviewFirstColumn>
+      {middleCol && (
+        <OverviewColumn>
+          {time && <p>total time: {time} min</p>}
+          {servings && <p>servings: {servings}</p>}
+        </OverviewColumn>
+      )}
+      <OverviewColumn>
+        <Ratings taste={taste} ease={ease} />
+      </OverviewColumn>
+    </OverviewWrapper>
+  );
+};
+
 // authorName is either loaded from firebase (for SelfLoadingRecipePost) or
 // passed in using context (for previews during post edits/creates when user
 // has permission)
 const DisplayRecipePost = ({ content, slug }) => {
   const { user } = useContext(UserContext);
+  console.log(content);
 
   // const breakpoints = useBreakpoint();
   return (
     <Container>
+      <Header>
+        <Title title={content.title} />
+        {user && (
+          <div>
+            <Check slug={slug} />
+            <Star slug={slug} />
+          </div>
+        )}
+      </Header>
       {content.coverImageURL !== "" ? (
-        <MainImg src={content.coverImageURL} />
+        <CoverImage src={content.coverImageURL} alt="cover image" />
       ) : null}
-      <InnerContainer>
-        <OverviewRow>
-          <OverviewCol1>
-            <Title title={content.title} />
-            <AuthorDate
-              authorName={content.authorName}
-              timestamp={content.timestamp}
-            />
-            <p>
-              <SourceLabel>source: </SourceLabel>
-              {content.source}
-            </p>
-          </OverviewCol1>
-          <OverviewCol2>
-            <Ratings content={content} />
-            <div>
-              {user && <Star slug={slug} />}
-              {user && <Check slug={slug} />}
-            </div>
-          </OverviewCol2>
-        </OverviewRow>
+      <Overview content={content} />
+      <Description>
+        {mdToHTML(content.description.replace(/\\n/g, "\n"), DescriptionLink)}
+      </Description>
 
-        <Description>
-          {mdToHTML(content.description.replace(/\\n/g, "\n"), DescriptionLink)}
-        </Description>
+      <InnerContainer>
         {content.sourceType === "personal" && (
           <Details
             ingredients={content.ingredients}
