@@ -16,12 +16,13 @@ import NoMatch from "./pages/no-match";
 import WishRecipes from "./pages/recipe-wishes";
 import Signin from "./pages/signin";
 import SelfLoadingRecipePost from "./recipes/recipe-post";
+import { GlobalStyle } from "./styling";
 
+// background-color: whitesmoke;
 const MainContent = styled.main`
   max-width: 1100px;
   margin: 20px auto;
   width: 100%;
-  background-color: whitesmoke;
   padding: 20px;
   min-height: 80vh;
 `;
@@ -145,6 +146,7 @@ const App = () => {
     >
       <BreakpointProvider queries={queries}>
         <Router>
+          <GlobalStyle />
           <NavBar />
           <MainContent>
             <Switch>

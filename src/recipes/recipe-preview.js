@@ -49,7 +49,7 @@ const RecipePreview = ({ post: { content, slug } }) => (
           timestamp={content.timestamp}
         />
         <BottomRow>
-          <Ratings tastiness={content.tastiness} easiness={content.easiness} />
+          <Ratings taste={content.tastiness} ease={content.easiness} />
           <Icons />
         </BottomRow>
       </CardContent>
