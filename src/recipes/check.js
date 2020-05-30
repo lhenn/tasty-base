@@ -16,7 +16,7 @@ import UpdatingTooltip from "../general/tooltip";
  * -    generalize check and star functions in '../firebase'
  */
 
-const Rate = ({slug}) => {
+const Rate = ({ slug, hideRate }) => {
   const [ease, setEase] = useState(10);
   const [taste, setTaste] = useState(10);
   const { user, loadingUser, userData, loadingUserData } = useContext(
@@ -24,9 +24,14 @@ const Rate = ({slug}) => {
   );
 
   const sendRatings = (ease, taste) => {
-    ratePost(user.uid, slug, ease, taste);
-
-};
+    ratePost(user.uid, slug, ease, taste).then(
+      () => {
+        console.log("finished rating!");
+        hideRate();
+      },
+      (err) => console.log(err)
+    );
+  };
 
   return (
     <>
@@ -55,7 +60,9 @@ const Rate = ({slug}) => {
           />
         </FormGroup>
       </FormRow>
-      <PrimaryButton onClick={() => sendRatings(ease, taste)}>Submit</PrimaryButton>
+      <PrimaryButton onClick={() => sendRatings(ease, taste)}>
+        Submit
+      </PrimaryButton>
     </>
   );
 };
@@ -111,9 +118,14 @@ const Check = ({ slug }) => {
         trigger={["hover", "focus"]}
         overlay={<UpdatingTooltip id="check-tooltip">{ttText}</UpdatingTooltip>}
       >
-        <Icon icon={faCheck} isactive={isChecked ? 1 : 0} onClick={onClick} onMouseEnter={onMouseEnter} />
+        <Icon
+          icon={faCheck}
+          isactive={isChecked ? 1 : 0}
+          onClick={onClick}
+          onMouseEnter={onMouseEnter}
+        />
       </OverlayTrigger>
-      {rate && <Rate slug={slug} />}
+      {rate && <Rate slug={slug} hideRate={()=> setRate(false)}/>}
     </>
   );
 };

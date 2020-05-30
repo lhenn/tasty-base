@@ -48,7 +48,6 @@ const Star = ({ slug }) => {
   const onMouseEnter = () => {
     !isStarred ? setTTText("Star") : setTTText("Unstar");
   };
-  console.log('isStarred:', isStarred)
 
   return (
     <OverlayTrigger

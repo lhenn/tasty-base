@@ -3,9 +3,8 @@ import styled from "styled-components";
 import { UserContext } from "../App";
 import mdToHTML from "../forms/md-parse";
 import Check from "./check";
-import { AuthorDate, Title, Source } from "./general-recipe";
+import { AuthorDate, Title, Source, Icons } from "./general-recipe";
 import Ratings from "./ratings.js";
-import Star from "./star";
 
 // box-shadow: 10px 10px 5px -10px rgba(0, 0, 0, 0.75);
 const Container = styled.div`
@@ -199,12 +198,7 @@ const DisplayRecipePost = ({ content, slug }) => {
     <Container>
       <Header>
         <Title title={content.title} />
-        {user && (
-          <div>
-            <Check slug={slug} />
-            <Star slug={slug} />
-          </div>
-        )}
+        {user && <Icons slug={slug} />}
       </Header>
 
       {content.coverImageURL !== "" ? (

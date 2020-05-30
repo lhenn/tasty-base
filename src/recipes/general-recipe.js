@@ -3,6 +3,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import styled from "styled-components";
 import { redBase } from "../styling";
+import Check from "./check";
+import Star from "./star";
+
 
 const StyledTitle = styled.h1`
   color: black;
@@ -61,7 +64,6 @@ const IconsWrapper = styled.div`
   display: flex;
 `;
 
-// TODO: change styling when starred
 const getActiveIconColor = (props) => {
   if(props.icon === faStar) return '#EFD910';
   if(props.icon === faCheck) return '#05CF56';
@@ -78,9 +80,12 @@ export const Icon = styled(FontAwesomeIcon)`
 
 //Might end up removing this(?)
 // TODO: pass props
-export const Icons = () => (
-  <IconsWrapper>
-    <Icon icon={faStar} />
-    <Icon icon={faCheck} />
+export const Icons = ({slug}) => (
+<IconsWrapper onClick={(e) => e.preventDefault()}>
+    <Check slug={slug}/>
+    <Star slug={slug}/>
   </IconsWrapper>
 );
+
+  
+
