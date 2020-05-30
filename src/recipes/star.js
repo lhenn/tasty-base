@@ -55,7 +55,7 @@ const Star = ({ slug }) => {
       trigger={["hover", "focus"]}
       overlay={<UpdatingTooltip id="star-tooltip">{ttText}</UpdatingTooltip>}
     >
-      <Icon icon={faStar} onClick={onClick} onMouseEnter={onMouseEnter} />
+      <Icon icon={faStar} isActive={isStarred} onClick={onClick} onMouseEnter={onMouseEnter} />
     </OverlayTrigger>
   );
 };

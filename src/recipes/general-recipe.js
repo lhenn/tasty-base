@@ -44,13 +44,17 @@ const IconsWrapper = styled.div`
 `;
 
 // TODO: change styling when starred
+const getActiveIconColor = (props) => {
+  if(props.icon == faStar) return '#EFD910';
+  if(props.icon == faCheck) return '#05CF56';
+}
 export const Icon = styled(FontAwesomeIcon)`
-  color: lightgrey;
+  color: ${(props) => props.isActive ? getActiveIconColor(props) : 'lightgrey'};
   font-size: 26px;
   padding: 5px;
   margin: 20px 5px;
   &:hover {
-    color: #9791e8;
+    color: ${(props) => props.isActive ? 'lightgrey' : getActiveIconColor(props)};
   }
 `;
 
