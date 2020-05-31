@@ -3,11 +3,11 @@ import { PrimaryButton } from "../general/buttons";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { Icon } from "./general-recipe";
 import { FormRow, FormGroup, Label, Input } from "../forms/general-forms";
-import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import styled from "styled-components";
 import { UserContext } from "../App";
 import { checkPost, uncheckPost, ratePost } from "../firebase";
-import UpdatingTooltip from "../general/tooltip";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Tooltip from "react-bootstrap/Tooltip";
 
 //
 /**
@@ -62,7 +62,6 @@ const Rate = ({slug, closeRate}) => {
 
 const Check = ({ slug }) => {
   const [busy, setBusy] = useState(false);
-  const [ttText, setTTText] = useState("");
   const [rate, setRate] = useState(false);
   const { user, loadingUser, userData, loadingUserData } = useContext(
     UserContext
@@ -77,7 +76,6 @@ const Check = ({ slug }) => {
     setBusy(true);
     checkPost(user.uid, slug).then(
       () => {
-        setTTText("Checked!");
         setBusy(false);
         setRate(true);
       },
@@ -90,7 +88,6 @@ const Check = ({ slug }) => {
     setBusy(true);
     uncheckPost(user.uid, slug).then(
       () => {
-        setTTText("Unchecked!");
         setBusy(false);
         setRate(false);
       },
@@ -101,17 +98,27 @@ const Check = ({ slug }) => {
   const onClick = () => (!isChecked ? check() : uncheck());
 
   const onMouseEnter = () => {
-    !isChecked ? setTTText("Check") : setTTText("Uncheck");
+    //!isChecked ? setTTContent("Check") : setTTContent("Uncheck");
   };
-
+  console.log('isChecked? :', isChecked)
   return (
     <div>
       <OverlayTrigger
         placement="bottom"
-        trigger={["hover", "focus"]}
-        overlay={<UpdatingTooltip id="check-tooltip">{ttText}</UpdatingTooltip>}
+        trigger="click"
+        overlay={
+          <Tooltip id="check-tooltip">
+            {rate ? <RateDiv slug={slug} /> : <div>unchecked</div>}
+          </Tooltip>
+        }
+        rootClose
       >
-        <Icon icon={faCheck} isactive={isChecked ? 1 : 0} onClick={onClick} onMouseEnter={onMouseEnter} />
+        <Icon
+          icon={faCheck}
+          isactive={isChecked ? 1 : 0}
+          onClick={onClick}
+          onMouseEnter={onMouseEnter}
+        />
       </OverlayTrigger>
       {rate && <Rate slug={slug} closeRate={()=>setRate(false)}/>}
     </div>
