@@ -111,7 +111,7 @@ const Check = ({ slug }) => {
         trigger={["hover", "focus"]}
         overlay={<UpdatingTooltip id="check-tooltip">{ttText}</UpdatingTooltip>}
       >
-        <Icon icon={faCheck} isactive={isChecked ? 1 : 0} onClick={onClick} onMouseEnter={onMouseEnter} />
+        <Icon icon={faCheck} isActive={isChecked} onClick={onClick} onMouseEnter={onMouseEnter} />
       </OverlayTrigger>
       {rate && <Rate slug={slug} />}
     </>

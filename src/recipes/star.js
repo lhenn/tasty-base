@@ -48,7 +48,6 @@ const Star = ({ slug }) => {
   const onMouseEnter = () => {
     !isStarred ? setTTText("Star") : setTTText("Unstar");
   };
-  console.log('isStarred:', isStarred)
 
   return (
     <OverlayTrigger
@@ -56,7 +55,7 @@ const Star = ({ slug }) => {
       trigger={["hover", "focus"]}
       overlay={<UpdatingTooltip id="star-tooltip">{ttText}</UpdatingTooltip>}
     >
-      <Icon icon={faStar} isactive={isStarred ? 1 : 0} onClick={onClick} onMouseEnter={onMouseEnter} />
+      <Icon icon={faStar} isActive={isStarred} onClick={onClick} onMouseEnter={onMouseEnter} />
     </OverlayTrigger>
   );
 };
