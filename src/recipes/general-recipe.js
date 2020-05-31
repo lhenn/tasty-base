@@ -67,20 +67,20 @@ const getActiveIconColor = (props) => {
   if(props.icon == faCheck) return '#05CF56';
 }
 export const Icon = styled(FontAwesomeIcon)`
-  color: ${(props) => props.isActive ? getActiveIconColor(props) : 'lightgrey'};
+  color: ${(props) => props.isactive ? getActiveIconColor(props) : 'lightgrey'};
   font-size: 26px;
   padding: 5px;
   margin: 20px 5px;
   &:hover {
-    color: ${(props) => props.isActive ? 'lightgrey' : getActiveIconColor(props)};
+    color: ${(props) => props.isactive ? 'lightgrey' : getActiveIconColor(props)};
   }
 `;
 
 //Might end up removing this(?)
 // TODO: pass props
-export const Icons = () => (
+export const Icons = ({slug}) => (
   <IconsWrapper>
-    <Icon icon={faStar} />
-    <Icon icon={faCheck} />
+    <Icon icon={faStar} slug={slug}/>
+    <Icon icon={faCheck} slug={slug}/>
   </IconsWrapper>
 );

@@ -50,7 +50,7 @@ const RecipePreview = ({ post: { content, slug } }) => (
         />
         <BottomRow>
           <Ratings taste={content.tastiness} ease={content.easiness} />
-          <Icons />
+          <Icons slug={slug} />
         </BottomRow>
       </CardContent>
     </Card>

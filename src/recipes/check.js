@@ -29,7 +29,7 @@ const Rate = ({slug}) => {
 };
 
   return (
-    <>
+    <div>
       <div>Care to anonymously rate this recipe?</div>
       <FormRow>
         <FormGroup>
@@ -56,7 +56,7 @@ const Rate = ({slug}) => {
         </FormGroup>
       </FormRow>
       <PrimaryButton onClick={() => sendRatings(ease, taste)}>Submit</PrimaryButton>
-    </>
+    </div>
   );
 };
 
@@ -105,16 +105,16 @@ const Check = ({ slug }) => {
   };
 
   return (
-    <>
+    <div>
       <OverlayTrigger
         placement="bottom"
         trigger={["hover", "focus"]}
         overlay={<UpdatingTooltip id="check-tooltip">{ttText}</UpdatingTooltip>}
       >
-        <Icon icon={faCheck} isActive={isChecked} onClick={onClick} onMouseEnter={onMouseEnter} />
+        <Icon icon={faCheck} isactive={isChecked ? 1 : 0} onClick={onClick} onMouseEnter={onMouseEnter} />
       </OverlayTrigger>
       {rate && <Rate slug={slug} />}
-    </>
+    </div>
   );
 };
 export default Check;
