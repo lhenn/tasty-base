@@ -78,8 +78,7 @@ export const Icon = styled(FontAwesomeIcon)`
   }
 `;
 
-//Might end up removing this(?)
-// TODO: pass props
+
 export const Icons = ({slug}) => (
   <IconsWrapper onClick={(e)=>e.preventDefault()}>
     <Star icon={faStar} slug={slug}/>

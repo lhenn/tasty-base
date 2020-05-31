@@ -16,7 +16,7 @@ import UpdatingTooltip from "../general/tooltip";
  * -    generalize check and star functions in '../firebase'
  */
 
-const Rate = ({slug}) => {
+const Rate = ({slug, closeRate}) => {
   const [ease, setEase] = useState(10);
   const [taste, setTaste] = useState(10);
   const { user, loadingUser, userData, loadingUserData } = useContext(
@@ -24,7 +24,7 @@ const Rate = ({slug}) => {
   );
 
   const sendRatings = (ease, taste) => {
-    ratePost(user.uid, slug, ease, taste);
+    ratePost(user.uid, slug, ease, taste).then(()=>{closeRate()}).catch((err)=>console.log(err));
 
 };
 
@@ -113,7 +113,7 @@ const Check = ({ slug }) => {
       >
         <Icon icon={faCheck} isactive={isChecked ? 1 : 0} onClick={onClick} onMouseEnter={onMouseEnter} />
       </OverlayTrigger>
-      {rate && <Rate slug={slug} />}
+      {rate && <Rate slug={slug} closeRate={()=>setRate(false)}/>}
     </div>
   );
 };
