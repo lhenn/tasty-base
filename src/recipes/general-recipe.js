@@ -5,8 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import styled from "styled-components";
 import { redBase } from "../styling";
-import Check from "./check";
-import Star from "./star";
+
 
 
 const StyledTitle = styled.h1`
@@ -67,8 +66,8 @@ const IconsWrapper = styled.div`
 `;
 
 const getActiveIconColor = (props) => {
-  if(props.icon == faStar) return '#EFD910';
-  if(props.icon == faCheck) return '#05CF56';
+  if(props.icon === faStar) return '#EFD910';
+  if(props.icon === faCheck) return '#05CF56';
 }
 export const Icon = styled(FontAwesomeIcon)`
   color: ${(props) => props.isactive ? getActiveIconColor(props) : 'lightgrey'};
@@ -76,7 +75,7 @@ export const Icon = styled(FontAwesomeIcon)`
   padding: 5px;
   margin: 20px 5px;
   &:hover {
-    color: ${(props) => props.isactive ? 'lightgrey' : getActiveIconColor(props)};
+    color: ${(props) => getActiveIconColor(props)};
   }
 `;
 

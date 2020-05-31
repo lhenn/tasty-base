@@ -97,29 +97,14 @@ const Check = ({ slug }) => {
 
   const onClick = () => (!isChecked ? check() : uncheck());
 
-  const onMouseEnter = () => {
-    //!isChecked ? setTTContent("Check") : setTTContent("Uncheck");
-  };
-  console.log('isChecked? :', isChecked)
+ 
   return (
     <div>
-      <OverlayTrigger
-        placement="bottom"
-        trigger="click"
-        overlay={
-          <Tooltip id="check-tooltip">
-            {rate ? <RateDiv slug={slug} /> : <div>unchecked</div>}
-          </Tooltip>
-        }
-        rootClose
-      >
         <Icon
           icon={faCheck}
           isactive={isChecked ? 1 : 0}
           onClick={onClick}
-          onMouseEnter={onMouseEnter}
         />
-      </OverlayTrigger>
       {rate && <Rate slug={slug} closeRate={()=>setRate(false)}/>}
     </div>
   );

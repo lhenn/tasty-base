@@ -2,10 +2,6 @@ import React, { useContext } from "react";
 import styled from "styled-components";
 import { UserContext } from "../App";
 import mdToHTML from "../forms/md-parse";
-<<<<<<< HEAD
-import Check from "./check";
-=======
->>>>>>> master
 import { AuthorDate, Title, Source, Icons } from "./general-recipe";
 import Ratings from "./ratings.js";
 
