@@ -1,4 +1,6 @@
 import { faCheck, faStar } from "@fortawesome/free-solid-svg-icons";
+import Check from './check';
+import Star from './star';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import styled from "styled-components";
@@ -79,8 +81,8 @@ export const Icon = styled(FontAwesomeIcon)`
 //Might end up removing this(?)
 // TODO: pass props
 export const Icons = ({slug}) => (
-  <IconsWrapper>
-    <Icon icon={faStar} slug={slug}/>
-    <Icon icon={faCheck} slug={slug}/>
+  <IconsWrapper onClick={(e)=>e.preventDefault()}>
+    <Star icon={faStar} slug={slug}/>
+    <Check icon={faCheck} slug={slug}/>
   </IconsWrapper>
 );
