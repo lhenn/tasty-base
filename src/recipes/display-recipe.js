@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { UserContext } from "../App";
 import mdToHTML from "../forms/md-parse";
 import Check from "./check";
-import { AuthorDate, Title, Source } from "./general-recipe";
+import { AuthorDate, Title, Source, Icons } from "./general-recipe";
 import Ratings from "./ratings.js";
 import Star from "./star";
 
@@ -200,10 +200,7 @@ const DisplayRecipePost = ({ content, slug }) => {
       <Header>
         <Title title={content.title} />
         {user && (
-          <div>
-            <Check slug={slug} />
-            <Star slug={slug} />
-          </div>
+          <Icons slug={slug}/>
         )}
       </Header>
 
