@@ -1,19 +1,19 @@
 import React, { memo, useState } from "react";
 import Columns from "../general/columns";
+import {
+  HeaderWrapper,
+  PageTitle,
+  PageViewOptions,
+  SearchField,
+} from "../general/page-header";
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import styled from "styled-components";
-
-const HeaderWrapper = styled.div`
-  display: flex;
-  justify-content: space-between;
-`;
 
 const SortByContainer = styled.div`
   display: flex;
   align-items: center;
 `;
-
 
 // Sort button labels and corresponding arguments for updatePosts
 const sorts = {
@@ -21,8 +21,6 @@ const sorts = {
   tastiest: ["tastiness", "reverse"],
   easiest: ["easiness", "reverse"],
 };
-
-
 
 const Home = memo(({ loadingPosts, posts, updatePosts }) => {
   const [sortBy, setSortBy] = useState("newest");
@@ -54,11 +52,14 @@ const Home = memo(({ loadingPosts, posts, updatePosts }) => {
   return (
     <>
       <HeaderWrapper>
-        <h1>Home</h1>
-        <SortByContainer>
-          <span>Sort by: </span>
-          <DropdownButton title={sortBy}>{sortButtons}</DropdownButton>
-        </SortByContainer>
+        <PageTitle>Home</PageTitle>
+        <PageViewOptions>
+          <SortByContainer>
+            <span>Sort by: </span>
+            <DropdownButton title={sortBy}>{sortButtons}</DropdownButton>
+          </SortByContainer>
+          <SearchField placeholder="search" />
+        </PageViewOptions>
       </HeaderWrapper>
       {postContent}
     </>

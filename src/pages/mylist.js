@@ -2,7 +2,12 @@ import React, { useContext, useEffect, useState } from "react";
 import { Redirect } from "react-router-dom";
 import { UserContext } from "../App";
 import { fetchPosts } from "../firebase";
-import styled from "styled-components";
+import {
+    HeaderWrapper,
+    PageTitle,
+    PageViewOptions,
+    SearchField,
+  } from "../general/page-header";
 import Columns from "../general/columns";
 import useCancellablePromises from "../promise-hooks";
 
@@ -47,7 +52,13 @@ const MyList = () => {
 
   return (
     <>
-      <h1>MyList</h1>
+       <HeaderWrapper>
+        <PageTitle>My List</PageTitle>
+        <PageViewOptions>
+          
+          <SearchField placeholder="search" />
+        </PageViewOptions>
+      </HeaderWrapper>
       
       {postsContent}
       
