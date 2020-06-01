@@ -4,7 +4,7 @@ import { yellowBase } from "../styling";
 export const PrimaryButton = styled.button`
   background-color: ${yellowBase};
   font-size: 20px;
-  padding: 7px 15px;
+  padding: 7px 10px;
   border-radius: 50px;
   border: 0;
   box-shadow: none;
@@ -19,4 +19,14 @@ export const SecondaryButton = styled.button`
   &:hover {
     cursor: pointer;
   }
+`;
+
+export const FilterButton = styled.button`
+ border:solid 2px black;
+ font-size: 20px;
+  padding: 0 10px;
+  border-radius: 50px;
+  margin: 0 10px;
+ color: black;
+ background-color: ${props => props.color}
 `;

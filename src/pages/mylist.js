@@ -10,8 +10,13 @@ import {
   } from "../general/page-header";
 import Columns from "../general/columns";
 import useCancellablePromises from "../promise-hooks";
+import {FilterButton} from "../general/buttons";
+import { yellowBase, greenBase, redOrangeBase, lavendarBase} from "../styling";
 
 
+const Filter = () => {
+
+}
 
 const MyList = () => {
   const [{ posts, loadingPosts }, setPosts] = useState({
@@ -55,7 +60,11 @@ const MyList = () => {
        <HeaderWrapper>
         <PageTitle>My List</PageTitle>
         <PageViewOptions>
-          
+        <FilterButton color={greenBase}>made</FilterButton>
+          <FilterButton color={yellowBase}>starred</FilterButton>
+          <FilterButton color={lavendarBase}>ideas</FilterButton>
+          <FilterButton color={redOrangeBase}>contributions</FilterButton>
+
           <SearchField placeholder="search" />
         </PageViewOptions>
       </HeaderWrapper>

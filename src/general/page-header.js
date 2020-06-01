@@ -6,6 +6,7 @@ export const HeaderWrapper = styled.div`
   display: flex;
   padding:10px;
   align-items:center;
+  margin-bottom: 20px;
 `;
 
 export const PageTitle = styled.h1`
@@ -21,10 +22,11 @@ align-items:center;
 `;
 
 export const SearchField = styled.input`
-border:solid 1px black;
+border:solid 2px black;
 border-radius:20px;
 height:35px;
 width:200px;
 padding: 0 10px;
-margin: 0 20px;
+margin-left:10px;
 `;
+
