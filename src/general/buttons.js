@@ -28,5 +28,8 @@ export const FilterButton = styled.button`
   border-radius: 50px;
   margin: 0 10px;
  color: black;
- background-color: ${props => props.color}
+ background-color: ${props => props.color};
+ &:focus {
+   outline: none;
+ }
 `;
