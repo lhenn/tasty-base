@@ -35,22 +35,24 @@ const MyList = () => {
       );
     }
   }, [userData, loadingUserData, addPromise]);
- 
-  // User auth and data loading underway
-  if (loadingUser || loadingUserData) return <p>loading...</p>;
 
-  // User auth completed
-  if (!user) {
+  // User auth completed and failed
+  if (!loadingUser && !loadingUserData && !user) {
     return <Redirect to="/" />;
   }
 
-  // User exists and may have favorite posts that are being loaded
-  if (loadingPosts) return <p>loading...</p>;
-  
+  const postsContent =
+    loadingUser || loadingUserData || loadingPosts ? (
+      <p>loading...</p>
+    ) : (
+      <MyListRecipes posts={posts} />
+    );
+
+
   return (
     <>
       <h1>MyList</h1>
-      <MyListRecipes posts={posts} />
+      {postsContent}
     </>
   );
 };
