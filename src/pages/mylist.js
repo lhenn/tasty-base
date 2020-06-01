@@ -2,16 +2,12 @@ import React, { useContext, useEffect, useState } from "react";
 import { Redirect } from "react-router-dom";
 import { UserContext } from "../App";
 import { fetchPosts } from "../firebase";
-import RecipePreview from "../recipes/recipe-preview";
+import styled from "styled-components";
+import Columns from "../general/columns";
 import useCancellablePromises from "../promise-hooks";
 
-const MyListRecipes = ({ posts }) => (
-  <>
-    {posts.map((post) => (
-      <RecipePreview key={post.slug} post={post} />
-    ))}
-  </>
-);
+
+
 const MyList = () => {
   const [{ posts, loadingPosts }, setPosts] = useState({
     posts: [],
@@ -45,14 +41,16 @@ const MyList = () => {
     loadingUser || loadingUserData || loadingPosts ? (
       <p>loading...</p>
     ) : (
-      <MyListRecipes posts={posts} />
+      <Columns posts={posts} />
     );
 
 
   return (
     <>
       <h1>MyList</h1>
+      
       {postsContent}
+      
     </>
   );
 };

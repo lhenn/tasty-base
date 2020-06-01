@@ -1,10 +1,8 @@
 import React, { memo, useState } from "react";
-import { useBreakpoint } from "../breakpoint-hooks";
+import Columns from "../general/columns";
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import styled from "styled-components";
-import RecipePreview from "../recipes/recipe-preview";
-import { getLayoutSize, SMALL, MEDIUM, LARGE } from "../App";
 
 const HeaderWrapper = styled.div`
   display: flex;
@@ -16,17 +14,6 @@ const SortByContainer = styled.div`
   align-items: center;
 `;
 
-const PostsContainer = styled.div`
-  display: flex;
-  justify-content: center;
-`;
-
-const Column = styled.div`
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-  width: 100%;
-`;
 
 // Sort button labels and corresponding arguments for updatePosts
 const sorts = {
@@ -35,34 +22,7 @@ const sorts = {
   easiest: ["easiness", "reverse"],
 };
 
-// Column layout for (sorted) posts
-const Columns = ({ posts }) => {
-  const matches = useBreakpoint();
 
-  // Media query
-  const layoutSize = getLayoutSize(matches);
-  const numCols =
-    layoutSize === SMALL
-      ? 1
-      : layoutSize === MEDIUM
-      ? 2
-      : layoutSize === LARGE
-      ? 3
-      : console.log("invalid layout size");
-
-  // Split up posts for each column. NOTE: using Array(...).fill([]) gives an
-  // array where all elements reference the same initially empty array...
-  const postsByCol = [...Array(numCols)].map(() => []);
-  posts.forEach((post, index) => postsByCol[index % numCols].push(post));
-
-  return postsByCol.map((col, i) => (
-    <Column key={`col ${i} of ${numCols}`}>
-      {col.map((post) => (
-        <RecipePreview key={post.slug} post={post} />
-      ))}
-    </Column>
-  ));
-};
 
 const Home = memo(({ loadingPosts, posts, updatePosts }) => {
   const [sortBy, setSortBy] = useState("newest");
@@ -100,7 +60,7 @@ const Home = memo(({ loadingPosts, posts, updatePosts }) => {
           <DropdownButton title={sortBy}>{sortButtons}</DropdownButton>
         </SortByContainer>
       </HeaderWrapper>
-      <PostsContainer>{postContent}</PostsContainer>
+      {postContent}
     </>
   );
 });
