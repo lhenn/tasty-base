@@ -13,8 +13,6 @@ import useCancellablePromises from "../promise-hooks";
 import { FilterButton } from "../general/buttons";
 import { yellowBase, greenBase, redOrangeBase, lavendarBase } from "../styling";
 
-const Filter = () => {};
-
 const MyList = () => {
   const [{ posts, loadingPosts }, setPosts] = useState({
     posts: [],
@@ -26,21 +24,26 @@ const MyList = () => {
   const { addPromise } = useCancellablePromises();
   const [activeFilters, setActiveFilters] = useState(["check", "star"]);
 
-  // Load all posts if userData is present
   useEffect(() => {
     if (!loadingUserData && userData?.myListRecipes) {
       setPosts({ posts: [], loadingPosts: true });
-      // Values are timestamps
-      addPromise(fetchPosts(Object.keys(userData.myListRecipes))).then(
+      const filteredSlugs = new Set();
+      for (let [slug, info] of Object.entries(userData.myListRecipes)) {
+        activeFilters.forEach((filter) => {
+          if (info.hasOwnProperty(filter)) {
+            filteredSlugs.add(slug);
+          }
+        });
+      }
+      addPromise(fetchPosts(Array.from(filteredSlugs))).then(
         (myListPosts) => {
           setPosts({ posts: myListPosts, loadingPosts: false });
         },
-        (err) => console.log("Stars: fetchPosts failed: ", err)
+        (err) => console.log("fetchPosts failed: ", err)
       );
     }
-  }, [userData, loadingUserData, addPromise]);
+  }, [activeFilters, userData, loadingUserData, addPromise]);
 
-  // User auth completed and failed
   if (!loadingUser && !loadingUserData && !user) {
     return <Redirect to="/" />;
   }
@@ -51,8 +54,7 @@ const MyList = () => {
     ) : (
       <Columns posts={posts} />
     );
-  //why isnt' this working??? maybe ahve to do some 'busy' thing like with stars/checks
-  console.log("initial activeFilters", activeFilters);
+
   const handleFilterClick = (e, filterBy) => {
     const newActiveFilters = [...activeFilters];
     activeFilters.includes(filterBy)
@@ -60,6 +62,7 @@ const MyList = () => {
       : newActiveFilters.push(filterBy);
     setActiveFilters(newActiveFilters);
   };
+
   return (
     <>
       <HeaderWrapper>
