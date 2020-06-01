@@ -119,7 +119,7 @@ const App = () => {
     }
   };
 
-  const updateMyListPosts = (filterBy = 'all', userData) => {
+  const filterPosts = (filterBy = 'all', userData) => {
     //fetchMyListPosts(filterBy)
   }
 

@@ -29,9 +29,9 @@ nav a h2 {
 /* override bootstrap components */
 .btn-primary,
 .dropdown-toggle {
-  background-image: linear-gradient(45deg, #738fce, #8377c7);
-  color: white;
-  padding: 7px 15px;
+  background-color: #EFD910 !important;
+color:black !important;
+  padding: 7px 15px !important;
   border-radius: 50px !important;
   margin-left: 10px;
   font-size: 15px;

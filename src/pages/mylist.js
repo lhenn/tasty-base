@@ -12,6 +12,10 @@ import Columns from "../general/columns";
 import useCancellablePromises from "../promise-hooks";
 import { FilterButton } from "../general/buttons";
 import { yellowBase, greenBase, redOrangeBase, lavendarBase } from "../styling";
+import styled from "styled-components";
+import { faCheck, faStar, faLightbulb } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 
 const MyList = () => {
   const [{ posts, loadingPosts }, setPosts] = useState({
@@ -62,7 +66,10 @@ const MyList = () => {
       : newActiveFilters.push(filterBy);
     setActiveFilters(newActiveFilters);
   };
-
+  const FilterIcon = styled(FontAwesomeIcon)`
+    color:black;
+    font-size: medium;
+  `;
   return (
     <>
       <HeaderWrapper>
@@ -73,16 +80,16 @@ const MyList = () => {
             color={greenBase}
             onClick={(e) => handleFilterClick(e, "check")}
           >
-            made
+            made <FilterIcon icon={faCheck}/>
           </FilterButton>
           <FilterButton
             isActive={activeFilters.includes("star")}
             color={yellowBase}
             onClick={(e) => handleFilterClick(e, "star")}
           >
-            starred
+            starred <FilterIcon icon={faStar}/>
           </FilterButton>
-          <FilterButton color={lavendarBase}>ideas</FilterButton>
+          <FilterButton color={lavendarBase}>ideas <FilterIcon icon={faLightbulb}/></FilterButton>
           <FilterButton color={redOrangeBase}>contributions</FilterButton>
 
           <SearchField placeholder="search" />
