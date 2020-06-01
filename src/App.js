@@ -17,6 +17,7 @@ import WishRecipes from "./pages/recipe-wishes";
 import Signin from "./pages/signin";
 import SelfLoadingRecipePost from "./recipes/recipe-post";
 import { GlobalStyle } from "./styling";
+import MyList from "./pages/mylist";
 
 // background-color: whitesmoke;
 const MainContent = styled.main`
@@ -118,6 +119,10 @@ const App = () => {
     }
   };
 
+  const updateMyListPosts = (filterBy = 'all', userData) => {
+    //fetchMyListPosts(filterBy)
+  }
+
   // Subscribe to listen for auth state changes when application mounts. Note
   // that onAuthStateChanged returns the auth unsubscribe function, so this
   // cleans up after itself.
@@ -162,6 +167,7 @@ const App = () => {
                 )}
               />
               <Route exact path="/signin" component={Signin} />
+              <Route exact path="/mylist" component={MyList} />
               <Route exact path="/fav-recipes" component={Favorites} />
               <Route exact path="/wish-recipes" component={WishRecipes} />
               <Route exact path="/create" component={Create} />

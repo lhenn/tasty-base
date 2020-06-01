@@ -94,7 +94,7 @@ const Home = memo(({ loadingPosts, posts, updatePosts }) => {
   return (
     <>
       <HeaderWrapper>
-        <h1>Recipes</h1>
+        <h1>Home</h1>
         <SortByContainer>
           <span>Sort by: </span>
           <DropdownButton title={sortBy}>{sortButtons}</DropdownButton>

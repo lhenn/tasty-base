@@ -5,7 +5,7 @@ import { Icon } from "./general-recipe";
 import { FormRow, FormGroup, Label, Input } from "../forms/general-forms";
 import styled from "styled-components";
 import { UserContext } from "../App";
-import { checkPost, uncheckPost, ratePost } from "../firebase";
+import { addToMyList, removeFromMyList } from "../firebase";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
 
@@ -24,7 +24,7 @@ const Rate = ({slug, closeRate}) => {
   );
 
   const sendRatings = (ease, taste) => {
-    ratePost(user.uid, slug, ease, taste).then(()=>{closeRate()}).catch((err)=>console.log(err));
+    addToMyList(user.uid, slug, 'rate', {ease, taste}).then(()=>{closeRate()}).catch((err)=>console.log(err));
 
 };
 
@@ -69,12 +69,12 @@ const Check = ({ slug }) => {
 
   if (loadingUser || loadingUserData) return <Icon icon={faCheck} />;
 
-  const isChecked = userData?.checkedRecipes?.hasOwnProperty(slug);
+  const isChecked = userData?.myListRecipes[slug]?.hasOwnProperty('check') ?? false;
 
   const check = () => {
     if (busy) return;
     setBusy(true);
-    checkPost(user.uid, slug).then(
+    addToMyList(user.uid, slug, 'check').then(
       () => {
         setBusy(false);
         setRate(true);
@@ -86,7 +86,7 @@ const Check = ({ slug }) => {
   const uncheck = () => {
     if (busy) return;
     setBusy(true);
-    uncheckPost(user.uid, slug).then(
+    removeFromMyList(user.uid, slug, 'check').then(
       () => {
         setBusy(false);
         setRate(false);
