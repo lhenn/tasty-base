@@ -49,6 +49,7 @@ export const uncheckPost = (uid, slug) =>
     .database()
     .ref(`/users/${uid}/data/checkedRecipes/${slug}`)
     .remove();
+
 export const ratePost = (uid, slug, ease, taste) =>
   getFirebase()
     .database()

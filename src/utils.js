@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 export const usePrevious = (value) => {
   const ref = useRef();
@@ -19,3 +19,50 @@ export const shallowIsEqual = (dict1, dict2) =>
   Object.keys(dict1).every(
     (key) => dict2.hasOwnProperty(key) && dict1[key] === dict2[key]
   );
+
+export const parseIntOrEmpty = (str) => {
+  let val = parseInt(str);
+  return isNaN(val) ? "" : val;
+};
+
+export const parseFloatOrEmpty = (str) => {
+  let val = parseFloat(str);
+  return isNaN(val) ? "" : val;
+};
+
+// Checks if a variable that should contain text doesn't exist or only contains
+// whitespace
+export const textIsEmpty = (text) =>
+  text === null || text === undefined || text.replace(/\s/g, "").length === 0;
+
+// Falls back to showing a placeholder when an image cannot be successfully
+// loaded
+export const ImageWithPlaceholder = ({
+  src,
+  alt,
+  Placeholder,
+  Image,
+  ...props
+}) => {
+  const [loaded, setLoaded] = useState(false);
+  const imageProps = {
+    src,
+    style: !loaded ? { visibility: "hidden", height: "0px" } : {},
+    onLoad: () => setLoaded(true),
+    onError: () => setLoaded(false),
+    ...props,
+  };
+
+  const image = Image ? (
+    <Image {...imageProps} />
+  ) : (
+    <img alt={alt} {...imageProps} />
+  );
+
+  return (
+    <>
+      {!loaded && <Placeholder />}
+      {image}
+    </>
+  );
+};

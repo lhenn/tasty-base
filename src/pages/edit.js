@@ -1,28 +1,30 @@
 import React, { useEffect, useContext, useState } from "react";
 import { Redirect } from "react-router-dom";
 import { UserContext } from "../App";
-import { fetchPost } from "../firebase";
-import RecipeForm from "../recipes/recipe-form";
+import { fetchPost, submitPost } from "../firebase";
+// import RecipeForm from "../recipes/recipe-form";
+import Editor from "../recipes/editor";
 import useCancellablePromises from "../promise-hooks";
 
 const Edit = ({ history, match }) => {
   const { user } = useContext(UserContext);
-  const slug = match.params.slug;
   const [loading, setLoading] = useState(true);
   const [content, setContent] = useState();
   const [authorized, setAuthorized] = useState();
   const { addPromise } = useCancellablePromises();
 
-  // Load the content
+  const slug = match.params.slug;
+
+  // Load content to make sure it's up to date
   useEffect(() => {
     addPromise(fetchPost(slug)).then(
-      ({ content }) => {
+      ({ content: fetchedContent }) => {
         // Wait until updateuser has been set
-        if (user && content.author !== user.uid) {
+        if (user && fetchedContent.author !== user.uid) {
           setAuthorized(false);
         } else {
           setAuthorized(true);
-          setContent(content);
+          setContent(fetchedContent);
         }
         setLoading(false);
       },
@@ -43,11 +45,18 @@ const Edit = ({ history, match }) => {
     return <Redirect to="/404" />;
   }
 
-  // Prepopulate recipe form
   return (
     <>
-      <h1>Edit Post</h1>
-      <RecipeForm history={history} content={content} slug={slug} />
+      <div
+        style={{
+          width: "100%",
+          borderBottom: "2px solid #000000",
+          marginBottom: "10px",
+        }}
+      >
+        <h1>Edit Post</h1>
+      </div>
+      <Editor initialContent={content} initialSlug={slug} history={history} />
     </>
   );
 };
