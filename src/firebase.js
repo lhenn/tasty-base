@@ -50,11 +50,29 @@ export const uncheckPost = (uid, slug) =>
     .ref(`/users/${uid}/data/checkedRecipes/${slug}`)
     .remove();
 
-export const ratePost = (uid, slug, ease, taste) =>
+export const addToMyList = (uid, slug, action, ratings = null) => {
+  let entry =
+    ratings == null
+      ? {
+          [action]: getFirebase().database.ServerValue.TIMESTAMP,
+        }
+      : {
+          [action]: {
+            timeAdded: getFirebase().database.ServerValue.TIMESTAMP,
+            ease: ratings.ease,
+            taste: ratings.taste,
+          },
+        };
+  return getFirebase()
+    .database()
+    .ref(`/users/${uid}/data/myListRecipes/${slug}`)
+    .update(entry);
+};
+export const removeFromMyList = (uid, slug, action) =>
   getFirebase()
     .database()
-    .ref(`/users/${uid}/data/checkedRecipes/${slug}`)
-    .update({ ease, taste});
+    .ref(`/users/${uid}/data/myListRecipes/${slug}/${action}`)
+    .remove();
 
 // TODO: restructure database to make name queries batchable?
 const fetchName = async (uid) => {
@@ -111,9 +129,9 @@ export const fetchPost = async (slug) => {
   const snapshot = await getFirebase()
     .database()
     .ref(`posts/${slug}`)
-    .once("value")
+    .once("value");
   // Unclear why this doesn't work in a then...
-  const content = snapshot.val()
+  const content = snapshot.val();
   content["authorName"] = await fetchName(content.author);
   return { slug, content };
 };
@@ -134,4 +152,4 @@ export const fetchPosts = async (slugs) => {
 export const submitPost = async (slug, content) =>
   await getFirebase().database().ref(`/posts/${slug}`).set(content);
 
-export const getTimestamp = () => getFirebase().database.ServerValue.TIMESTAMP
+export const getTimestamp = () => getFirebase().database.ServerValue.TIMESTAMP;

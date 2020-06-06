@@ -104,33 +104,19 @@ const SignedInLinks = ({ user }) => {
   return (
     <>
       <NavItem>
-        <UserWrapper>
-          <UserPhoto user={user} />
-        </UserWrapper>
+        <Link to="/mylist">My List</Link>
       </NavItem>
-
-      <NavItem>
-        <Link to="/graph">
-          <ScatterIcon />
-        </Link>
-      </NavItem>
-
-      <NavItem>
-        <Link to="/fav-recipes">
-          <FontAwesomeIcon icon={faBookmark} />
-        </Link>
-      </NavItem>
-
-      <NavItem>
-        <Link to="/wish-recipes">
-          <FontAwesomeIcon icon={faList} />
-        </Link>
-      </NavItem>
-
+     
       <NavItem>
         <Link to="/create">
           <PrimaryButton>recipe +</PrimaryButton>
         </Link>
+      </NavItem>
+
+      <NavItem>
+        <UserWrapper>
+          <UserPhoto user={user} />
+        </UserWrapper>
       </NavItem>
     </>
   );

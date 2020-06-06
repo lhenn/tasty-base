@@ -3,7 +3,7 @@ import { Icon } from "./general-recipe";
 import React, { useContext, useState } from "react";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import { UserContext } from "../App";
-import { starPost, unstarPost } from "../firebase";
+import { addToMyList, removeFromMyList } from "../firebase";
 import UpdatingTooltip from "../general/tooltip";
 
 
@@ -17,12 +17,15 @@ const Star = ({ slug }) => {
 
   if (loadingUser || loadingUserData) return <Icon icon={faStar} />;
 
-  const isStarred = userData?.starredRecipes?.hasOwnProperty(slug);
+  const isStarred = 
+    userData.myListRecipes &&
+    userData.myListRecipes[slug] &&
+    userData.myListRecipes[slug].hasOwnProperty("star");
 
   const star = () => {
     if (busy) return;
     setBusy(true);
-    starPost(user.uid, slug).then(
+    addToMyList(user.uid, slug, 'star').then(
       () => {
         setTTText("Starred!");
         setBusy(false);
@@ -34,7 +37,7 @@ const Star = ({ slug }) => {
   const unstar = () => {
     if (busy) return;
     setBusy(true);
-    unstarPost(user.uid, slug).then(
+    removeFromMyList(user.uid, slug, 'star').then(
       () => {
         setTTText("Unstarred!");
         setBusy(false);
@@ -48,7 +51,6 @@ const Star = ({ slug }) => {
   const onMouseEnter = () => {
     !isStarred ? setTTText("Star") : setTTText("Unstar");
   };
-  console.log('isStarred:', isStarred)
 
   return (
     <OverlayTrigger

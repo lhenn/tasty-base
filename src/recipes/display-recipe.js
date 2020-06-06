@@ -2,10 +2,9 @@ import React, { useContext } from "react";
 import styled from "styled-components";
 import { UserContext } from "../App";
 import mdToHTML from "../forms/md-parse";
-import Check from "./check";
-import { AuthorDate, Source } from "./general-recipe";
+import { AuthorDate, Source, Icons, Title } from "./general-recipe";
 import Ratings from "./ratings.js";
-// import { EditingContext } from "./recipe-post";
+import Check from "./check";
 import Star from "./star";
 
 // box-shadow: 10px 10px 5px -10px rgba(0, 0, 0, 0.75);
@@ -156,13 +155,6 @@ export const Overview = ({
   );
 };
 
-export const StyledTitle = styled.h1`
-  color: black;
-  font-size: 48px;
-`;
-
-export const Title = ({ title }) => <StyledTitle>{title}</StyledTitle>;
-
 // TODO: factor out
 const DescriptionLink = styled.a`
   text-decoration: underline !important;
@@ -205,12 +197,7 @@ const DisplayRecipePost = ({ content, slug }) => {
     <Container>
       <Header>
         <Title title={content.title} />
-        {user && (
-          <div>
-            <Check slug={slug} />
-            <Star slug={slug} />
-          </div>
-        )}
+        {user && <Icons slug={slug} />}
       </Header>
 
       {content.coverImageURL && (

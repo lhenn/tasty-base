@@ -24,9 +24,8 @@ import {
   OverviewColumn,
   OverviewFirstColumn,
   OverviewWrapper,
-  StyledTitle,
-  Title as DisplayTitle,
 } from "./display-recipe";
+import { StyledTitle, Title as DisplayTitle } from "./general-recipe";
 import useExpandingArray from "./form-hooks";
 import { AuthorDate, Source } from "./general-recipe";
 import {

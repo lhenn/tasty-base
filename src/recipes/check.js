@@ -3,11 +3,11 @@ import { PrimaryButton } from "../general/buttons";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { Icon } from "./general-recipe";
 import { FormRow, FormGroup, Label, Input } from "../forms/general-forms";
-import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import styled from "styled-components";
 import { UserContext } from "../App";
-import { checkPost, uncheckPost, ratePost } from "../firebase";
-import UpdatingTooltip from "../general/tooltip";
+import { addToMyList, removeFromMyList } from "../firebase";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Tooltip from "react-bootstrap/Tooltip";
 
 //
 /**
@@ -16,7 +16,7 @@ import UpdatingTooltip from "../general/tooltip";
  * -    generalize check and star functions in '../firebase'
  */
 
-const Rate = ({slug}) => {
+const Rate = ({ slug, closeRate }) => {
   const [ease, setEase] = useState(10);
   const [taste, setTaste] = useState(10);
   const { user, loadingUser, userData, loadingUserData } = useContext(
@@ -24,12 +24,15 @@ const Rate = ({slug}) => {
   );
 
   const sendRatings = (ease, taste) => {
-    ratePost(user.uid, slug, ease, taste);
-
-};
+    addToMyList(user.uid, slug, "rate", { ease, taste })
+      .then(() => {
+        closeRate();
+      })
+      .catch((err) => console.log(err));
+  };
 
   return (
-    <>
+    <div>
       <div>Care to anonymously rate this recipe?</div>
       <FormRow>
         <FormGroup>
@@ -55,14 +58,15 @@ const Rate = ({slug}) => {
           />
         </FormGroup>
       </FormRow>
-      <PrimaryButton onClick={() => sendRatings(ease, taste)}>Submit</PrimaryButton>
-    </>
+      <PrimaryButton onClick={() => sendRatings(ease, taste)}>
+        Submit
+      </PrimaryButton>
+    </div>
   );
 };
 
 const Check = ({ slug }) => {
   const [busy, setBusy] = useState(false);
-  const [ttText, setTTText] = useState("");
   const [rate, setRate] = useState(false);
   const { user, loadingUser, userData, loadingUserData } = useContext(
     UserContext
@@ -70,14 +74,16 @@ const Check = ({ slug }) => {
 
   if (loadingUser || loadingUserData) return <Icon icon={faCheck} />;
 
-  const isChecked = userData?.checkedRecipes?.hasOwnProperty(slug);
+  const isChecked =
+    userData.myListRecipes &&
+    userData.myListRecipes[slug] &&
+    userData.myListRecipes[slug].hasOwnProperty("check");
 
   const check = () => {
     if (busy) return;
     setBusy(true);
-    checkPost(user.uid, slug).then(
+    addToMyList(user.uid, slug, "check").then(
       () => {
-        setTTText("Checked!");
         setBusy(false);
         setRate(true);
       },
@@ -88,9 +94,8 @@ const Check = ({ slug }) => {
   const uncheck = () => {
     if (busy) return;
     setBusy(true);
-    uncheckPost(user.uid, slug).then(
+    removeFromMyList(user.uid, slug, "check").then(
       () => {
-        setTTText("Unchecked!");
         setBusy(false);
         setRate(false);
       },
@@ -100,21 +105,11 @@ const Check = ({ slug }) => {
 
   const onClick = () => (!isChecked ? check() : uncheck());
 
-  const onMouseEnter = () => {
-    !isChecked ? setTTText("Check") : setTTText("Uncheck");
-  };
-
   return (
-    <>
-      <OverlayTrigger
-        placement="bottom"
-        trigger={["hover", "focus"]}
-        overlay={<UpdatingTooltip id="check-tooltip">{ttText}</UpdatingTooltip>}
-      >
-        <Icon icon={faCheck} isactive={isChecked ? 1 : 0} onClick={onClick} onMouseEnter={onMouseEnter} />
-      </OverlayTrigger>
-      {rate && <Rate slug={slug} />}
-    </>
+    <div>
+      <Icon icon={faCheck} isactive={isChecked ? 1 : 0} onClick={onClick} />
+      {rate && <Rate slug={slug} closeRate={() => setRate(false)} />}
+    </div>
   );
 };
 export default Check;
