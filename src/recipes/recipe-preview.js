@@ -1,20 +1,18 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import { AuthorDate, Icons, Title } from "./general-recipe";
-import Ratings from "./ratings.js";
+import AuthorDate from "./atoms/author-date";
+import { CardCoverImage } from "./atoms/cover-image";
+import { Icons } from "./atoms/icons";
+import { DisplayRatings } from "./atoms/ratings.js";
+import { DisplayTitle } from "./atoms/title";
 
-const Card = styled.div`
+const CardContainer = styled.div`
   margin: 10px;
   display: flex;
   flex-direction: column;
-  border:solid 2px black;
+  border: solid 2px black;
   width: 95%;
-`;
-const StyledImg = styled.img`
-  height: 250px;
-  width: 100%;
-  object-fit: cover;
 `;
 
 const CardContent = styled.div`
@@ -35,22 +33,26 @@ const BottomRow = styled.div`
 
 const RecipePreview = ({ post: { content, slug } }) => (
   <Link to={`/recipes/${slug}`}>
-    <Card>
+    <CardContainer>
       {content.coverImageURL && (
-        <StyledImg src={content.coverImageURL} alt={content.coverImageAlt} />
+        <CardCoverImage
+          src={content.coverImageURL}
+          alt={content.coverImageAlt}
+        />
       )}
+
       <CardContent>
-        <Title title={content.title} />
+        <DisplayTitle title={content.title} />
         <AuthorDate
           authorName={content.authorName}
           timestamp={content.timestamp}
         />
         <BottomRow>
-          <Ratings taste={content.tastiness} ease={content.easiness} />
-          <Icons slug={slug}/>
+          <DisplayRatings taste={content.tastiness} ease={content.easiness} />
+          <Icons slug={slug} />
         </BottomRow>
       </CardContent>
-    </Card>
+    </CardContainer>
   </Link>
 );
 

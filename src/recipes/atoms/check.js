@@ -1,27 +1,15 @@
-import React, { useContext, useState } from "react";
-import { PrimaryButton } from "../general/buttons";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
-import { Icon } from "./general-recipe";
-import { FormRow, FormGroup, Label, Input } from "../forms/general-forms";
-import styled from "styled-components";
-import { UserContext } from "../App";
-import { addToMyList, removeFromMyList } from "../firebase";
-import OverlayTrigger from "react-bootstrap/OverlayTrigger";
-import Tooltip from "react-bootstrap/Tooltip";
-
-//
-/**
- * TODO:
- * -    generalize this and star.js (maybe into Higher Order Component?)
- * -    generalize check and star functions in '../firebase'
- */
+import React, { useContext, useState } from "react";
+import { UserContext } from "../../App";
+import { addToMyList, removeFromMyList } from "../../firebase";
+import { FormGroup, FormRow, Input, Label } from "../../forms/general-forms";
+import { PrimaryButton } from "../../general/buttons";
+import { Icon } from "./generic-icons";
 
 const Rate = ({ slug, closeRate }) => {
   const [ease, setEase] = useState(10);
   const [taste, setTaste] = useState(10);
-  const { user, loadingUser, userData, loadingUserData } = useContext(
-    UserContext
-  );
+  const { user } = useContext(UserContext);
 
   const sendRatings = (ease, taste) => {
     addToMyList(user.uid, slug, "rate", { ease, taste })
@@ -112,4 +100,5 @@ const Check = ({ slug }) => {
     </div>
   );
 };
+
 export default Check;

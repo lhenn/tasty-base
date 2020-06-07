@@ -1,10 +1,9 @@
-import React, { useEffect, useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Redirect } from "react-router-dom";
 import { UserContext } from "../App";
-import { fetchPost, submitPost } from "../firebase";
-// import RecipeForm from "../recipes/recipe-form";
-import Editor from "../recipes/editor";
+import { fetchPost } from "../firebase";
 import useCancellablePromises from "../promise-hooks";
+import Editor from "../recipes/recipe-editor";
 
 const Edit = ({ history, match }) => {
   const { user } = useContext(UserContext);

@@ -1,11 +1,10 @@
 import { faStar } from "@fortawesome/free-solid-svg-icons";
-import { Icon } from "./general-recipe";
 import React, { useContext, useState } from "react";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
-import { UserContext } from "../App";
-import { addToMyList, removeFromMyList } from "../firebase";
-import UpdatingTooltip from "../general/tooltip";
-
+import { UserContext } from "../../App";
+import { addToMyList, removeFromMyList } from "../../firebase";
+import UpdatingTooltip from "../../general/tooltip";
+import { Icon } from "./generic-icons";
 
 const Star = ({ slug }) => {
   // Busy when sending star/unstar data to firebase
@@ -17,7 +16,7 @@ const Star = ({ slug }) => {
 
   if (loadingUser || loadingUserData) return <Icon icon={faStar} />;
 
-  const isStarred = 
+  const isStarred =
     userData.myListRecipes &&
     userData.myListRecipes[slug] &&
     userData.myListRecipes[slug].hasOwnProperty("star");
@@ -25,7 +24,7 @@ const Star = ({ slug }) => {
   const star = () => {
     if (busy) return;
     setBusy(true);
-    addToMyList(user.uid, slug, 'star').then(
+    addToMyList(user.uid, slug, "star").then(
       () => {
         setTTText("Starred!");
         setBusy(false);
@@ -37,7 +36,7 @@ const Star = ({ slug }) => {
   const unstar = () => {
     if (busy) return;
     setBusy(true);
-    removeFromMyList(user.uid, slug, 'star').then(
+    removeFromMyList(user.uid, slug, "star").then(
       () => {
         setTTText("Unstarred!");
         setBusy(false);
@@ -58,7 +57,12 @@ const Star = ({ slug }) => {
       trigger={["hover", "focus"]}
       overlay={<UpdatingTooltip id="star-tooltip">{ttText}</UpdatingTooltip>}
     >
-      <Icon icon={faStar} isactive={isStarred ? 1 : 0} onClick={onClick} onMouseEnter={onMouseEnter} />
+      <Icon
+        icon={faStar}
+        isactive={isStarred ? 1 : 0}
+        onClick={onClick}
+        onMouseEnter={onMouseEnter}
+      />
     </OverlayTrigger>
   );
 };
