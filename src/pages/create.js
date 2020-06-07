@@ -1,6 +1,6 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import { UserContext } from "../App";
-import Editor from "../recipes/editor";
+import Editor from "../recipes/recipe-editor";
 
 const Create = ({ history }) => {
   const { user, loadingUser } = useContext(UserContext);
