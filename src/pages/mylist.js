@@ -32,7 +32,8 @@ const MyList = () => {
     if (!loadingUserData && userData?.myListRecipes) {
       setPosts({ posts: [], loadingPosts: true });
       const filteredSlugs = new Set();
-      for (let [slug, info] of Object.entries(userData.myListRecipes)) {
+      for (let [slug, info] of Object.entries(userData.myListRecipes)) { 
+        console.log(info);
         activeFilters.forEach((filter) => {
           if (info.hasOwnProperty(filter)) {
             filteredSlugs.add(slug);
@@ -89,8 +90,7 @@ const MyList = () => {
           >
             starred <FilterIcon icon={faStar}/>
           </FilterButton>
-          <FilterButton color={lavendarBase}>ideas <FilterIcon icon={faLightbulb}/></FilterButton>
-          <FilterButton color={redOrangeBase}>contributions</FilterButton>
+          <FilterButton  color={redOrangeBase}>contributions</FilterButton>
 
           <SearchField placeholder="search" />
         </PageViewOptions>

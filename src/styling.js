@@ -14,4 +14,13 @@ export const GlobalStyle = createGlobalStyle`
     font-family: ${contentFont}, sans-serif;
     font-size: 20px;
   }
+  button{
+    padding: 0 10px;
+    border-radius: 50px;
+    font-size: 20px;
+    &:focus {
+      outline: none;
+    }
+  }
 `
+export const buttonPadding = `0 10px`;
