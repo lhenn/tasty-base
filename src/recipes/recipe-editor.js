@@ -45,6 +45,9 @@ const SubmitButton = ({ content, slug, history, uid }) => {
 };
 
 const Editor = ({ author, initialContent, initialSlug = "", history }) => {
+  const { user, loadingUser, userData, loadingUserData } = useContext(
+    UserContext
+  );
   // Make sure fields' states are defined
   const [title, setTitle] = useState(initialContent?.title || "");
   const [coverImageURL, setCoverImageURL] = useState(
