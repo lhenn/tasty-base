@@ -13,9 +13,12 @@ import useCancellablePromises from "../promise-hooks";
 import { FilterButton } from "../general/buttons";
 import { yellowBase, greenBase, redOrangeBase, lavendarBase } from "../styling";
 import styled from "styled-components";
-import { faCheck, faStar, faLightbulb } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCheck,
+  faStar,
+  faLightbulb,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
 
 const MyRecipes = () => {
   const [{ posts, loadingPosts }, setPosts] = useState({
@@ -26,13 +29,13 @@ const MyRecipes = () => {
     UserContext
   );
   const { addPromise } = useCancellablePromises();
-  const [activeFilters, setActiveFilters] = useState(["check", "star"]);
+  const [activeFilters, setActiveFilters] = useState(["check", "star", "contribution"]);
 
   useEffect(() => {
     if (!loadingUserData && userData?.myListRecipes) {
       setPosts({ posts: [], loadingPosts: true });
       const filteredSlugs = new Set();
-      for (let [slug, info] of Object.entries(userData.myListRecipes)) { 
+      for (let [slug, info] of Object.entries(userData.myListRecipes)) {
         activeFilters.forEach((filter) => {
           if (info.hasOwnProperty(filter)) {
             filteredSlugs.add(slug);
@@ -67,7 +70,7 @@ const MyRecipes = () => {
     setActiveFilters(newActiveFilters);
   };
   const FilterIcon = styled(FontAwesomeIcon)`
-    color:black;
+    color: black;
     font-size: medium;
   `;
   return (
@@ -80,16 +83,22 @@ const MyRecipes = () => {
             color={greenBase}
             onClick={(e) => handleFilterClick(e, "check")}
           >
-            made <FilterIcon icon={faCheck}/>
+            made <FilterIcon icon={faCheck} />
           </FilterButton>
           <FilterButton
             isActive={activeFilters.includes("star")}
             color={yellowBase}
             onClick={(e) => handleFilterClick(e, "star")}
           >
-            starred <FilterIcon icon={faStar}/>
+            starred <FilterIcon icon={faStar} />
           </FilterButton>
-          <FilterButton  color={redOrangeBase}>contributions</FilterButton>
+          <FilterButton
+            isActive={activeFilters.includes("contribution")}
+            color={redOrangeBase}
+            onClick={(e) => handleFilterClick(e, "contribution")}
+          >
+            contributions <FilterIcon icon={faLightbulb} />
+          </FilterButton>
 
           <SearchField placeholder="search" />
         </PageViewOptions>

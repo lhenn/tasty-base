@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import { getTimestamp, submitPost } from "../firebase";
+import React, { useState, useContext } from "react";
+import { UserContext } from "../App";
+import { getTimestamp, submitPost, addToMyList } from "../firebase";
 import useCancellablePromises from "../promise-hooks";
 import { PrimaryButton } from "../general/buttons";
 import { RecipeContainer, RecipeHeader } from "./display-recipe";
@@ -14,7 +15,7 @@ import useExpandingArray from "./form-hooks";
 const emptyIngredient = { name: "", amount: "" };
 
 // On click, submit the post and then redirect to post's page
-const SubmitButton = ({ content, slug, history }) => {
+const SubmitButton = ({ content, slug, history, uid }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { addPromise } = useCancellablePromises();
 
@@ -31,6 +32,7 @@ const SubmitButton = ({ content, slug, history }) => {
     // Upload to firebase
     setIsSubmitting(true);
     addPromise(submitPost(slug, timestampedContent))
+      .then(() => addToMyList(uid, slug, "contribution"))
       .then(() => setIsSubmitting(false))
       .then(() => history.push(`/recipes/${slug}`));
   };
@@ -43,6 +45,9 @@ const SubmitButton = ({ content, slug, history }) => {
 };
 
 const Editor = ({ initialContent, initialSlug = "", history }) => {
+  const { user, loadingUser, userData, loadingUserData } = useContext(
+    UserContext
+  );
   // Make sure fields' states are defined
   const [title, setTitle] = useState(initialContent?.title || "");
   const [coverImageURL, setCoverImageURL] = useState(
@@ -131,7 +136,12 @@ const Editor = ({ initialContent, initialSlug = "", history }) => {
       </RecipeContainer>
 
       <div style={{ textAlign: "right" }}>
-        <SubmitButton content={content} slug={slug} history={history} />
+        <SubmitButton
+          content={content}
+          slug={slug}
+          history={history}
+          uid={user.uid}
+        />
       </div>
     </>
   );
