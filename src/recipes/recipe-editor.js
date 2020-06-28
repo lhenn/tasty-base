@@ -42,7 +42,7 @@ const SubmitButton = ({ content, slug, history }) => {
   );
 };
 
-const Editor = ({ initialContent, initialSlug = "", history }) => {
+const Editor = ({ author, initialContent, initialSlug = "", history }) => {
   // Make sure fields' states are defined
   const [title, setTitle] = useState(initialContent?.title || "");
   const [coverImageURL, setCoverImageURL] = useState(
@@ -86,6 +86,7 @@ const Editor = ({ initialContent, initialSlug = "", history }) => {
     description,
     ingredients: ingredients.slice(0, -1),
     instructions: instructions.slice(0, -1),
+    author,
   };
 
   return (
