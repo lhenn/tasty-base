@@ -17,7 +17,7 @@ import { faCheck, faStar, faLightbulb } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 
-const MyList = () => {
+const MyRecipes = () => {
   const [{ posts, loadingPosts }, setPosts] = useState({
     posts: [],
     loadingPosts: false,
@@ -32,7 +32,7 @@ const MyList = () => {
     if (!loadingUserData && userData?.myListRecipes) {
       setPosts({ posts: [], loadingPosts: true });
       const filteredSlugs = new Set();
-      for (let [slug, info] of Object.entries(userData.myListRecipes)) {
+      for (let [slug, info] of Object.entries(userData.myListRecipes)) { 
         activeFilters.forEach((filter) => {
           if (info.hasOwnProperty(filter)) {
             filteredSlugs.add(slug);
@@ -40,8 +40,8 @@ const MyList = () => {
         });
       }
       addPromise(fetchPosts(Array.from(filteredSlugs))).then(
-        (myListPosts) => {
-          setPosts({ posts: myListPosts, loadingPosts: false });
+        (myRecipesPosts) => {
+          setPosts({ posts: myRecipesPosts, loadingPosts: false });
         },
         (err) => console.log("fetchPosts failed: ", err)
       );
@@ -73,7 +73,7 @@ const MyList = () => {
   return (
     <>
       <HeaderWrapper>
-        <PageTitle>My List</PageTitle>
+        <PageTitle>My Recipes</PageTitle>
         <PageViewOptions>
           <FilterButton
             isActive={activeFilters.includes("check")}
@@ -89,8 +89,7 @@ const MyList = () => {
           >
             starred <FilterIcon icon={faStar}/>
           </FilterButton>
-          <FilterButton color={lavendarBase}>ideas <FilterIcon icon={faLightbulb}/></FilterButton>
-          <FilterButton color={redOrangeBase}>contributions</FilterButton>
+          <FilterButton  color={redOrangeBase}>contributions</FilterButton>
 
           <SearchField placeholder="search" />
         </PageViewOptions>
@@ -101,4 +100,4 @@ const MyList = () => {
   );
 };
 
-export default MyList;
+export default MyRecipes;

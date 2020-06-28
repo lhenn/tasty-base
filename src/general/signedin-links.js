@@ -104,15 +104,16 @@ const SignedInLinks = ({ user }) => {
   return (
     <>
       <NavItem>
-        <Link to="/mylist">My List</Link>
+        <Link to="/myrecipes">My Recipes</Link>
       </NavItem>
-     
+      <NavItem>
+        <Link to="/notes">Notes</Link>
+      </NavItem>
       <NavItem>
         <Link to="/create">
           <PrimaryButton>recipe +</PrimaryButton>
         </Link>
       </NavItem>
-
       <NavItem>
         <UserWrapper>
           <UserPhoto user={user} />

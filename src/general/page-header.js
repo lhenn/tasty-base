@@ -28,5 +28,8 @@ height:35px;
 width:200px;
 padding: 0 10px;
 margin-left:10px;
+&:focus {
+  outline: none;
+}
 `;
 
