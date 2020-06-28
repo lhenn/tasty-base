@@ -1,10 +1,11 @@
 import React from "react";
 import styled from "styled-components";
-import { DisplayIngredients } from "./ingredients";
-import { DisplayInstructions } from "./instructions";
+import { DisplayIngredients, IngredientsEditor } from "./ingredients";
+import { DisplayInstructions, InstructionsEditor } from "./instructions";
 
 const DetailsWrapper = styled.div`
   display: flex;
+  width: 100%;
   padding: 25px 0 25px 0;
 `;
 
@@ -24,12 +25,12 @@ export const DetailsEditor = ({
   deleteInstruction,
 }) => (
   <DetailsWrapper>
-    <DisplayIngredients
+    <IngredientsEditor
       ingredients={ingredients}
       setIngredientField={setIngredientField}
       deleteIngredient={deleteIngredient}
     />
-    <DisplayInstructions
+    <InstructionsEditor
       instructions={instructions}
       setInstructionField={setInstructionField}
       deleteInstruction={deleteInstruction}

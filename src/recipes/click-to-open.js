@@ -40,6 +40,7 @@ const ClickToOpen = ({ open, closed, onOpen, onClose }) => {
 
   return (
     <div
+      style={{width: "100%"}}
       ref={node}
       onClick={() => {
         if (!isOpen) {

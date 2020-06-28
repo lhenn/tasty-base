@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import mdToHTML from "../../forms/md-parse";
-import { defaultTransparent } from "../../styling";
+import { defaultTransparent, lightGrey } from "../../styling";
 import { textIsEmpty } from "../../utils";
 import ClickToOpen from "../click-to-open";
 
@@ -25,7 +25,7 @@ const DescriptionWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #e8e8e8;
+  background: ${lightGrey};
   padding: 25px 15% 25px 15%;
 `;
 

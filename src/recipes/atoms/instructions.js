@@ -17,12 +17,14 @@ export const DisplayInstructions = ({ instructions }) => {
   return (
     <div>
       {instructionsHeader}
-      {instructions &&
-        instructions.map((instruction, i) => (
-          <p style={{ marginBottom: "30px" }} key={`instruction-${i}`}>
-            {instruction}
-          </p>
-        ))}
+      <ol>
+        {instructions &&
+          instructions.map((instruction, i) => (
+            <li style={{ marginBottom: "30px" }} key={`instruction-${i}`}>
+              {instruction}
+            </li>
+          ))}
+      </ol>
     </div>
   );
 };
@@ -39,12 +41,12 @@ export const InstructionsEditor = ({
       {instructions.slice(0, -1).length === 0
         ? transparentInstructionsHeader
         : instructionsHeader}
-      {instructions &&
-        instructions.map((instruction, i) => (
-          <p style={{ marginBottom: "30px" }} key={`instruction-${i}`}>
-            {instruction}
-          </p>
-        ))}
+      <ol>
+        {instructions &&
+          instructions.map((instruction, i) => (
+            <li key={`instruction-${i}`}>{instruction}</li>
+          ))}
+      </ol>
     </div>
   );
 

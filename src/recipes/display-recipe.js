@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import styled from "styled-components";
+import { lightGrey } from "../styling";
 import { UserContext } from "../App";
 import { DisplayCoverImage } from "./atoms/cover-image";
 import { DisplayDescription } from "./atoms/description";
@@ -13,27 +14,35 @@ export const RecipeContainer = styled.div`
   background-color: white;
 `;
 
-// const Gallery = ({ gallery }) => {
-//   return (
-//     <div>
-//       {gallery.map((img) => {
-//         return (
-//           <a key={img} data-fancybox="gallery" href={img}>
-//             <ThumbnailImg src={img} />
-//           </a>
-//         );
-//       })}
-//     </div>
-//   );
-// };
+const GalleryContainer = styled.div`
+  width: 100%;
+  text-align: center;
+  background: ${lightGrey};
+  padding: 20px;
+  margin-bottom: 20px;
+`;
 
-// const ThumbnailImg = styled.img`
-//   height: 200px;
-//   width: 200px;
-//   margin: 10px;
-//   object-fit: cover;
-//   display: inline-flex;
-// `;
+const Gallery = ({ gallery }) => {
+  return (
+    <GalleryContainer>
+      {gallery.map((img) => {
+        return (
+          <a key={img} data-fancybox="gallery" href={img}>
+            <ThumbnailImg src={img} />
+          </a>
+        );
+      })}
+    </GalleryContainer>
+  );
+};
+
+const ThumbnailImg = styled.img`
+  height: 200px;
+  width: 200px;
+  margin: 10px;
+  object-fit: cover;
+  display: inline-flex;
+`;
 
 export const RecipeHeader = styled.div`
   display: flex;
@@ -44,10 +53,6 @@ const DisplayRecipePost = ({ content, slug }) => {
   const { user } = useContext(UserContext);
 
   if (!content) return <h1>Loading recipe post...</h1>;
-
-  // {content.gallery && content.gallery.length > 0 && (
-  //     <Gallery gallery={content.gallery} />
-  //   );}
 
   return (
     <RecipeContainer>
@@ -77,6 +82,10 @@ const DisplayRecipePost = ({ content, slug }) => {
         ingredients={content.ingredients}
         instructions={content.instructions}
       />
+
+      {content.gallery && content.gallery.length > 0 && (
+        <Gallery gallery={content.gallery} />
+      )}
     </RecipeContainer>
   );
 };

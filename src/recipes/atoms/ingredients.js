@@ -4,7 +4,7 @@ import { defaultTransparent } from "../../styling";
 import ClickToOpen from "../click-to-open";
 
 const IngredientsWrapper = styled.div`
-  width: 35%;
+  width: 33.3333%;
   border-right: 2px solid #000000;
   margin-right: 20px;
 `;
