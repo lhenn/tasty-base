@@ -19,6 +19,7 @@ const Create = ({ history }) => {
         <h1>Create a new post</h1>
       </div>
       <Editor
+        author={user.uid}
         initialContent={{ authorName: user.displayName, timestamp: Date.now() }}
         history={history}
       />

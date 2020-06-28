@@ -119,10 +119,6 @@ const App = () => {
     }
   };
 
-  const filterPosts = (filterBy = 'all', userData) => {
-    //fetchMyListPosts(filterBy)
-  }
-
   // Subscribe to listen for auth state changes when application mounts. Note
   // that onAuthStateChanged returns the auth unsubscribe function, so this
   // cleans up after itself.

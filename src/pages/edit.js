@@ -55,7 +55,12 @@ const Edit = ({ history, match }) => {
       >
         <h1>Edit Post</h1>
       </div>
-      <Editor initialContent={content} initialSlug={slug} history={history} />
+      <Editor
+        author={user.uid}
+        initialContent={content}
+        initialSlug={slug}
+        history={history}
+      />
     </>
   );
 };
