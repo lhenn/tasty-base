@@ -5,31 +5,33 @@ import { Redirect } from "react-router-dom";
 import styled from "styled-components";
 import { UserContext } from "../App";
 import { getFirebase } from "../firebase";
-import {Input} from "../forms/general-forms";
+import { Input } from "../forms/general-forms";
 import mdToHTML from "../forms/md-parse";
+import {
+  HeaderWrapper,
+  PageTitle,
+  PageViewOptions,
+  SearchField,
+} from "../general/page-header";
+import {lavendarBase} from "../styling.js";
 
-const WishLink = styled.a`
+const NoteLink = styled.a`
   text-decoration: underline !important;
   color: ;
 `;
 
-const WishCardWrapper = styled.div`
+const NoteCardWrapper = styled.div`
   border: solid 2px black;
   padding: 10px;
   margin-top: 10px;
 `;
 
-const WishCardHeader = styled.div`
+const NoteCardHeader = styled.div`
   display: flex;
   justify-content: space-between;
 `;
 
-const WishlistHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-`;
-
-const Notes = styled.textarea`
+const NoteInput = styled.textarea`
   width: 100%;
   lineheight: 2rem;
   verticalalign: middle;
@@ -40,11 +42,11 @@ const Notes = styled.textarea`
 
 const Button = styled.button``;
 
-const WishCardsWrapper = styled.div`
+const NoteCardsWrapper = styled.div`
   margin-top: 20px;
 `;
 
-const WishCard = ({ wishKey, wish, viewing, startEdit, deleteWish }) => {
+const NoteCard = ({ wishKey, wish, viewing, startEdit, deleteWish }) => {
   const EditButton = () => (
     <button onClick={() => startEdit(wishKey)} disabled={!viewing}>
       <FontAwesomeIcon icon={faEdit} />
@@ -58,20 +60,20 @@ const WishCard = ({ wishKey, wish, viewing, startEdit, deleteWish }) => {
   );
 
   return (
-    <WishCardWrapper>
-      <WishCardHeader>
+    <NoteCardWrapper>
+      <NoteCardHeader>
         <strong>{wish.idea}</strong>
         <div>
           <EditButton />
           <DeleteButton />
         </div>
-      </WishCardHeader>
-      {wish.notes !== "" && <p>{mdToHTML(wish.notes, WishLink)}</p>}
-    </WishCardWrapper>
+      </NoteCardHeader>
+      {wish.notes !== "" && <p>{mdToHTML(wish.notes, NoteLink)}</p>}
+    </NoteCardWrapper>
   );
 };
 
-const WishCards = ({
+const NoteCards = ({
   wishes,
   viewing,
   beingEdited,
@@ -83,12 +85,12 @@ const WishCards = ({
 }) => {
   if (Object.keys(wishes).length > 0) {
     return (
-      <WishCardsWrapper>
+      <NoteCardsWrapper>
         {Object.entries(wishes)
           .reverse()
           .map(([wishKey, wish]) =>
             beingEdited(wishKey) ? (
-              <WishForm
+              <NoteForm
                 submitWish={(wish) => submitEdit(wishKey, wish)}
                 cancel={cancel}
                 working={working}
@@ -96,7 +98,7 @@ const WishCards = ({
                 key={wishKey}
               />
             ) : (
-              <WishCard
+              <NoteCard
                 wishKey={wishKey}
                 wish={wish}
                 viewing={viewing}
@@ -106,19 +108,19 @@ const WishCards = ({
               />
             )
           )}
-      </WishCardsWrapper>
+      </NoteCardsWrapper>
     );
   } else {
-    return <p>No wishes added yet!</p>;
+    return <p>No notes added yet!</p>;
   }
 };
 
-const WishForm = ({ submitWish, cancel, working, initialWish }) => {
+const NoteForm = ({ submitWish, cancel, working, initialWish }) => {
   const [idea, setIdea] = useState(initialWish ? initialWish.idea : "");
-  const [notes, setNotes] = useState(initialWish ? initialWish.notes : "");
+  const [notes, setNoteInput] = useState(initialWish ? initialWish.notes : "");
 
   return (
-    <WishCardWrapper>
+    <NoteCardWrapper>
       <Input
         type="text"
         id="idea"
@@ -129,11 +131,11 @@ const WishForm = ({ submitWish, cancel, working, initialWish }) => {
         required
         disabled={working === true}
       />
-      <Notes
+      <NoteInput
         id="notes"
-        placeholder="Notes, with [links](https://example.com)"
+        placeholder="NoteInput, with [links](https://example.com)"
         value={notes}
-        onChange={(e) => setNotes(e.target.value)}
+        onChange={(e) => setNoteInput(e.target.value)}
         disabled={working === true}
       />
       <div style={{ textAlign: "right" }}>
@@ -147,7 +149,7 @@ const WishForm = ({ submitWish, cancel, working, initialWish }) => {
           Cancel
         </Button>
       </div>
-    </WishCardWrapper>
+    </NoteCardWrapper>
   );
 };
 
@@ -192,7 +194,7 @@ const reducer = (state, action) => {
   return { ...state };
 };
 
-const WishRecipes = () => {
+const Notes = () => {
   const { user, loadingUser, userData, loadingUserData } = useContext(
     UserContext
   );
@@ -262,9 +264,9 @@ const WishRecipes = () => {
   const beingEdited = (wishKey) =>
     state.mode === "editing" && state.wishKey === wishKey;
 
-  const WishCreator = () =>
+  const NoteCreator = () =>
     state.mode === "creating" && (
-      <WishForm
+      <NoteForm
         submitWish={submitWish}
         cancel={cancel}
         working={state.working}
@@ -273,14 +275,17 @@ const WishRecipes = () => {
 
   return (
     <>
-      <WishlistHeader>
-        <h1>Your recipe wish list</h1>
-        <Button onClick={startNew} disabled={state.mode !== "viewing"}>
-          Add wish
-        </Button>
-      </WishlistHeader>
-      <WishCreator />
-      <WishCards
+      <HeaderWrapper>
+        <PageTitle>Notes</PageTitle>
+        <PageViewOptions>
+          <Button onClick={startNew} disabled={state.mode !== "viewing"}>
+            note +
+          </Button>
+          <SearchField placeholder="search" />
+        </PageViewOptions>
+      </HeaderWrapper>
+      <NoteCreator />
+      <NoteCards
         wishes={wishes}
         viewing={state.mode === "viewing"}
         beingEdited={beingEdited}
@@ -294,4 +299,4 @@ const WishRecipes = () => {
   );
 };
 
-export default WishRecipes;
+export default Notes;

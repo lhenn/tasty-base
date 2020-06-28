@@ -104,17 +104,16 @@ const SignedInLinks = ({ user }) => {
   return (
     <>
       <NavItem>
-        <Link to="/wish-recipes">Notes</Link>
+        <Link to="/myrecipes">My Recipes</Link>
       </NavItem>
       <NavItem>
-        <Link to="/mylist">My Recipes</Link>
+        <Link to="/notes">Notes</Link>
       </NavItem>
       <NavItem>
         <Link to="/create">
           <PrimaryButton>recipe +</PrimaryButton>
         </Link>
       </NavItem>
-
       <NavItem>
         <UserWrapper>
           <UserPhoto user={user} />

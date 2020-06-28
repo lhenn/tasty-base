@@ -13,11 +13,11 @@ import Favorites from "./pages/favorites";
 import Graph from "./pages/graph";
 import Home from "./pages/home";
 import NoMatch from "./pages/no-match";
-import WishRecipes from "./pages/recipe-wishes";
+import Notes from "./pages/notes";
 import Signin from "./pages/signin";
 import SelfLoadingRecipePost from "./recipes/recipe-post";
 import { GlobalStyle } from "./styling";
-import MyList from "./pages/mylist";
+import MyRecipes from "./pages/myrecipes";
 
 // background-color: whitesmoke;
 const MainContent = styled.main`
@@ -167,9 +167,9 @@ const App = () => {
                 )}
               />
               <Route exact path="/signin" component={Signin} />
-              <Route exact path="/mylist" component={MyList} />
+              <Route exact path="/myrecipes" component={MyRecipes} />
               <Route exact path="/fav-recipes" component={Favorites} />
-              <Route exact path="/wish-recipes" component={WishRecipes} />
+              <Route exact path="/notes" component={Notes} />
               <Route exact path="/create" component={Create} />
               <Route exact path="/about" component={About} />
               <Route
