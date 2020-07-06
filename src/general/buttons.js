@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { yellowBase } from "../styling";
+import { yellowBase, lavendarBase, blueBase } from "../styling";
 
 export const PrimaryButton = styled.button`
   background-color: ${yellowBase};
@@ -20,4 +20,18 @@ export const FilterButton = styled.button`
  margin: 0 10px;
  color: black;
  background-color: ${props => props.isActive ? props.color : 'white'};
+`;
+
+export const NoteButton = styled.button`
+  background-color: ${lavendarBase};
+  color: ${blueBase};
+  border: 0;
+  margin: 0 10px;
+`;
+export const SecondaryNoteButton = styled.button`
+background-color: inherit;
+color:${blueBase};
+border: 0;
+
+
 `;

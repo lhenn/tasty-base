@@ -13,7 +13,7 @@ import {
   PageViewOptions,
   SearchField,
 } from "../general/page-header";
-import {lavendarBase} from "../styling";
+import {NoteButton, SecondaryNoteButton} from "../general/buttons";
 
 const NoteCardWrapper = styled.div`
   border: solid 2px black;
@@ -44,15 +44,15 @@ const NoteCardsWrapper = styled.div`
 
 const NoteCard = ({ wishKey, wish, viewing, startEdit, deleteWish }) => {
   const EditButton = () => (
-    <button onClick={() => startEdit(wishKey)} disabled={!viewing}>
+    <NoteButton onClick={() => startEdit(wishKey)} disabled={!viewing}>
       <FontAwesomeIcon icon={faEdit} />
-    </button>
+    </NoteButton>
   );
 
   const DeleteButton = () => (
-    <button onClick={() => deleteWish(wishKey)} disabled={!viewing}>
+    <SecondaryNoteButton onClick={() => deleteWish(wishKey)} disabled={!viewing}>
       <FontAwesomeIcon icon={faTimes} />
-    </button>
+    </SecondaryNoteButton>
   );
 
   return (
@@ -117,7 +117,6 @@ const NoteForm = ({ submitWish, cancel, working, initialWish }) => {
 
   return (
     <NoteCardWrapper>
- 
       <Input
         type="text"
         id="idea"
@@ -130,21 +129,22 @@ const NoteForm = ({ submitWish, cancel, working, initialWish }) => {
       />
       <NoteInput
         id="notes"
-        placeholder="NoteInput, with [links](https://example.com)"
+        placeholder="NoteInput, using markdown-it syntax https://markdown-it.github.io/"
         value={notes}
         onChange={(e) => setNoteInput(e.target.value)}
         disabled={working === true}
       />
       <div style={{ textAlign: "right" }}>
-        <Button
+      <SecondaryNoteButton onClick={cancel} disabled={working === true}>
+          Cancel
+        </SecondaryNoteButton>
+        <NoteButton
           onClick={() => submitWish({ idea, notes })}
           disabled={working === true}
         >
           Submit
-        </Button>
-        <Button onClick={cancel} disabled={working === true}>
-          Cancel
-        </Button>
+        </NoteButton>
+        
       </div>
     </NoteCardWrapper>
   );
@@ -275,9 +275,9 @@ const Notes = () => {
       <HeaderWrapper>
         <PageTitle>Notes</PageTitle>
         <PageViewOptions>
-          <Button onClick={startNew} disabled={state.mode !== "viewing"}>
+          <NoteButton onClick={startNew} disabled={state.mode !== "viewing"}>
             note +
-          </Button>
+          </NoteButton>
           <SearchField placeholder="search" />
         </PageViewOptions>
       </HeaderWrapper>
