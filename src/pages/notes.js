@@ -6,7 +6,6 @@ import styled from "styled-components";
 import { UserContext } from "../App";
 import { getFirebase } from "../firebase";
 import { Input } from "../forms/general-forms";
-import mdToHTML from "../forms/md-parse";
 import {createMarkDown} from "../utils";
 import {
   HeaderWrapper,
@@ -14,13 +13,7 @@ import {
   PageViewOptions,
   SearchField,
 } from "../general/page-header";
-import {lavendarBase} from "../styling.js";
-
-
-const NoteLink = styled.a`
-  text-decoration: underline !important;
-  color: ;
-`;
+import {lavendarBase} from "../styling";
 
 const NoteCardWrapper = styled.div`
   border: solid 2px black;
