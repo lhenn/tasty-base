@@ -66,3 +66,14 @@ export const ImageWithPlaceholder = ({
     </>
   );
 };
+
+//Use this to dangerously set innerHTML of components to display markdown.
+//e.g. 
+//const Test = () => {
+//   return <div dangerouslySetInnerHTML= {createMarkDown('# markdown-it rulezz!')}/>;
+// }
+//Markdown formatting, etc here: https://github.com/markdown-it/markdown-it
+export const createMarkDown = (mdText) => {
+  var md = require('markdown-it')();
+  return {__html:md.render(mdText)};
+}

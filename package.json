@@ -12,6 +12,7 @@
     "chart.js": "^2.9.3",
     "firebase": "^7.14.2",
     "firebaseui": "^4.5.0",
+    "markdown-it": "^11.0.0",
     "react": "^16.9.0",
     "react-bootstrap": "^1.0.1",
     "react-dom": "^16.9.0",

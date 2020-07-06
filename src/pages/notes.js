@@ -7,6 +7,7 @@ import { UserContext } from "../App";
 import { getFirebase } from "../firebase";
 import { Input } from "../forms/general-forms";
 import mdToHTML from "../forms/md-parse";
+import {createMarkDown} from "../utils";
 import {
   HeaderWrapper,
   PageTitle,
@@ -14,6 +15,7 @@ import {
   SearchField,
 } from "../general/page-header";
 import {lavendarBase} from "../styling.js";
+
 
 const NoteLink = styled.a`
   text-decoration: underline !important;
@@ -45,6 +47,7 @@ const Button = styled.button``;
 const NoteCardsWrapper = styled.div`
   margin-top: 20px;
 `;
+
 
 const NoteCard = ({ wishKey, wish, viewing, startEdit, deleteWish }) => {
   const EditButton = () => (
@@ -121,6 +124,7 @@ const NoteForm = ({ submitWish, cancel, working, initialWish }) => {
 
   return (
     <NoteCardWrapper>
+ 
       <Input
         type="text"
         id="idea"

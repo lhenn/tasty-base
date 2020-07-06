@@ -63,7 +63,7 @@ const Check = ({ slug }) => {
   if (loadingUser || loadingUserData) return <Icon icon={faCheck} />;
 
   const isChecked =
-    userData.myListRecipes &&
+    userData?.myListRecipes &&
     userData.myListRecipes[slug] &&
     userData.myListRecipes[slug].hasOwnProperty("check");
 
