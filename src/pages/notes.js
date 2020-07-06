@@ -71,7 +71,7 @@ const NoteCard = ({ wishKey, wish, viewing, startEdit, deleteWish }) => {
           <DeleteButton />
         </div>
       </NoteCardHeader>
-      {wish.notes !== "" && <p>{mdToHTML(wish.notes, NoteLink)}</p>}
+      {wish.notes !== "" && <div dangerouslySetInnerHTML={createMarkDown(wish.notes)}/>}
     </NoteCardWrapper>
   );
 };
