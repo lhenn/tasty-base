@@ -93,7 +93,6 @@ const Editor = ({ author, initialContent, initialSlug = "", history }) => {
     instructions: instructions.slice(0, -1),
     author,
   };
-  console.log('taste from recipe-editor', taste)
   return (
     <>
       <RecipeContainer>

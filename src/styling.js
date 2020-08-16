@@ -1,6 +1,7 @@
 import { createGlobalStyle } from "styled-components";
 
 export const blueBase = "#1A153A";
+export const mediumBlueBase = "#4B3E99";
 export const yellowBase = "#EFD910";
 export const redBase = "#DA1947";
 export const greenBase = "#05CF56";

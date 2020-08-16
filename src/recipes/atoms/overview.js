@@ -70,8 +70,7 @@ export const OverviewEditor = ({
   ease,
   setEase,
 }) => {
-  console.log('time:', time, )
-  //console.log('activeTime:', activeTime)
+
 return (
   <OverviewWrapper>
     <OverviewFirstColumn>

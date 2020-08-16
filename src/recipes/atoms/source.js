@@ -1,26 +1,60 @@
 import React from "react";
 import styled from "styled-components";
 import ClickToOpen from "../click-to-open";
+import { faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { mediumBlueBase } from "../../styling";
 
 export const SourceContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
 `;
-
-// TODO: link display text for web sources
-
+const StyledWebSourceLink = styled.a`
+  display: inline-flex;
+  align-items: flex-start;
+  color: ${mediumBlueBase} !important;
+  &:hover {
+    text-decoration: underline !important;
+    color: ${mediumBlueBase} !important;
+  }
+`;
+const ExternalLinkIcon = styled(FontAwesomeIcon)`
+  font-size: 15px;
+  margin: 5px;
+`;
+const DisplayWebSource = (source) => {
+  //remove href if in edit mode to prevent confusion
+  return window.location.pathname.includes('edit') ? (
+    <StyledWebSourceLink >
+    Web <ExternalLinkIcon icon={faExternalLinkAlt} />
+  </StyledWebSourceLink>
+  ) : (
+    <StyledWebSourceLink href={source.source} target="_blank">
+    Web <ExternalLinkIcon icon={faExternalLinkAlt} />
+  </StyledWebSourceLink>
+  );
+ 
+};
 export const DisplaySource = ({ sourceType, source }) => {
+  console.log("hello");
+  console.log(source)
   if (sourceType === "personal") {
-    return <SourceContainer><p>personal recipe</p></SourceContainer>;
+    return (
+      <SourceContainer>
+        <p>personal recipe</p>
+      </SourceContainer>
+    );
   } else if (sourceType === "cookbook") {
-    return <SourceContainer><p>source: {source}</p></SourceContainer>;
+    return (
+      <SourceContainer>
+        <p>source: {source}</p>
+      </SourceContainer>
+    );
   } else {
     return (
       <SourceContainer>
-      <p>
-        source: <a href={source}>Web</a>
-      </p>
+        <p>source: <DisplayWebSource source={source} /></p>
       </SourceContainer>
     );
   }
