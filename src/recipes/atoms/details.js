@@ -7,6 +7,9 @@ const DetailsWrapper = styled.div`
   display: flex;
   width: 100%;
   padding: 25px 0 25px 0;
+  @media(max-width:700px){
+    flex-direction:column;
+  }
 `;
 
 export const DisplayDetails = ({ ingredients, instructions }) => (

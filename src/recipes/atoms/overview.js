@@ -6,17 +6,22 @@ import { DisplayRatings, RatingsEditor } from "./ratings";
 import { DisplaySource, SourceEditor } from "./source";
 
 const OverviewWrapper = styled.div`
-  margin: 25px 0px 25px 0px;
+  margin: 25px 0;
   width: 100%;
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
+  @media(max-width:700px){
+    flex-direction:column;
+    margin: 10px 0 20px 0;
+  }
 `;
 
 const OverviewFirstColumn = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  text-align:center;
   width: 100%;
 `;
 
@@ -26,6 +31,9 @@ const OverviewColumn = styled.div`
   flex-direction: column;
   align-items: center;
   width: 100%;
+  @media(max-width:700px){
+    border:0;
+  }
 `;
 
 export const DisplayOverview = ({

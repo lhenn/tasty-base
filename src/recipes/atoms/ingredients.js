@@ -7,6 +7,11 @@ const IngredientsWrapper = styled.div`
   width: 33.3333%;
   border-right: 2px solid #000000;
   margin-right: 20px;
+  @media(max-width:700px){
+    width:100%;
+    border:0;
+    margin: 0 0 15px 0;
+  }
 `;
 
 const ingredientsHeader = <h2 style={{ fontSize: "30px" }}>Ingredients</h2>;

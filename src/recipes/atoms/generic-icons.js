@@ -16,4 +16,7 @@ export const Icon = styled(FontAwesomeIcon)`
   &:hover {
     color: ${(props) => getActiveIconColor(props)};
   }
+  @media(max-width:700px){
+    margin: 5px;
+  }
 `;

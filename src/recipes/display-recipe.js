@@ -47,6 +47,10 @@ const ThumbnailImg = styled.img`
 export const RecipeHeader = styled.div`
   display: flex;
   justify-content: space-between;
+  @media(max-width:700px){
+    flex-direction:column;
+    text-align:center;
+  }
 `;
 
 const DisplayRecipePost = ({ content, slug }) => {

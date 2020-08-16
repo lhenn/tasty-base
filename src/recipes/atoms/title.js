@@ -6,6 +6,9 @@ import ClickToOpen from "../click-to-open";
 export const StyledTitle = styled.h1`
   color: black;
   font-size: 48px;
+  @media(max-width:700px){
+    font-size:36px;
+  }
 `;
 
 const TransparentStyledTitle = styled(StyledTitle)`

@@ -3,6 +3,12 @@ import styled from "styled-components";
 import { defaultTransparent } from "../../styling";
 import ClickToOpen from "../click-to-open";
 
+const StyledList = styled.ol`
+  @media(max-width:700px){
+    padding-left: 18px !important;
+  }
+`;
+
 const instructionsHeader = <h2 style={{ fontSize: "30px" }}>Instructions</h2>;
 
 const transparentInstructionsHeader = (
@@ -17,14 +23,14 @@ export const DisplayInstructions = ({ instructions }) => {
   return (
     <div>
       {instructionsHeader}
-      <ol>
+      <StyledList>
         {instructions &&
           instructions.map((instruction, i) => (
             <li style={{ marginBottom: "30px" }} key={`instruction-${i}`}>
               {instruction}
             </li>
           ))}
-      </ol>
+      </StyledList>
     </div>
   );
 };

@@ -26,6 +26,9 @@ const MainContent = styled.main`
   width: 100%;
   padding: 20px;
   min-height: 85vh;
+  @media(max-width:700px){
+    margin: 10px auto;
+  }
 `;
 
 export const UserContext = createContext(null); // for user info and userData
