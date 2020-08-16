@@ -9,7 +9,7 @@ import { NumericPlaceholder } from "./generic-placeholders";
 // Styling
 const ratingStep = 0.5;
 const minRating = 0.0;
-const maxRating = 10.0;
+const maxRating = 5.0;
 const numDots = 5;
 const colors = { taste: yellowBase, ease: "#4B3E99" };
 
