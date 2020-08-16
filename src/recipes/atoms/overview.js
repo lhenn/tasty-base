@@ -69,7 +69,10 @@ export const OverviewEditor = ({
   setTaste,
   ease,
   setEase,
-}) => (
+}) => {
+  console.log('time:', time, )
+  //console.log('activeTime:', activeTime)
+return (
   <OverviewWrapper>
     <OverviewFirstColumn>
       <AuthorDate authorName={authorName} timestamp={timestamp} />
@@ -98,3 +101,4 @@ export const OverviewEditor = ({
     </OverviewColumn>
   </OverviewWrapper>
 );
+}

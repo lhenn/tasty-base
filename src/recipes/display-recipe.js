@@ -53,6 +53,8 @@ const DisplayRecipePost = ({ content, slug }) => {
   const { user } = useContext(UserContext);
 
   if (!content) return <h1>Loading recipe post...</h1>;
+  console.log('content',content)
+  console.log('activeTime',content.time)
 
   return (
     <RecipeContainer>
@@ -70,10 +72,10 @@ const DisplayRecipePost = ({ content, slug }) => {
         timestamp={content.timestamp}
         sourceType={content.sourceType}
         source={content.source}
-        activeTime={content.activeTime}
+        activeTime={content.time}
         servings={content.servings}
-        tastiness={content.tastiness}
-        easiness={content.easiness}
+        tastiness={content.taste}
+        easiness={content.ease}
       />
 
       <DisplayDescription description={content.description} />

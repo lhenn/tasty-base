@@ -48,7 +48,7 @@ const RecipePreview = ({ post: { content, slug } }) => (
           timestamp={content.timestamp}
         />
         <BottomRow>
-          <DisplayRatings taste={content.tastiness} ease={content.easiness} />
+          <DisplayRatings taste={content.taste} ease={content.ease} />
           <Icons slug={slug} />
         </BottomRow>
       </CardContent>

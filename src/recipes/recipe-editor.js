@@ -57,10 +57,10 @@ const Editor = ({ author, initialContent, initialSlug = "", history }) => {
     initialContent?.sourceType || ""
   );
   const [source, setSource] = useState(initialContent?.source || "");
-  const [time, setTime] = useState(initialContent?.activeTime || "");
+  const [time, setTime] = useState(initialContent?.time || "");
   const [servings, setServings] = useState(initialContent?.servings || "");
-  const [taste, setTaste] = useState(initialContent?.tastiness || "");
-  const [ease, setEase] = useState(initialContent?.easiness || "");
+  const [taste, setTaste] = useState(initialContent?.taste || "");
+  const [ease, setEase] = useState(initialContent?.ease || "");
   const [description, setDescription] = useState(
     initialContent?.description || ""
   );
@@ -93,7 +93,7 @@ const Editor = ({ author, initialContent, initialSlug = "", history }) => {
     instructions: instructions.slice(0, -1),
     author,
   };
-
+  console.log('taste from recipe-editor', taste)
   return (
     <>
       <RecipeContainer>
