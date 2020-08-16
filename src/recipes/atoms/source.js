@@ -17,6 +17,7 @@ const StyledWebSourceLink = styled.a`
   &:hover {
     text-decoration: underline !important;
     color: ${mediumBlueBase} !important;
+    cursor:pointer;
   }
 `;
 const ExternalLinkIcon = styled(FontAwesomeIcon)`

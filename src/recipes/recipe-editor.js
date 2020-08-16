@@ -93,9 +93,10 @@ const Editor = ({ author, initialContent, initialSlug = "", history }) => {
     instructions: instructions.slice(0, -1),
     author,
   };
-  return (
-    <>
-      <RecipeContainer>
+  //The information that all recipes should have, regardless of source
+  const GeneralRecipeInfo = () => {
+    return (
+      <>
         <RecipeHeader>
           <TitleEditor title={title} set={setTitle} />
           <SlugEditor
@@ -103,9 +104,7 @@ const Editor = ({ author, initialContent, initialSlug = "", history }) => {
             setSlug={initialSlug !== "" ? undefined : setSlug}
           />
         </RecipeHeader>
-
         <CoverImageEditor src={coverImageURL} set={setCoverImageURL} />
-
         <OverviewEditor
           authorName={initialContent?.authorName}
           timestamp={initialContent?.timestamp}
@@ -122,10 +121,17 @@ const Editor = ({ author, initialContent, initialSlug = "", history }) => {
           ease={ease}
           setEase={setEase}
         />
-
         <DescriptionEditor description={description} set={setDescription} />
-
-        <DetailsEditor
+      </>
+    );
+  };
+  
+  return (
+    <>
+      <RecipeContainer>
+        <GeneralRecipeInfo />
+        { content.sourceType === "personal" && (
+          <DetailsEditor
           ingredients={ingredients}
           instructions={instructions}
           setIngredientField={setIngredientField}
@@ -133,6 +139,9 @@ const Editor = ({ author, initialContent, initialSlug = "", history }) => {
           deleteIngredient={deleteIngredient}
           deleteInstruction={deleteInstruction}
         />
+        )
+        }
+        
       </RecipeContainer>
 
       <div style={{ textAlign: "right" }}>
