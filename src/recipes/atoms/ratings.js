@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import ShadedDot from "../../shaded-dot";
 import { yellowBase } from "../../styling";
@@ -7,7 +7,7 @@ import ClickToOpen from "../click-to-open";
 import { NumericPlaceholder } from "./generic-placeholders";
 
 // Styling
-const ratingStep = 0.5;
+const ratingStep = 0.1;
 const minRating = 0.0;
 const maxRating = 5.0;
 const numDots = 5;
@@ -81,7 +81,7 @@ export const DisplayRatings = (ratings) => (
   </RatingsContainer>
 );
 
-const getRatingInput = (value, set) => (
+const RatingInput = ({ value, set }) => (
   <input
     type="number"
     min={`${minRating}`}
@@ -93,6 +93,11 @@ const getRatingInput = (value, set) => (
 );
 
 export const RatingsEditor = ({ taste, setTaste, ease, setEase }) => {
+  const [newTaste, setNewTaste] = useState(taste);
+  const [newEase, setNewEase] = useState(ease);
+
+  const onClose = () => setTaste(newTaste) || setEase(newEase);
+
   const closed = (
     <RatingsContainer>
       {taste ? (
@@ -104,21 +109,18 @@ export const RatingsEditor = ({ taste, setTaste, ease, setEase }) => {
     </RatingsContainer>
   );
 
-  const tasteInput = getRatingInput(taste, setTaste);
-  const easeInput = getRatingInput(ease, setEase);
-
   const open = (
     <RatingsContainer>
       <RatingWrapper>
         <RatingLabel>taste</RatingLabel>
-        {tasteInput}
+        <RatingInput value={newTaste} set={setNewTaste} />
       </RatingWrapper>
       <RatingWrapper>
         <RatingLabel>ease</RatingLabel>
-        {easeInput}
+        <RatingInput value={newEase} set={setNewEase} />
       </RatingWrapper>
     </RatingsContainer>
   );
 
-  return <ClickToOpen open={open} closed={closed} />;
+  return <ClickToOpen open={open} closed={closed} onClose={onClose} />;
 };

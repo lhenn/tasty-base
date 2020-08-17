@@ -11,8 +11,8 @@ const OverviewWrapper = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
-  @media(max-width:700px){
-    flex-direction:column;
+  @media (max-width: 700px) {
+    flex-direction: column;
     margin: 10px 0 20px 0;
   }
 `;
@@ -21,7 +21,7 @@ const OverviewFirstColumn = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-align:center;
+  text-align: center;
   width: 100%;
 `;
 
@@ -31,8 +31,8 @@ const OverviewColumn = styled.div`
   flex-direction: column;
   align-items: center;
   width: 100%;
-  @media(max-width:700px){
-    border:0;
+  @media (max-width: 700px) {
+    border: 0;
   }
 `;
 
@@ -78,34 +78,33 @@ export const OverviewEditor = ({
   ease,
   setEase,
 }) => {
-
-return (
-  <OverviewWrapper>
-    <OverviewFirstColumn>
-      <AuthorDate authorName={authorName} timestamp={timestamp} />
-      <SourceEditor
-        sourceType={sourceType}
-        setSourceType={setSourceType}
-        source={source}
-        setSource={setSource}
-      />
-    </OverviewFirstColumn>
-    <OverviewColumn>
-      <BasicInfoEditor
-        time={time}
-        setTime={setTime}
-        servings={servings}
-        setServings={setServings}
-      />
-    </OverviewColumn>
-    <OverviewColumn>
-      <RatingsEditor
-        taste={taste}
-        setTaste={setTaste}
-        ease={ease}
-        setEase={setEase}
-      />
-    </OverviewColumn>
-  </OverviewWrapper>
-);
-}
+  return (
+    <OverviewWrapper>
+      <OverviewFirstColumn>
+        <AuthorDate authorName={authorName} timestamp={timestamp} />
+        <SourceEditor
+          sourceType={sourceType}
+          setSourceType={setSourceType}
+          source={source}
+          setSource={setSource}
+        />
+      </OverviewFirstColumn>
+      <OverviewColumn>
+        <BasicInfoEditor
+          time={time}
+          setTime={setTime}
+          servings={servings}
+          setServings={setServings}
+        />
+      </OverviewColumn>
+      <OverviewColumn>
+        <RatingsEditor
+          taste={taste}
+          setTaste={setTaste}
+          ease={ease}
+          setEase={setEase}
+        />
+      </OverviewColumn>
+    </OverviewWrapper>
+  );
+};

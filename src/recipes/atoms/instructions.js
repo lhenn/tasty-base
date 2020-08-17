@@ -2,9 +2,10 @@ import React from "react";
 import styled from "styled-components";
 import { defaultTransparent } from "../../styling";
 import ClickToOpen from "../click-to-open";
+import useExpandingArray from "../form-hooks";
 
 const StyledList = styled.ol`
-  @media(max-width:700px){
+  @media (max-width: 700px) {
     padding-left: 18px !important;
   }
 `;
@@ -37,14 +38,18 @@ export const DisplayInstructions = ({ instructions }) => {
 
 const DeleteInstructionButton = styled.button``;
 
-export const InstructionsEditor = ({
-  instructions,
-  setInstructionField,
-  deleteInstruction,
-}) => {
+export const InstructionsEditor = ({ instructions, setInstructions }) => {
+  const [
+    newInstructions,
+    setNewInstructionField,
+    deleteNewInstruction,
+  ] = useExpandingArray(instructions.length > 0 ? [...instructions] : [""]);
+
+  const onClose = () => setInstructions(newInstructions.slice(0, -1));
+
   const closed = (
     <div>
-      {instructions.slice(0, -1).length === 0
+      {instructions.length === 0
         ? transparentInstructionsHeader
         : instructionsHeader}
       <ol>
@@ -59,26 +64,26 @@ export const InstructionsEditor = ({
   const open = (
     <div style={{ display: "flex", flexDirection: "column" }}>
       {instructionsHeader}
-      {instructions.map((instruction, index) => (
+      {newInstructions.map((instruction, index) => (
         <div
           style={{ display: "flex", flexDirection: "row", width: "100%" }}
           key={`instruction-${index}`}
         >
           <DeleteInstructionButton
             id={`delete-ingredient-${index}`}
-            onClick={() => deleteInstruction(index)}
+            onClick={() => deleteNewInstruction(index)}
           >
             X
           </DeleteInstructionButton>
           <textarea
             placeholder="Instruction"
             value={instruction}
-            onChange={(e) => setInstructionField(index, e.target.value)}
+            onChange={(e) => setNewInstructionField(index, e.target.value)}
           />
         </div>
       ))}
     </div>
   );
 
-  return <ClickToOpen open={open} closed={closed} />;
+  return <ClickToOpen open={open} closed={closed} onClose={onClose} />;
 };

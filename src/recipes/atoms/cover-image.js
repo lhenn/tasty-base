@@ -38,9 +38,8 @@ const CoverImagePlaceholder = () => (
 );
 
 export const CoverImageEditor = ({ src, set }) => {
-  const [newSrc, setNewSrc] = useState("");
+  const [newSrc, setNewSrc] = useState(src);
 
-  const onOpen = () => setNewSrc(src);
   const onClose = () => set(newSrc);
 
   const closed = (
@@ -68,12 +67,5 @@ export const CoverImageEditor = ({ src, set }) => {
       />
     </>
   );
-  return (
-    <ClickToOpen
-      open={open}
-      closed={closed}
-      onOpen={onOpen}
-      onClose={onClose}
-    />
-  );
+  return <ClickToOpen open={open} closed={closed} onClose={onClose} />;
 };

@@ -5,8 +5,8 @@ import Star from "./star";
 
 const IconsWrapper = styled.div`
   display: flex;
-  @media(max-width:700px){
-    justify-content:center;
+  @media (max-width: 700px) {
+    justify-content: center;
   }
 `;
 
