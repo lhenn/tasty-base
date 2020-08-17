@@ -5,54 +5,93 @@ import { addToMyList, removeFromMyList } from "../../firebase";
 import { FormGroup, FormRow, Input, Label } from "../../forms/general-forms";
 import { PrimaryButton } from "../../general/buttons";
 import { Icon } from "./generic-icons";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Tooltip from "react-bootstrap/Tooltip";
+import styled from "styled-components";
 
-const Rate = ({ slug, closeRate }) => {
-  const [ease, setEase] = useState(10);
-  const [taste, setTaste] = useState(10);
+const TtInner = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: 10px 0;
+`;
+const RateTT = (props) => {
+  const [show, setShow] = useState(false);
+  const [ease, setEase] = useState(5);
+  const [taste, setTaste] = useState(5);
   const { user } = useContext(UserContext);
 
+  const handleSubmit = () => {
+    sendRatings(ease, taste);
+    setShow(false);
+  }
   const sendRatings = (ease, taste) => {
-    addToMyList(user.uid, slug, "rate", { ease, taste })
+    addToMyList(user.uid, props.slug, "rate", { ease, taste })
       .then(() => {
-        closeRate();
+        props.closeRate();
       })
       .catch((err) => console.log(err));
   };
-
   return (
-    <div>
-      <div>Care to anonymously rate this recipe?</div>
-      <FormRow>
-        <FormGroup>
-          <Label htmlFor="ease" content="Ease rating" />
-          <Input
-            type="number"
-            id="ease"
-            max="10"
-            min="1"
-            value={ease}
-            onChange={(e) => setEase(e.target.value)}
-          />
-        </FormGroup>
-        <FormGroup>
-          <Label htmlFor="taste" content="Taste rating" />
-          <Input
-            type="number"
-            id="taste"
-            value={taste}
-            max="10"
-            min="1"
-            onChange={(e) => setTaste(e.target.value)}
-          />
-        </FormGroup>
-      </FormRow>
-      <PrimaryButton onClick={() => sendRatings(ease, taste)}>
-        Submit
-      </PrimaryButton>
-    </div>
+    <>
+      <OverlayTrigger
+        placement="bottom"
+        trigger="click"
+        overlay={
+          <div>
+            test overlay
+            <p onClick={()=>setShow(false)}>close me</p>
+          </div>
+        }
+        rootClose
+      >
+        <Icon
+          icon={faCheck}
+          isactive={props.isactive}
+          onClick={props.onClick}
+        />
+      </OverlayTrigger>
+    </>
   );
 };
-
+const Overlay = () => {
+  return <div>this is a test overlay</div>
+}
+// const Rate = () => {
+//  return (
+//   <Tooltip id="overlay">
+//   <TtInner>
+//       <div>Care to anonymously rate this recipe?</div>
+//       <FormRow>
+//         <FormGroup>
+//           <Label htmlFor="ease" content="Ease rating" />
+//           <Input
+//             type="number"
+//             id="ease"
+//             max="5"
+//             min="1"
+//             value={ease}
+//             onChange={(e) => setEase(e.target.value)}
+//           />
+//         </FormGroup>
+//         <FormGroup>
+//           <Label htmlFor="taste" content="Taste rating" />
+//           <Input
+//             type="number"
+//             id="taste"
+//             value={taste}
+//             max="5"
+//             min="1"
+//             onChange={(e) => setTaste(e.target.value)}
+//           />
+//         </FormGroup>
+//       </FormRow>
+//       <PrimaryButton onClick={() => handleSubmit(ease, taste)}>
+//         Submit
+//       </PrimaryButton>
+//   </TtInner>
+// </Tooltip>
+//  )
+// }
 const Check = ({ slug }) => {
   const [busy, setBusy] = useState(false);
   const [rate, setRate] = useState(false);
@@ -65,7 +104,9 @@ const Check = ({ slug }) => {
   const isChecked =
     userData?.myListRecipes &&
     userData.myListRecipes[slug] &&
-    userData.myListRecipes[slug].hasOwnProperty("check");
+    userData.myListRecipes[slug].hasOwnProperty("check")
+      ? true
+      : false;
 
   const check = () => {
     if (busy) return;
@@ -95,8 +136,12 @@ const Check = ({ slug }) => {
 
   return (
     <div>
-      <Icon icon={faCheck} isactive={isChecked ? 1 : 0} onClick={onClick} />
-      {rate && <Rate slug={slug} closeRate={() => setRate(false)} />}
+      <RateTT
+        slug={slug}
+        closeRate={() => setRate(false)}
+        isactive={isChecked ? 1 : 0}
+        onClick={onClick}
+      />
     </div>
   );
 };
