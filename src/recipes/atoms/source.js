@@ -1,9 +1,9 @@
-import React from "react";
-import styled from "styled-components";
-import ClickToOpen from "../click-to-open";
 import { faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React, { useState } from "react";
+import styled from "styled-components";
 import { mediumBlueBase } from "../../styling";
+import ClickToOpen from "../click-to-open";
 
 export const SourceContainer = styled.div`
   display: flex;
@@ -17,7 +17,7 @@ const StyledWebSourceLink = styled.a`
   &:hover {
     text-decoration: underline !important;
     color: ${mediumBlueBase} !important;
-    cursor:pointer;
+    cursor: pointer;
   }
 `;
 const ExternalLinkIcon = styled(FontAwesomeIcon)`
@@ -26,20 +26,17 @@ const ExternalLinkIcon = styled(FontAwesomeIcon)`
 `;
 const DisplayWebSource = (source) => {
   //remove href if in edit mode to prevent confusion
-  return window.location.pathname.includes('edit') ? (
-    <StyledWebSourceLink >
-    Web <ExternalLinkIcon icon={faExternalLinkAlt} />
-  </StyledWebSourceLink>
+  return window.location.pathname.includes("edit") ? (
+    <StyledWebSourceLink>
+      Web <ExternalLinkIcon icon={faExternalLinkAlt} />
+    </StyledWebSourceLink>
   ) : (
     <StyledWebSourceLink href={source.source} target="_blank">
-    Web <ExternalLinkIcon icon={faExternalLinkAlt} />
-  </StyledWebSourceLink>
+      Web <ExternalLinkIcon icon={faExternalLinkAlt} />
+    </StyledWebSourceLink>
   );
- 
 };
 export const DisplaySource = ({ sourceType, source }) => {
-  console.log("hello");
-  console.log(source)
   if (sourceType === "personal") {
     return (
       <SourceContainer>
@@ -55,7 +52,9 @@ export const DisplaySource = ({ sourceType, source }) => {
   } else {
     return (
       <SourceContainer>
-        <p>source: <DisplayWebSource source={source} /></p>
+        <p>
+          source: <DisplayWebSource source={source} />
+        </p>
       </SourceContainer>
     );
   }
@@ -85,16 +84,28 @@ export const SourceEditor = ({
   source,
   setSource,
 }) => {
+  const [newSourceType, setNewSourceType] = useState(sourceType);
+  const [newSource, setNewSource] = useState(source);
+
+  const onClose = () => {
+    setSourceType(newSourceType) || setSource(newSource);
+  };
+
   const closed = <DisplaySource sourceType={sourceType} source={source} />;
 
   const open = (
     <SourceContainer>
-      <SourceTypeSelector sourceType={sourceType} set={setSourceType} />
-      {(sourceType === "web" || sourceType === "cookbook") && (
-        <SourceInput source={source} set={setSource} />
+      <SourceTypeSelector
+        sourceType={newSourceType}
+        set={(value) => {
+          setNewSourceType(value) || setNewSource("");
+        }}
+      />
+      {(newSourceType === "web" || newSourceType === "cookbook") && (
+        <SourceInput source={newSource} set={setNewSource} />
       )}
     </SourceContainer>
   );
 
-  return <ClickToOpen open={open} closed={closed} />;
+  return <ClickToOpen open={open} closed={closed} onClose={onClose} />;
 };

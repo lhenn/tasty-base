@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { parseIntOrEmpty } from "../../utils";
 import ClickToOpen from "../click-to-open";
@@ -18,6 +18,11 @@ export const DisplayBasicInfo = ({ time, servings }) => (
 );
 
 export const BasicInfoEditor = ({ time, setTime, servings, setServings }) => {
+  const [newTime, setNewTime] = useState(time);
+  const [newServings, setNewServings] = useState(servings);
+
+  const onClose = () => setTime(newTime) || setServings(newServings);
+
   const closed = (
     <BasicInfoContainer>
       {time ? (
@@ -39,8 +44,8 @@ export const BasicInfoEditor = ({ time, setTime, servings, setServings }) => {
     <input
       type="number"
       min="1"
-      value={time}
-      onChange={getIntSetter(setTime)}
+      value={newTime}
+      onChange={getIntSetter(setNewTime)}
     />
   );
 
@@ -48,8 +53,8 @@ export const BasicInfoEditor = ({ time, setTime, servings, setServings }) => {
     <input
       type="number"
       min="1"
-      value={servings}
-      onChange={getIntSetter(setServings)}
+      value={newServings}
+      onChange={getIntSetter(setNewServings)}
     />
   );
 
@@ -60,5 +65,5 @@ export const BasicInfoEditor = ({ time, setTime, servings, setServings }) => {
     </BasicInfoContainer>
   );
 
-  return <ClickToOpen open={open} closed={closed} />;
+  return <ClickToOpen open={open} closed={closed} onClose={onClose} />;
 };

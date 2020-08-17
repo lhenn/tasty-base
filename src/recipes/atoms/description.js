@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import mdToHTML from "../../forms/md-parse";
 import { defaultTransparent, lightGrey } from "../../styling";
@@ -44,6 +44,10 @@ export const DescriptionPlaceholder = () => (
 );
 
 export const DescriptionEditor = ({ description, set }) => {
+  const [newDescription, setNewDescription] = useState(description);
+
+  const onClose = () => set(newDescription);
+
   const closed = textIsEmpty(description) ? (
     <DescriptionPlaceholder />
   ) : (
@@ -54,12 +58,12 @@ export const DescriptionEditor = ({ description, set }) => {
       <textarea
         placeholder={"Say something about this recipe"}
         style={{ width: "100%" }}
-        value={description}
-        onChange={(e) => set(e.target.value)}
+        value={newDescription}
+        onChange={(e) => setNewDescription(e.target.value)}
         autoFocus
       />
     </DescriptionWrapper>
   );
   // console.log("DESC", description, open, closed);
-  return <ClickToOpen open={open} closed={closed} />;
+  return <ClickToOpen open={open} closed={closed} onClose={onClose} />;
 };

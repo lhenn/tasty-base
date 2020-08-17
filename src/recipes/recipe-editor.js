@@ -1,16 +1,16 @@
-import React, { useState, useContext } from "react";
+import React, { useContext, useState } from "react";
 import { UserContext } from "../App";
-import { getTimestamp, submitPost, addToMyList } from "../firebase";
-import useCancellablePromises from "../promise-hooks";
+import { addToMyList, getTimestamp, submitPost } from "../firebase";
 import { PrimaryButton } from "../general/buttons";
-import { RecipeContainer, RecipeHeader } from "./display-recipe";
-import { TitleEditor } from "./atoms/title";
+import useCancellablePromises from "../promise-hooks";
 import { CoverImageEditor } from "./atoms/cover-image";
-import { OverviewEditor } from "./atoms/overview";
 import { DescriptionEditor } from "./atoms/description";
 import { DetailsEditor } from "./atoms/details";
+import { OverviewEditor } from "./atoms/overview";
 import SlugEditor from "./atoms/slug";
-import useExpandingArray from "./form-hooks";
+import { TitleEditor } from "./atoms/title";
+import { RecipeContainer, RecipeHeader } from "./display-recipe";
+// import useExpandingArray from "./form-hooks";
 
 const emptyIngredient = { name: "", amount: "" };
 
@@ -45,9 +45,8 @@ const SubmitButton = ({ content, slug, history, uid }) => {
 };
 
 const Editor = ({ author, initialContent, initialSlug = "", history }) => {
-  const { user, loadingUser, userData, loadingUserData } = useContext(
-    UserContext
-  );
+  const { user } = useContext(UserContext);
+
   // Make sure fields' states are defined
   const [title, setTitle] = useState(initialContent?.title || "");
   const [coverImageURL, setCoverImageURL] = useState(
@@ -64,16 +63,12 @@ const Editor = ({ author, initialContent, initialSlug = "", history }) => {
   const [description, setDescription] = useState(
     initialContent?.description || ""
   );
-  const [ingredients, setIngredientField, deleteIngredient] = useExpandingArray(
+  const [ingredients, setIngredients] = useState(
     initialContent?.ingredients
       ? [...initialContent.ingredients]
       : [emptyIngredient]
   );
-  const [
-    instructions,
-    setInstructionField,
-    deleteInstruction,
-  ] = useExpandingArray(
+  const [instructions, setInstructions] = useState(
     initialContent?.instructions ? [...initialContent.instructions] : [""]
   );
 
@@ -89,10 +84,11 @@ const Editor = ({ author, initialContent, initialSlug = "", history }) => {
     taste,
     ease,
     description,
-    ingredients: ingredients.slice(0, -1),
-    instructions: instructions.slice(0, -1),
+    ingredients,
+    instructions,
     author,
   };
+
   //The information that all recipes should have, regardless of source
   const GeneralRecipeInfo = () => {
     return (
@@ -125,23 +121,19 @@ const Editor = ({ author, initialContent, initialSlug = "", history }) => {
       </>
     );
   };
-  
+
   return (
     <>
       <RecipeContainer>
         <GeneralRecipeInfo />
-        { content.sourceType === "personal" && (
+        {content.sourceType === "personal" && (
           <DetailsEditor
-          ingredients={ingredients}
-          instructions={instructions}
-          setIngredientField={setIngredientField}
-          setInstructionField={setInstructionField}
-          deleteIngredient={deleteIngredient}
-          deleteInstruction={deleteInstruction}
-        />
-        )
-        }
-        
+            ingredients={ingredients}
+            instructions={instructions}
+            setIngredients={setIngredients}
+            setInstructions={setInstructions}
+          />
+        )}
       </RecipeContainer>
 
       <div style={{ textAlign: "right" }}>

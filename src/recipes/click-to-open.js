@@ -29,11 +29,11 @@ const ClickToOpen = ({ open, closed, onOpen, onClose }) => {
   }, [closing, onClose]);
 
   useEffect(() => {
-    console.log("add listener");
+    // console.log("add listener");
     document.addEventListener("mousedown", handleClickOutside);
 
     return () => {
-      console.log("unmount.");
+      // console.log("unmount.");
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);

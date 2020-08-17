@@ -7,8 +7,8 @@ const DetailsWrapper = styled.div`
   display: flex;
   width: 100%;
   padding: 25px 0 25px 0;
-  @media(max-width:700px){
-    flex-direction:column;
+  @media (max-width: 700px) {
+    flex-direction: column;
   }
 `;
 
@@ -22,21 +22,17 @@ export const DisplayDetails = ({ ingredients, instructions }) => (
 export const DetailsEditor = ({
   ingredients,
   instructions,
-  setIngredientField,
-  setInstructionField,
-  deleteIngredient,
-  deleteInstruction,
+  setIngredients,
+  setInstructions,
 }) => (
   <DetailsWrapper>
     <IngredientsEditor
       ingredients={ingredients}
-      setIngredientField={setIngredientField}
-      deleteIngredient={deleteIngredient}
+      setIngredients={setIngredients}
     />
     <InstructionsEditor
       instructions={instructions}
-      setInstructionField={setInstructionField}
-      deleteInstruction={deleteInstruction}
+      setInstructions={setInstructions}
     />
   </DetailsWrapper>
 );
