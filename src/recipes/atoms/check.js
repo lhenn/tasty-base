@@ -34,13 +34,42 @@ const RateTT = (props) => {
   return (
     <>
       <OverlayTrigger
+        onClick={() => setShow(!show)}
         placement="bottom"
         trigger="click"
         overlay={
-          <div>
-            test overlay
-            <p onClick={()=>setShow(false)}>close me</p>
-          </div>
+          <Tooltip id="overlay">
+            <TtInner>
+                <div>Care to anonymously rate this recipe?</div>
+                <FormRow>
+                  <FormGroup>
+                    <Label htmlFor="ease" content="Ease rating" />
+                    <Input
+                      type="number"
+                      id="ease"
+                      max="5"
+                      min="1"
+                      value={ease}
+                      onChange={(e) => setEase(e.target.value)}
+                    />
+                  </FormGroup>
+                  <FormGroup>
+                    <Label htmlFor="taste" content="Taste rating" />
+                    <Input
+                      type="number"
+                      id="taste"
+                      value={taste}
+                      max="5"
+                      min="1"
+                      onChange={(e) => setTaste(e.target.value)}
+                    />
+                  </FormGroup>
+                </FormRow>
+                <PrimaryButton onClick={() => handleSubmit(ease, taste)}>
+                  Submit
+                </PrimaryButton>
+            </TtInner>
+          </Tooltip>
         }
         rootClose
       >
@@ -53,45 +82,7 @@ const RateTT = (props) => {
     </>
   );
 };
-const Overlay = () => {
-  return <div>this is a test overlay</div>
-}
-// const Rate = () => {
-//  return (
-//   <Tooltip id="overlay">
-//   <TtInner>
-//       <div>Care to anonymously rate this recipe?</div>
-//       <FormRow>
-//         <FormGroup>
-//           <Label htmlFor="ease" content="Ease rating" />
-//           <Input
-//             type="number"
-//             id="ease"
-//             max="5"
-//             min="1"
-//             value={ease}
-//             onChange={(e) => setEase(e.target.value)}
-//           />
-//         </FormGroup>
-//         <FormGroup>
-//           <Label htmlFor="taste" content="Taste rating" />
-//           <Input
-//             type="number"
-//             id="taste"
-//             value={taste}
-//             max="5"
-//             min="1"
-//             onChange={(e) => setTaste(e.target.value)}
-//           />
-//         </FormGroup>
-//       </FormRow>
-//       <PrimaryButton onClick={() => handleSubmit(ease, taste)}>
-//         Submit
-//       </PrimaryButton>
-//   </TtInner>
-// </Tooltip>
-//  )
-// }
+
 const Check = ({ slug }) => {
   const [busy, setBusy] = useState(false);
   const [rate, setRate] = useState(false);
