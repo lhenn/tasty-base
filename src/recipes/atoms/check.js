@@ -5,7 +5,6 @@ import { addToMyList, removeFromMyList } from "../../firebase";
 import { FormGroup, FormRow, Input, Label } from "../../forms/general-forms";
 import { PrimaryButton } from "../../general/buttons";
 import { Icon } from "./generic-icons";
-import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Overlay from "react-bootstrap/Overlay";
 import Button from "react-bootstrap/Button";
 import Tooltip from "react-bootstrap/Tooltip";
@@ -18,7 +17,6 @@ const TtInner = styled.div`
 `;
 
 function RateToolTip(props) {
-  console.log("props:", props);
   const [show, setShow] = useState(false);
   const target = useRef(null);
   const [ease, setEase] = useState(5);
@@ -37,10 +35,12 @@ function RateToolTip(props) {
       .catch((err) => console.log(err));
   };
   // Currently wrapping Icon in a Button because otherwise there is a "functional components not compatible with useRef error"
-  // TODO: improve the check clicking active/not active and checked/not checked behavior
+  // TODO: improve the check clicking active/not-active and checked/not-checked behavior 
+  // TODO: should only open rating container if check is currently unchecked (?) or..
+  // if clicked and check is already checked, should at least show current ratings rather than defaulting to 5
   return (
     <>
-      <Button ref={target} onClick={() => setShow(!show)}>
+      <Button id="invisible-trigger-wrapper" ref={target} onClick={() => setShow(!show)}>
         <Icon
           icon={faCheck}
           isactive={props.isactive}
@@ -131,12 +131,6 @@ const Check = ({ slug }) => {
 
   return (
     <div>
-      <RateTT
-        slug={slug}
-        closeRate={() => setRate(false)}
-        isactive={isChecked ? 1 : 0}
-        onClick={onClick}
-      />
       <RateToolTip
         slug={slug}
         closeRate={() => setRate(false)}

@@ -51,3 +51,8 @@ color:black !important;
     margin-bottom:.5em !important;
   }
 }
+#invisible-trigger-wrapper{
+  padding: 0 !important;
+  margin: 0 !important;
+  background-color: inherit !important;
+}
