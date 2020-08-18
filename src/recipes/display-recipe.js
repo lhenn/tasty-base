@@ -82,10 +82,10 @@ const DisplayRecipePost = ({ content, slug }) => {
 
       <DisplayDescription description={content.description} />
 
-      <DisplayDetails
+      {content.source==='personal' && <DisplayDetails
         ingredients={content.ingredients}
         instructions={content.instructions}
-      />
+      />}
 
       {content.gallery && content.gallery.length > 0 && (
         <Gallery gallery={content.gallery} />
