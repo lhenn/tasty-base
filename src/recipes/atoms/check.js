@@ -15,6 +15,14 @@ const TtInner = styled.div`
   flex-direction: column;
   padding: 10px 0;
 `;
+const DeclineButton = styled.p`
+  cursor: pointer;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  &:hover {
+    text-decoration: underline;
+  }
+`;
 
 function RateToolTip(props) {
   const [show, setShow] = useState(false);
@@ -35,9 +43,7 @@ function RateToolTip(props) {
       .catch((err) => console.log(err));
   };
   // Currently wrapping Icon in a Button because otherwise there is a "functional components not compatible with useRef error"
-  // TODO: improve the check clicking active/not-active and checked/not-checked behavior
-  // TODO: should only open rating container if check is currently unchecked (?) or..
-  // if clicked and check is already checked, should at least show current ratings rather than defaulting to 5
+  // Could not get tooltip closing to work with OverlayTrigger
   return (
     <>
       <Button
@@ -87,7 +93,9 @@ function RateToolTip(props) {
               <PrimaryButton onClick={() => handleSubmit(ease, taste)}>
                 Submit
               </PrimaryButton>
-              <p onClick={() => handleSubmit()}>No Thanks</p>
+              <DeclineButton onClick={() => handleSubmit()}>
+                No Thanks
+              </DeclineButton>
             </TtInner>
           </Tooltip>
         )}
@@ -137,20 +145,7 @@ const Check = ({ slug }) => {
       ),
       (err) => console.log("remove check failed with code:", err.code)
     );
-
   };
-  // const uncheck = () => {
-  //   if (busy) return;
-  //   setBusy(true);
-
-  //   removeFromMyList(user.uid, slug, "rate").then(
-  //     () => {
-  //       setBusy(false);
-  //       setRate(false);
-  //     },
-  //     (err) => console.log("remove ratings failed with code:", err.code)
-  //   );
-  // };
 
   const onClick = () => (!isChecked ? check() : uncheck());
 
