@@ -9,6 +9,7 @@ import Overlay from "react-bootstrap/Overlay";
 import Button from "react-bootstrap/Button";
 import Tooltip from "react-bootstrap/Tooltip";
 import styled from "styled-components";
+import {RatingInput} from "./ratings";
 
 const TtInner = styled.div`
   display: flex;
@@ -69,25 +70,11 @@ function RateToolTip(props) {
               <FormRow>
                 <FormGroup>
                   <Label htmlFor="ease" content="Ease rating" />
-                  <Input
-                    type="number"
-                    id="ease"
-                    max="5"
-                    min="1"
-                    value={ease}
-                    onChange={(e) => setEase(e.target.value)}
-                  />
+                  <RatingInput value={ease} set={setEase}/>
                 </FormGroup>
                 <FormGroup>
                   <Label htmlFor="taste" content="Taste rating" />
-                  <Input
-                    type="number"
-                    id="taste"
-                    value={taste}
-                    max="5"
-                    min="1"
-                    onChange={(e) => setTaste(e.target.value)}
-                  />
+                  <RatingInput value={taste} set={setTaste}/>
                 </FormGroup>
               </FormRow>
               <PrimaryButton onClick={() => handleSubmit(ease, taste)}>

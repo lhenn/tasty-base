@@ -81,7 +81,7 @@ export const DisplayRatings = (ratings) => (
   </RatingsContainer>
 );
 
-const RatingInput = ({ value, set }) => (
+export const RatingInput = ({ value, set }) => (
   <input
     type="number"
     min={`${minRating}`}
