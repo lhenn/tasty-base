@@ -23,8 +23,8 @@ function RateToolTip(props) {
   const [taste, setTaste] = useState(5);
   const { user } = useContext(UserContext);
 
-  const handleSubmit = () => {
-    sendRatings(ease, taste);
+  const handleSubmit = (ease, taste) => {
+    if (ease && taste) sendRatings(ease, taste);
     setShow(false);
   };
   const sendRatings = (ease, taste) => {
@@ -35,19 +35,27 @@ function RateToolTip(props) {
       .catch((err) => console.log(err));
   };
   // Currently wrapping Icon in a Button because otherwise there is a "functional components not compatible with useRef error"
-  // TODO: improve the check clicking active/not-active and checked/not-checked behavior 
+  // TODO: improve the check clicking active/not-active and checked/not-checked behavior
   // TODO: should only open rating container if check is currently unchecked (?) or..
   // if clicked and check is already checked, should at least show current ratings rather than defaulting to 5
   return (
     <>
-      <Button id="invisible-trigger-wrapper" ref={target} onClick={() => setShow(!show)}>
+      <Button
+        id="invisible-trigger-wrapper"
+        ref={target}
+        onClick={() => {
+          if (!props.isactive) {
+            setShow(!show);
+          }
+        }}
+      >
         <Icon
           icon={faCheck}
           isactive={props.isactive}
           onClick={props.onClick}
         />
       </Button>
-      <Overlay target={target.current} show={show} placement="right">
+      <Overlay target={target.current} show={show} placement="bottom">
         {(props) => (
           <Tooltip id="overlay" {...props}>
             <TtInner>
@@ -79,6 +87,7 @@ function RateToolTip(props) {
               <PrimaryButton onClick={() => handleSubmit(ease, taste)}>
                 Submit
               </PrimaryButton>
+              <p onClick={() => handleSubmit()}>No Thanks</p>
             </TtInner>
           </Tooltip>
         )}
@@ -119,13 +128,29 @@ const Check = ({ slug }) => {
     if (busy) return;
     setBusy(true);
     removeFromMyList(user.uid, slug, "check").then(
-      () => {
-        setBusy(false);
-        setRate(false);
-      },
-      (err) => console.log("uncheck failed with code:", err.code)
+      removeFromMyList(user.uid, slug, "rate").then(
+        () => {
+          setBusy(false);
+          setRate(false);
+        },
+        (err) => console.log("remove ratings failed with code:", err.code)
+      ),
+      (err) => console.log("remove check failed with code:", err.code)
     );
+
   };
+  // const uncheck = () => {
+  //   if (busy) return;
+  //   setBusy(true);
+
+  //   removeFromMyList(user.uid, slug, "rate").then(
+  //     () => {
+  //       setBusy(false);
+  //       setRate(false);
+  //     },
+  //     (err) => console.log("remove ratings failed with code:", err.code)
+  //   );
+  // };
 
   const onClick = () => (!isChecked ? check() : uncheck());
 
