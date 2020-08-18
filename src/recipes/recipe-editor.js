@@ -36,6 +36,8 @@ const SubmitButton = ({ content, slug, history, uid }) => {
     setIsSubmitting(true);
     addPromise(submitPost(slug, timestampedContent))
       .then(() => addToMyList(uid, slug, "contribution"))
+      .then(() => addToMyList(uid, slug, "check"))
+      .then(() => addToMyList(uid, slug, "rate", {ease:content.ease, taste:content.taste}))
       .then(() => setIsSubmitting(false))
       .then(() => history.push(`/recipes/${slug}`));
   };
