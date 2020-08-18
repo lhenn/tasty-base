@@ -47,9 +47,9 @@ const ThumbnailImg = styled.img`
 export const RecipeHeader = styled.div`
   display: flex;
   justify-content: space-between;
-  @media(max-width:700px){
-    flex-direction:column;
-    text-align:center;
+  @media (max-width: 700px) {
+    flex-direction: column;
+    text-align: center;
   }
 `;
 
@@ -57,8 +57,6 @@ const DisplayRecipePost = ({ content, slug }) => {
   const { user } = useContext(UserContext);
 
   if (!content) return <h1>Loading recipe post...</h1>;
-  console.log('content',content)
-  console.log('activeTime',content.time)
 
   return (
     <RecipeContainer>

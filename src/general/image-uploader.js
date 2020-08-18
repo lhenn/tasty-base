@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import styled from "styled-components";
 import UpdatingTooltip from "../general/tooltip";
-import {SecondaryButton} from "../general/buttons";
+import { SecondaryButton } from "../general/buttons";
 import {
   LOADED,
   INIT,
@@ -43,6 +43,8 @@ const ThumbnailImg = styled.img`
 `;
 
 // Thumbnail component
+// onSetCover is called when an image is toggled/untoggled as the album cover.
+// It takes the image's URL and the file name as the alt text.
 const Thumbnail = ({
   downloadURL,
   src,
@@ -127,7 +129,7 @@ const ImageUploader = ({
   onSetCover,
 }) => {
   return (
-    <div className="container">
+    <div className="container" style={{ alignItems: "center", width: "100%", display: "block"}}>
       <form className="form" onSubmit={onSubmit}>
         <FileInput onChange={onChange} />
 

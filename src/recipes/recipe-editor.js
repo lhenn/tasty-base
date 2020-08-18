@@ -1,8 +1,12 @@
 import React, { useContext, useState } from "react";
+import styled from "styled-components";
+import { lightGrey } from "../styling";
 import { UserContext } from "../App";
 import { addToMyList, getTimestamp, submitPost } from "../firebase";
 import { PrimaryButton } from "../general/buttons";
+import ImageUploader from "../general/image-uploader";
 import useCancellablePromises from "../promise-hooks";
+import useFileHandlers from "../useFileHandlers";
 import { CoverImageEditor } from "./atoms/cover-image";
 import { DescriptionEditor } from "./atoms/description";
 import { DetailsEditor } from "./atoms/details";
@@ -10,7 +14,6 @@ import { OverviewEditor } from "./atoms/overview";
 import SlugEditor from "./atoms/slug";
 import { TitleEditor } from "./atoms/title";
 import { RecipeContainer, RecipeHeader } from "./display-recipe";
-// import useExpandingArray from "./form-hooks";
 
 const emptyIngredient = { name: "", amount: "" };
 
@@ -44,6 +47,13 @@ const SubmitButton = ({ content, slug, history, uid }) => {
   );
 };
 
+const ImageUploaderWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 25px 15% 25px 15%;
+`;
+
 const Editor = ({ author, initialContent, initialSlug = "", history }) => {
   const { user } = useContext(UserContext);
 
@@ -53,7 +63,7 @@ const Editor = ({ author, initialContent, initialSlug = "", history }) => {
     initialContent?.coverImageURL || ""
   );
   const [sourceType, setSourceType] = useState(
-    initialContent?.sourceType || ""
+    initialContent?.sourceType || "personal"
   );
   const [source, setSource] = useState(initialContent?.source || "");
   const [time, setTime] = useState(initialContent?.time || "");
@@ -74,6 +84,17 @@ const Editor = ({ author, initialContent, initialSlug = "", history }) => {
 
   const [slug, setSlug] = useState(initialSlug);
 
+  // Set up file handlers for ImageUploader
+  const {
+    files: galleryFiles,
+    uploaded: galleryUploaded, // uploaded files
+    status: galleryUploadStatus,
+    onSubmit: onSubmitGallery,
+    onChange: onChangeGallery,
+  } = useFileHandlers();
+
+  console.log(">GU", galleryUploaded);
+
   const content = {
     title,
     coverImageURL,
@@ -87,12 +108,48 @@ const Editor = ({ author, initialContent, initialSlug = "", history }) => {
     ingredients,
     instructions,
     author,
+    gallery: Object.values(galleryUploaded).map((img) => img.downloadURL),
   };
 
-  //The information that all recipes should have, regardless of source
-  const GeneralRecipeInfo = () => {
-    return (
-      <>
+  // The information that all recipes should have, regardless of source
+  const imageUploader = (
+    <ImageUploaderWrapper>
+      <label htmlFor="post-image-uploader">{"Upload images"}</label>
+      <ImageUploader
+        id="post-image-uploader"
+        files={galleryFiles}
+        uploaded={galleryUploaded}
+        status={galleryUploadStatus}
+        onSubmit={onSubmitGallery}
+        onChange={onChangeGallery}
+        curCover={coverImageURL}
+        onSetCover={(url) => setCoverImageURL(url)}
+      />
+    </ImageUploaderWrapper>
+  );
+
+  const submitButton = (
+    <div style={{ textAlign: "right" }}>
+      <SubmitButton
+        content={content}
+        slug={slug}
+        history={history}
+        uid={user.uid}
+      />
+    </div>
+  );
+
+  const cancelButton = (
+    <div style={{ textAlign: "right" }}>
+      <PrimaryButton onClick={() => history.push(`/recipes/${slug}`)}>
+        Cancel
+      </PrimaryButton>
+    </div>
+  );
+
+  return (
+    <>
+      <RecipeContainer>
         <RecipeHeader>
           <TitleEditor title={title} set={setTitle} />
           <SlugEditor
@@ -100,7 +157,9 @@ const Editor = ({ author, initialContent, initialSlug = "", history }) => {
             setSlug={initialSlug !== "" ? undefined : setSlug}
           />
         </RecipeHeader>
+
         <CoverImageEditor src={coverImageURL} set={setCoverImageURL} />
+
         <OverviewEditor
           authorName={initialContent?.authorName}
           timestamp={initialContent?.timestamp}
@@ -117,15 +176,9 @@ const Editor = ({ author, initialContent, initialSlug = "", history }) => {
           ease={ease}
           setEase={setEase}
         />
-        <DescriptionEditor description={description} set={setDescription} />
-      </>
-    );
-  };
 
-  return (
-    <>
-      <RecipeContainer>
-        <GeneralRecipeInfo />
+        <DescriptionEditor description={description} set={setDescription} />
+
         {content.sourceType === "personal" && (
           <DetailsEditor
             ingredients={ingredients}
@@ -136,14 +189,11 @@ const Editor = ({ author, initialContent, initialSlug = "", history }) => {
         )}
       </RecipeContainer>
 
-      <div style={{ textAlign: "right" }}>
-        <SubmitButton
-          content={content}
-          slug={slug}
-          history={history}
-          uid={user.uid}
-        />
-      </div>
+      {imageUploader}
+
+      {submitButton}
+
+      {cancelButton}
     </>
   );
 };
