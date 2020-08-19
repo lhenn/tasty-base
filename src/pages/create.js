@@ -5,7 +5,11 @@ import Editor from "../recipes/recipe-editor";
 const Create = ({ history }) => {
   const { user, loadingUser } = useContext(UserContext);
 
-  if (loadingUser) return <h1>Authenticating...</h1>;
+  if (loadingUser) {
+    return <h1>Loading...</h1>;
+  } else if (!loadingUser && !user) {
+    return <p>To create a new post, sign in or create an account.</p>;
+  }
 
   return (
     <>

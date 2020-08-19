@@ -6,8 +6,8 @@ import useCancellablePromises from "../promise-hooks";
 import Editor from "../recipes/recipe-editor";
 
 const Edit = ({ history, match }) => {
-  const { user } = useContext(UserContext);
-  const [loading, setLoading] = useState(true);
+  const { user, loadingUser } = useContext(UserContext);
+  const [loadingPost, setLoadingPost] = useState(true);
   const [content, setContent] = useState();
   const [authorized, setAuthorized] = useState();
   const { addPromise } = useCancellablePromises();
@@ -16,31 +16,32 @@ const Edit = ({ history, match }) => {
 
   // Load content to make sure it's up to date
   useEffect(() => {
-    addPromise(fetchPost(slug)).then(
-      ({ content: fetchedContent }) => {
-        // Wait until updateuser has been set
-        if (user && fetchedContent.author !== user.uid) {
-          setAuthorized(false);
-        } else {
-          setAuthorized(true);
-          setContent(fetchedContent);
-        }
-        setLoading(false);
-      },
-      (err) => console.log("edit: content loading failed with code: ", err.code)
-    );
-  }, [slug, user, addPromise]);
+    if (!loadingUser) {
+      addPromise(fetchPost(slug)).then(
+        ({ content: fetchedContent }) => {
+          // Wait until has been set
+          if (user && fetchedContent.author !== user.uid) {
+            setAuthorized(false);
+          } else {
+            setAuthorized(true);
+            setContent(fetchedContent);
+          }
+          setLoadingPost(false);
+        },
+        (err) =>
+          console.log("edit: content loading failed with code: ", err.code)
+      );
+    }
+  }, [loadingUser, user, slug, addPromise]);
 
-  if (loading) {
+  if (loadingPost || loadingUser) {
     return <h1>Loading...</h1>;
-  }
-
-  if (!authorized) {
+  } else if (!loadingUser && !user) {
+    return <Redirect to="/" />;
+  } else if (!authorized) {
     return <p>You are not authorized to edit this post.</p>;
-  }
-
-  // Loading is done and post wasn't found in the database
-  if (!content) {
+  } else if (!content) {
+    // Loading is done and post wasn't found in the database
     return <Redirect to="/404" />;
   }
 

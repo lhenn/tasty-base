@@ -26,7 +26,7 @@ const MainContent = styled.main`
   width: 100%;
   padding: 20px;
   min-height: 85vh;
-  @media(max-width:700px){
+  @media (max-width: 700px) {
     margin: 10px auto;
   }
 `;
@@ -166,8 +166,8 @@ const App = () => {
                 )}
               />
               <Route exact path="/signin" component={Signin} />
-              <Route exact path="/myrecipes" component={MyRecipes} />
-              <Route exact path="/fav-recipes" component={Favorites} />
+              <Route exact path="/my-recipes" component={MyRecipes} />
+              // <Route exact path="/fav-recipes" component={Favorites} />
               <Route exact path="/notes" component={Notes} />
               <Route exact path="/create" component={Create} />
               <Route exact path="/about" component={About} />

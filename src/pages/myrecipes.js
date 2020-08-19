@@ -1,24 +1,29 @@
+import {
+  faCheck,
+  faLightbulb,
+  faStar,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useContext, useEffect, useState } from "react";
 import { Redirect } from "react-router-dom";
+import styled from "styled-components";
 import { UserContext } from "../App";
 import { fetchPosts } from "../firebase";
+import { FilterButton } from "../general/buttons";
+import Columns from "../general/columns";
 import {
   HeaderWrapper,
   PageTitle,
   PageViewOptions,
   SearchField,
 } from "../general/page-header";
-import Columns from "../general/columns";
 import useCancellablePromises from "../promise-hooks";
-import { FilterButton } from "../general/buttons";
-import { yellowBase, greenBase, redOrangeBase, lavendarBase } from "../styling";
-import styled from "styled-components";
-import {
-  faCheck,
-  faStar,
-  faLightbulb,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { greenBase, redOrangeBase, yellowBase } from "../styling";
+
+const FilterIcon = styled(FontAwesomeIcon)`
+  color: black;
+  font-size: medium;
+`;
 
 const MyRecipes = () => {
   const [{ posts, loadingPosts }, setPosts] = useState({
@@ -29,10 +34,15 @@ const MyRecipes = () => {
     UserContext
   );
   const { addPromise } = useCancellablePromises();
-  const [activeFilters, setActiveFilters] = useState(["check", "star", "contribution"]);
+  const [activeFilters, setActiveFilters] = useState([
+    "check",
+    "star",
+    "contribution",
+  ]);
 
   useEffect(() => {
     if (!loadingUserData && userData?.myListRecipes) {
+      console.log("FILTERING");
       setPosts({ posts: [], loadingPosts: true });
       const filteredSlugs = new Set();
       for (let [slug, info] of Object.entries(userData.myListRecipes)) {
@@ -51,16 +61,15 @@ const MyRecipes = () => {
     }
   }, [activeFilters, userData, loadingUserData, addPromise]);
 
-  if (!loadingUser && !loadingUserData && !user) {
-    return <Redirect to="/" />;
+  if (loadingUser) {
+    return <p>Loading...</p>;
+  } else if (!loadingUser && !user) {
+    return <p>Sign in or make an account to start saving recipes.</p>
+  } else if (!loadingUser && user && loadingUserData) {
+    return <p>Loading...</p>;
+  } else if (!loadingUser && !loadingUserData && loadingPosts) {
+    return <p>Loading...</p>;
   }
-
-  const postsContent =
-    loadingUser || loadingUserData || loadingPosts ? (
-      <p>loading...</p>
-    ) : (
-      <Columns posts={posts} />
-    );
 
   const handleFilterClick = (e, filterBy) => {
     const newActiveFilters = [...activeFilters];
@@ -69,10 +78,7 @@ const MyRecipes = () => {
       : newActiveFilters.push(filterBy);
     setActiveFilters(newActiveFilters);
   };
-  const FilterIcon = styled(FontAwesomeIcon)`
-    color: black;
-    font-size: medium;
-  `;
+
   return (
     <>
       <HeaderWrapper>
@@ -104,7 +110,7 @@ const MyRecipes = () => {
         </PageViewOptions>
       </HeaderWrapper>
 
-      {postsContent}
+      <Columns posts={posts} />
     </>
   );
 };
