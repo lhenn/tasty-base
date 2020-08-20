@@ -1,8 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 import styled from "styled-components";
 import { parseIntOrEmpty } from "../../utils";
-import ClickToOpen from "../click-to-open";
-import { NumericPlaceholder } from "./generic-placeholders";
 
 export const BasicInfoContainer = styled.div`
   display: flex;
@@ -17,53 +15,38 @@ export const DisplayBasicInfo = ({ time, servings }) => (
   </BasicInfoContainer>
 );
 
+const StyledPositiveIntInput = styled.input`
+  border: none;
+	width: 80px;
+`;
+
 export const BasicInfoEditor = ({ time, setTime, servings, setServings }) => {
-  const [newTime, setNewTime] = useState(time);
-  const [newServings, setNewServings] = useState(servings);
-
-  const onClose = () => setTime(newTime) || setServings(newServings);
-
-  const closed = (
-    <BasicInfoContainer>
-      {time ? (
-        <p>total time: {time} min</p>
-      ) : (
-        <NumericPlaceholder name="total time" />
-      )}
-      {servings ? (
-        <p>servings: {servings}</p>
-      ) : (
-        <NumericPlaceholder name="servings" />
-      )}
-    </BasicInfoContainer>
-  );
-
-  const getIntSetter = (set) => (e) => set(parseIntOrEmpty(e.target.value));
-
   const timeInput = (
-    <input
+    <StyledPositiveIntInput
+      placeholder="--"
+      id="time-input"
       type="number"
       min="1"
-      value={newTime}
-      onChange={getIntSetter(setNewTime)}
+      value={time}
+      onChange={(e) => setTime(parseIntOrEmpty(e.target.value))}
     />
   );
 
   const servingsInput = (
-    <input
+    <StyledPositiveIntInput
+      placeholder="--"
+      id="servings-input"
       type="number"
       min="1"
-      value={newServings}
-      onChange={getIntSetter(setNewServings)}
+      value={servings}
+      onChange={(e) => setServings(parseIntOrEmpty(e.target.value))}
     />
   );
 
-  const open = (
+  return (
     <BasicInfoContainer>
       <p>total time: {timeInput} min</p>
       <p>servings: {servingsInput}</p>
     </BasicInfoContainer>
   );
-
-  return <ClickToOpen open={open} closed={closed} onClose={onClose} />;
 };

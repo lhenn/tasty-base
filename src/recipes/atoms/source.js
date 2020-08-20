@@ -101,8 +101,27 @@ export const SourceEditor = ({
           setNewSourceType(value) || setNewSource("");
         }}
       />
-      {(newSourceType === "web" || newSourceType === "cookbook") && (
-        <SourceInput source={newSource} set={setNewSource} />
+
+      {newSourceType === "web" && (
+        <input
+          type="url"
+          minLength="1"
+          id="web-source"
+          value={newSource}
+          onChange={(e) => setNewSource(e.target.value)}
+          required
+        />
+      )}
+
+      {newSourceType === "cookbook" && (
+        <input
+          type="text"
+          minLength="1"
+          id="web-source"
+          value={newSource}
+          onChange={(e) => setNewSource(e.target.value)}
+          required
+        />
       )}
     </SourceContainer>
   );

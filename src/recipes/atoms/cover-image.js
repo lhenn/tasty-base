@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import React, { useRef } from "react";
 import styled from "styled-components";
 import { defaultTransparent } from "../../styling";
 import { ImageWithPlaceholder } from "../../utils";
-import ClickToOpen from "../click-to-open";
 
 export const DisplayCoverImage = styled.img`
   height: 400px;
@@ -14,10 +13,6 @@ export const CardCoverImage = styled.img`
   height: 250px;
   width: 100%;
   object-fit: cover;
-`;
-
-const TransparentCoverImage = styled(DisplayCoverImage)`
-  opacity: ${defaultTransparent};
 `;
 
 const CoverImagePlaceholderWrapper = styled.div`
@@ -37,35 +32,44 @@ const CoverImagePlaceholder = () => (
   </CoverImagePlaceholderWrapper>
 );
 
+const StyledWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center
+`;
+
+const StyledCoverImageInput = styled.input`
+  margin: 0 auto;
+  opacity: 0;
+  ${StyledWrapper}:focus-within & {
+    opacity: 1;
+  }
+`;
+
+const StyledImageWithPlaceholder = styled(ImageWithPlaceholder)`
+  opacity: 1;
+  ${StyledWrapper}:focus-within & {
+    opacity: ${defaultTransparent};
+  }
+`;
+
 export const CoverImageEditor = ({ src, set }) => {
-  const [newSrc, setNewSrc] = useState(src);
-
-  const onClose = () => set(newSrc);
-
-  const closed = (
-    <ImageWithPlaceholder
-      src={src}
-      alt="cover image"
-      Image={DisplayCoverImage}
-      Placeholder={CoverImagePlaceholder}
-    />
-  );
-
-  const open = (
-    <>
-      <ImageWithPlaceholder
+  const inputRef = useRef();
+  return (
+    <StyledWrapper>
+      <StyledCoverImageInput
+        ref={inputRef}
+        placeholder="Cover image URL"
+        value={src}
+        onChange={(e) => set(e.target.value)}
+      />
+      <StyledImageWithPlaceholder
         src={src}
         alt="cover image"
-        Image={TransparentCoverImage}
+        Image={DisplayCoverImage}
         Placeholder={CoverImagePlaceholder}
+        onClick={() => inputRef.current.focus()}
       />
-      <input
-        placeholder="Cover image URL"
-        value={newSrc}
-        onChange={(e) => setNewSrc(e.target.value)}
-        autoFocus
-      />
-    </>
+    </StyledWrapper>
   );
-  return <ClickToOpen open={open} closed={closed} onClose={onClose} />;
 };

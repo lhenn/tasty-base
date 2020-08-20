@@ -1,15 +1,15 @@
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
-import React, { useContext, useState, useRef } from "react";
-import { UserContext } from "../../App";
-import { addToMyList, removeFromMyList } from "../../firebase";
-import { FormGroup, FormRow, Input, Label } from "../../forms/general-forms";
-import { PrimaryButton } from "../../general/buttons";
-import { Icon } from "./generic-icons";
-import Overlay from "react-bootstrap/Overlay";
+import React, { useContext, useRef, useState } from "react";
 import Button from "react-bootstrap/Button";
+import Overlay from "react-bootstrap/Overlay";
 import Tooltip from "react-bootstrap/Tooltip";
 import styled from "styled-components";
-import {RatingInput} from "./ratings";
+import { UserContext } from "../../App";
+import { addToMyList, removeFromMyList } from "../../firebase";
+import { FormGroup, FormRow, Label } from "../../forms/general-forms";
+import { PrimaryButton } from "../../general/buttons";
+import { Icon } from "./generic-icons";
+import { RatingInput } from "./ratings";
 
 const TtInner = styled.div`
   display: flex;
@@ -69,12 +69,12 @@ function RateToolTip(props) {
               <div>Care to anonymously rate this recipe?</div>
               <FormRow>
                 <FormGroup>
-                  <Label htmlFor="ease" content="Ease rating" />
-                  <RatingInput value={ease} set={setEase}/>
+                  <Label htmlFor="taste" content="Taste rating" />
+                  <RatingInput value={taste} set={setTaste} />
                 </FormGroup>
                 <FormGroup>
-                  <Label htmlFor="taste" content="Taste rating" />
-                  <RatingInput value={taste} set={setTaste}/>
+                  <Label htmlFor="ease" content="Ease rating" />
+                  <RatingInput value={ease} set={setEase} />
                 </FormGroup>
               </FormRow>
               <PrimaryButton onClick={() => handleSubmit(ease, taste)}>

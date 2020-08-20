@@ -80,6 +80,8 @@ export const IngredientsEditor = ({ ingredients, setIngredients }) => {
             X
           </DeleteIngredientButton>
           <input
+            type="text"
+            id={`ingredient-amount-${index}`}
             placeholder="Amount"
             value={amount}
             onChange={(e) =>
@@ -87,6 +89,8 @@ export const IngredientsEditor = ({ ingredients, setIngredients }) => {
             }
           />
           <input
+            type="text"
+            id={`ingredient-${index}`}
             placeholder="Name"
             value={name}
             onChange={(e) =>

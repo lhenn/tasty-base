@@ -1,6 +1,5 @@
 import React, { useContext, useState } from "react";
 import styled from "styled-components";
-import { lightGrey } from "../styling";
 import { UserContext } from "../App";
 import { addToMyList, getTimestamp, submitPost } from "../firebase";
 import { PrimaryButton } from "../general/buttons";
@@ -37,7 +36,12 @@ const SubmitButton = ({ content, slug, history, uid }) => {
     addPromise(submitPost(slug, timestampedContent))
       .then(() => addToMyList(uid, slug, "contribution"))
       .then(() => addToMyList(uid, slug, "check"))
-      .then(() => addToMyList(uid, slug, "rate", {ease:content.ease, taste:content.taste}))
+      .then(() =>
+        addToMyList(uid, slug, "rate", {
+          ease: content.ease,
+          taste: content.taste,
+        })
+      )
       .then(() => setIsSubmitting(false))
       .then(() => history.push(`/recipes/${slug}`));
   };
@@ -94,8 +98,6 @@ const Editor = ({ author, initialContent, initialSlug = "", history }) => {
     onSubmit: onSubmitGallery,
     onChange: onChangeGallery,
   } = useFileHandlers();
-
-  console.log(">GU", galleryUploaded);
 
   const content = {
     title,

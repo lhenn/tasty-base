@@ -1,9 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import styled from "styled-components";
 import mdToHTML from "../../forms/md-parse";
-import { defaultTransparent, lightGrey } from "../../styling";
-import { textIsEmpty } from "../../utils";
-import ClickToOpen from "../click-to-open";
+import { lightGrey } from "../../styling";
 
 // TODO: factor out
 const DescriptionLink = styled.a`
@@ -15,10 +13,6 @@ const DescriptionText = styled.p`
   white-space: pre-line;
   margin: 0;
   padding: 0;
-`;
-
-const TransparentDescriptionText = styled(DescriptionText)`
-  opacity: ${defaultTransparent};
 `;
 
 const DescriptionWrapper = styled.div`
@@ -37,33 +31,32 @@ export const DisplayDescription = ({ description }) => (
   </DescriptionWrapper>
 );
 
-export const DescriptionPlaceholder = () => (
-  <DescriptionWrapper>
-    <TransparentDescriptionText>Description</TransparentDescriptionText>
-  </DescriptionWrapper>
-);
+const StyledDescriptionInput = styled.textarea`
+  border: none;
+  background: transparent;
+  resize: none;
+  width: 100%;
+  min-height: 40px;
+  &:focus {
+    background: white;
+  }
+`;
 
 export const DescriptionEditor = ({ description, set }) => {
-  const [newDescription, setNewDescription] = useState(description);
+  const handleKeyDown = (e) => {
+    e.target.style.height = "inherit";
+    e.target.style.height = `${e.target.scrollHeight}px`;
+  };
 
-  const onClose = () => set(newDescription);
-
-  const closed = textIsEmpty(description) ? (
-    <DescriptionPlaceholder />
-  ) : (
-    <DisplayDescription description={description} />
-  );
-  const open = (
+  return (
     <DescriptionWrapper>
-      <textarea
-        placeholder={"Say something about this recipe"}
-        style={{ width: "100%" }}
-        value={newDescription}
-        onChange={(e) => setNewDescription(e.target.value)}
-        autoFocus
+      <StyledDescriptionInput
+        id="description-input"
+        onKeyDown={handleKeyDown}
+        placeholder="Recipe description"
+        value={description}
+        onChange={(e) => set(e.target.value)}
       />
     </DescriptionWrapper>
   );
-  // console.log("DESC", description, open, closed);
-  return <ClickToOpen open={open} closed={closed} onClose={onClose} />;
 };

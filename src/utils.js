@@ -49,8 +49,7 @@ export const ImageWithPlaceholder = ({
     src,
     style: !loaded ? { visibility: "hidden", height: "0px" } : {},
     onLoad: () => setLoaded(true),
-    onError: () => setLoaded(false),
-    ...props,
+    onError: () => setLoaded(false)
   };
 
   const image = Image ? (
@@ -60,10 +59,10 @@ export const ImageWithPlaceholder = ({
   );
 
   return (
-    <>
+    <div {...props}>
       {!loaded && <Placeholder />}
       {image}
-    </>
+    </div>
   );
 };
 

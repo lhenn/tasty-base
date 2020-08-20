@@ -47,6 +47,7 @@ const ThumbnailImg = styled.img`
 export const RecipeHeader = styled.div`
   display: flex;
   justify-content: space-between;
+  align-items: center;
   @media (max-width: 700px) {
     flex-direction: column;
     text-align: center;
@@ -82,10 +83,12 @@ const DisplayRecipePost = ({ content, slug }) => {
 
       <DisplayDescription description={content.description} />
 
-      {content.source==='personal' && <DisplayDetails
-        ingredients={content.ingredients}
-        instructions={content.instructions}
-      />}
+      {content.source === "personal" && (
+        <DisplayDetails
+          ingredients={content.ingredients}
+          instructions={content.instructions}
+        />
+      )}
 
       {content.gallery && content.gallery.length > 0 && (
         <Gallery gallery={content.gallery} />
