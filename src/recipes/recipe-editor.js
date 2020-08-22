@@ -37,7 +37,7 @@ const SubmitButton = ({ content, slug, history, uid }) => {
       .then(() => addToMyList(uid, slug, "contribution"))
       .then(() => addToMyList(uid, slug, "check"))
       .then(() =>
-        addToMyList(uid, slug, "rate", {
+        addToMyList(uid, slug, "rate", { 
           ease: content.ease,
           taste: content.taste,
         })

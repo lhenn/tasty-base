@@ -111,7 +111,6 @@ const StyledHideOnFocusParent = styled.div`
     opacity: 0;
   }
 `;
-
 export const RatingsEditor = ({ taste, setTaste, ease, setEase }) => {
   return (
     <RatingsContainer>
