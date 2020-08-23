@@ -42,7 +42,6 @@ const Editor = ({ author, initialContent, initialSlug = "", history }) => {
   const [source, setSource] = useState(initialContent?.source || "");
   const [time, setTime] = useState(initialContent?.time || "");
   const [servings, setServings] = useState(initialContent?.servings || "");
-  console.log("TASTE:", initialContent.taste);
   const [taste, setTaste] = useState(
     initialContent?.taste ? initialContent.taste[user.uid].rating : ""
   );
