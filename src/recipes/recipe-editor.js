@@ -37,8 +37,8 @@ const Editor = ({ author, initialContent, initialSlug = "", history }) => {
   const [source, setSource] = useState(initialContent?.source || "");
   const [time, setTime] = useState(initialContent?.time || "");
   const [servings, setServings] = useState(initialContent?.servings || "");
-  const [taste, setTaste] = useState(initialContent?.taste[user.uid].rating || "");
-  const [ease, setEase] = useState(initialContent?.ease[user.uid].rating || "");
+  const [taste, setTaste] = useState(initialContent?.taste?.[user.uid].rating || "");
+  const [ease, setEase] = useState(initialContent?.ease?.[user.uid].rating || "");
   const [description, setDescription] = useState(
     initialContent?.description || ""
   );
