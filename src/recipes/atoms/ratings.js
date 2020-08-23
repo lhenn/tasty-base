@@ -144,22 +144,27 @@ export const RatingsEditor = ({ taste, setTaste, ease, setEase }) => {
           />
         </StyledRatingEditor>
       </RatingWrapper>
-      {/*<RatingWrapper>
+      <RatingWrapper>
         <RatingLabel>ease </RatingLabel>
         <StyledRatingEditor>
-          <StyledDotsWrapper>
+          <StyledDots>
             <Dots
               id="ease-dots"
               name="ease"
               value={ease}
               color={colors["ease"]}
             />
-          </StyledDotsWrapper>
-          <StyledInputWrapper>
-            <StyledRatingInput id="ease-input" value={ease} set={setEase} />
-          </StyledInputWrapper>
+          </StyledDots>
+          <StyledRatingInput
+            type="number"
+            min={`${minRating}`}
+            max={`${maxRating}`}
+            step={`${ratingStep}`}
+            value={ease}
+            onChange={(e) => setEase(parseFloatOrEmpty(e.target.value))}
+          />
         </StyledRatingEditor>
-      </RatingWrapper>*/}
+      </RatingWrapper>
     </RatingsContainer>
   );
 };
