@@ -6,14 +6,14 @@ import styled from "styled-components";
 import { UserContext } from "../App";
 import { getFirebase } from "../firebase";
 import { Input } from "../forms/general-forms";
-import {createMarkDown} from "../utils";
+import { NoteButton, SecondaryNoteButton } from "../general/buttons";
 import {
   HeaderWrapper,
   PageTitle,
   PageViewOptions,
   SearchField,
 } from "../general/page-header";
-import {NoteButton, SecondaryNoteButton} from "../general/buttons";
+import { createMarkDown } from "../utils";
 
 const NoteCardWrapper = styled.div`
   border: solid 2px black;
@@ -35,12 +35,9 @@ const NoteInput = styled.textarea`
   padding: 0 0.38rem;
 `;
 
-const Button = styled.button``;
-
 const NoteCardsWrapper = styled.div`
   margin-top: 20px;
 `;
-
 
 const NoteCard = ({ wishKey, wish, viewing, startEdit, deleteWish }) => {
   const EditButton = () => (
@@ -50,7 +47,10 @@ const NoteCard = ({ wishKey, wish, viewing, startEdit, deleteWish }) => {
   );
 
   const DeleteButton = () => (
-    <SecondaryNoteButton onClick={() => deleteWish(wishKey)} disabled={!viewing}>
+    <SecondaryNoteButton
+      onClick={() => deleteWish(wishKey)}
+      disabled={!viewing}
+    >
       <FontAwesomeIcon icon={faTimes} />
     </SecondaryNoteButton>
   );
@@ -64,7 +64,9 @@ const NoteCard = ({ wishKey, wish, viewing, startEdit, deleteWish }) => {
           <DeleteButton />
         </div>
       </NoteCardHeader>
-      {wish.notes !== "" && <div dangerouslySetInnerHTML={createMarkDown(wish.notes)}/>}
+      {wish.notes !== "" && (
+        <div dangerouslySetInnerHTML={createMarkDown(wish.notes)} />
+      )}
     </NoteCardWrapper>
   );
 };
@@ -135,7 +137,7 @@ const NoteForm = ({ submitWish, cancel, working, initialWish }) => {
         disabled={working === true}
       />
       <div style={{ textAlign: "right" }}>
-      <SecondaryNoteButton onClick={cancel} disabled={working === true}>
+        <SecondaryNoteButton onClick={cancel} disabled={working === true}>
           Cancel
         </SecondaryNoteButton>
         <NoteButton
@@ -144,7 +146,6 @@ const NoteForm = ({ submitWish, cancel, working, initialWish }) => {
         >
           Submit
         </NoteButton>
-        
       </div>
     </NoteCardWrapper>
   );

@@ -1,10 +1,8 @@
 import React from "react";
 import styled from "styled-components";
 import { defaultTransparent } from "../../styling";
-import ClickToOpen from "../click-to-open";
-import useExpandingArray from "../form-hooks";
 
-const emptyIngredient = { name: "", amount: "" };
+export const emptyIngredient = { name: "", amount: "" };
 
 const IngredientsWrapper = styled.div`
   width: 33.3333%;
@@ -17,18 +15,18 @@ const IngredientsWrapper = styled.div`
   }
 `;
 
-const ingredientsHeader = <h2 style={{ fontSize: "30px" }}>Ingredients</h2>;
-
-const transparentIngredientsHeader = (
-  <h2 style={{ opacity: defaultTransparent, fontSize: "30px" }}>Ingredients</h2>
+const IngredientsHeader = ({ solid = true }) => (
+  <h2 style={{ fontSize: "30px", opacity: solid ? 1 : defaultTransparent }}>
+    Ingredients
+  </h2>
 );
 
 export const DisplayIngredients = ({ ingredients }) => {
   if (!ingredients) return null;
 
   return (
-    <IngredientsWrapper>
-      {ingredientsHeader}
+    <IngredientsWrapper id="ingredients-wrapper">
+      <IngredientsHeader />
       {ingredients &&
         ingredients.map((ingredient, i) => (
           <p key={`ingredient-${i}`}>
@@ -39,33 +37,53 @@ export const DisplayIngredients = ({ ingredients }) => {
   );
 };
 
+// TODO: style this puppy
 const DeleteIngredientButton = styled.button``;
 
-export const IngredientsEditor = ({ ingredients, setIngredients }) => {
-  const [
-    newIngredients,
-    setNewIngredientField,
-    deleteNewIngredient,
-  ] = useExpandingArray(
-    ingredients.length > 0 ? [...ingredients] : [emptyIngredient]
-  );
+const IngredientsInput = styled.input`
+  border: none;
+  resize: none;
+`;
 
-  const onClose = () => setIngredients(newIngredients.slice(0, -1));
-
-  const closed = (
-    <IngredientsWrapper>
-      {ingredients.length === 0
-        ? transparentIngredientsHeader
-        : ingredientsHeader}
-      {ingredients.map((ingredient, i) => (
-        <p key={`ingredient-${i}`}>
-          {ingredient.amount} {ingredient.name}
-        </p>
+export const IngredientsEditor = ({
+  ingredients,
+  setIngredientField,
+  deleteIngredient,
+}) => {
+  return (
+    <IngredientsWrapper id="ingredients-editor-wrapper">
+      <IngredientsHeader solid={ingredients.length > 1} />
+      {ingredients.map((ingredient, index) => (
+        <div key={`ingredient-${index}`}>
+          <IngredientsInput
+            id="amount"
+            placeholder="Amount"
+            value={ingredient.amount}
+            onChange={(e) =>
+              setIngredientField(index, e.target.value, "amount")
+            }
+            style={{ display: "inline-block" }}
+          />{" "}
+          <IngredientsInput
+            id="amount"
+            placeholder="Name"
+            value={ingredient.name}
+            onChange={(e) => setIngredientField(index, e.target.value, "name")}
+            style={{ display: "inline-block" }}
+          />
+          <DeleteIngredientButton
+            id={`delete-ingredient-${index}`}
+            onClick={() => deleteIngredient(index)}
+            style={{ display: "inline-block" }}
+          >
+            X
+          </DeleteIngredientButton>
+        </div>
       ))}
     </IngredientsWrapper>
   );
 
-  const open = (
+  /*const open = (
     <IngredientsWrapper>
       {ingredientsHeader}
       {newIngredients.map(({ name, amount }, index) => (
@@ -100,7 +118,5 @@ export const IngredientsEditor = ({ ingredients, setIngredients }) => {
         </div>
       ))}
     </IngredientsWrapper>
-  );
-
-  return <ClickToOpen open={open} closed={closed} onClose={onClose} />;
+  );*/
 };

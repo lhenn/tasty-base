@@ -1,89 +1,89 @@
 import React from "react";
 import styled from "styled-components";
 import { defaultTransparent } from "../../styling";
-import ClickToOpen from "../click-to-open";
-import useExpandingArray from "../form-hooks";
 
-const StyledList = styled.ol`
-  @media (max-width: 700px) {
-    padding-left: 18px !important;
-  }
-`;
-
-const instructionsHeader = <h2 style={{ fontSize: "30px" }}>Instructions</h2>;
-
-const transparentInstructionsHeader = (
-  <h2 style={{ opacity: defaultTransparent, fontSize: "30px" }}>
+const InstructionsHeader = ({ solid = true }) => (
+  <h2 style={{ fontSize: "30px", opacity: solid ? 1 : defaultTransparent }}>
     Instructions
   </h2>
 );
+
+const InstructionsLI = styled.li`
+  margin-bottom: 30px;
+`;
+
+const InstructionsWrapper = styled.div`
+  width: 66.6666%;
+`;
 
 export const DisplayInstructions = ({ instructions }) => {
   if (!instructions) return null;
 
   return (
-    <div>
-      {instructionsHeader}
-      <StyledList>
-        {instructions &&
-          instructions.map((instruction, i) => (
-            <li style={{ marginBottom: "30px" }} key={`instruction-${i}`}>
-              {instruction}
-            </li>
-          ))}
-      </StyledList>
-    </div>
-  );
-};
-
-const DeleteInstructionButton = styled.button``;
-
-export const InstructionsEditor = ({ instructions, setInstructions }) => {
-  const [
-    newInstructions,
-    setNewInstructionField,
-    deleteNewInstruction,
-  ] = useExpandingArray(instructions.length > 0 ? [...instructions] : [""]);
-
-  const onClose = () => setInstructions(newInstructions.slice(0, -1));
-
-  const closed = (
-    <div>
-      {instructions.length === 0
-        ? transparentInstructionsHeader
-        : instructionsHeader}
+    <InstructionsWrapper id="instructions-wrapper">
+      <InstructionsHeader />
       <ol>
         {instructions &&
           instructions.map((instruction, i) => (
-            <li key={`instruction-${i}`}>{instruction}</li>
+            <InstructionsLI key={`instruction-${i}`}>
+              {instruction}
+            </InstructionsLI>
           ))}
       </ol>
-    </div>
+    </InstructionsWrapper>
   );
+};
 
-  const open = (
-    <div style={{ display: "flex", flexDirection: "column" }}>
-      {instructionsHeader}
-      {newInstructions.map((instruction, index) => (
-        <div
-          style={{ display: "flex", flexDirection: "row", width: "100%" }}
-          key={`instruction-${index}`}
-        >
-          <DeleteInstructionButton
-            id={`delete-ingredient-${index}`}
-            onClick={() => deleteNewInstruction(index)}
-          >
-            X
-          </DeleteInstructionButton>
-          <textarea
-            placeholder="Instruction"
-            value={instruction}
-            onChange={(e) => setNewInstructionField(index, e.target.value)}
-          />
-        </div>
-      ))}
-    </div>
+// TODO: style this puppy
+const DeleteInstructionButton = styled.button``;
+
+const InstructionRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const InstructionTextArea = styled.textarea`
+  border: none;
+  resize: none;
+  min-height: 40px;
+  width: 100%;
+`;
+
+export const InstructionsEditor = ({
+  instructions,
+  setInstructionField,
+  deleteInstruction,
+}) => {
+  const handleKeyDown = (e) => {
+    e.target.style.height = "inherit";
+    e.target.style.height = `${e.target.scrollHeight}px`;
+  };
+
+  return (
+    <InstructionsWrapper id="instructions-editor-wrapper">
+      <InstructionsHeader solid={instructions.length > 1} />
+      <ol>
+        {instructions.map((instruction, index) => (
+          <InstructionsLI key={`instruction-${index}`}>
+            <InstructionRow>
+              <InstructionTextArea
+                id={`input-ingredient-${index}`}
+                placeholder="Instruction"
+                value={instruction}
+                onChange={(e) => setInstructionField(index, e.target.value)}
+                onKeyDown={handleKeyDown}
+              />
+              <DeleteInstructionButton
+                id={`delete-ingredient-${index}`}
+                onClick={() => deleteInstruction(index)}
+              >
+                X
+              </DeleteInstructionButton>
+            </InstructionRow>
+          </InstructionsLI>
+        ))}
+      </ol>
+    </InstructionsWrapper>
   );
-
-  return <ClickToOpen open={open} closed={closed} onClose={onClose} />;
 };

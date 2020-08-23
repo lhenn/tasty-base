@@ -25,7 +25,7 @@ export const DisplayTitle = ({ title }) => <StyledTitle>{title}</StyledTitle>;
 
 const StyledTitleInput = styled.input`
   ${TitleStyles}
-  border: none;
+  // border: none;
 `;
 
 export const TitleEditor = ({ title, set }) => {
