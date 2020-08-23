@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import styled from "styled-components";
 import { UserContext } from "../App";
-import { addToMyList, getTimestamp, submitPost } from "../firebase";
+import { addToMyList, getTimestamp, submitPost, addRatingToRecipe} from "../firebase";
 import { PrimaryButton } from "../general/buttons";
 import ImageUploader from "../general/image-uploader";
 import useCancellablePromises from "../promise-hooks";
@@ -37,8 +37,8 @@ const Editor = ({ author, initialContent, initialSlug = "", history }) => {
   const [source, setSource] = useState(initialContent?.source || "");
   const [time, setTime] = useState(initialContent?.time || "");
   const [servings, setServings] = useState(initialContent?.servings || "");
-  const [taste, setTaste] = useState(initialContent?.taste || "");
-  const [ease, setEase] = useState(initialContent?.ease || "");
+  const [taste, setTaste] = useState(initialContent?.taste[user.uid].rating || "");
+  const [ease, setEase] = useState(initialContent?.ease[user.uid].rating || "");
   const [description, setDescription] = useState(
     initialContent?.description || ""
   );
@@ -72,8 +72,6 @@ const Editor = ({ author, initialContent, initialSlug = "", history }) => {
     source,
     time,
     servings,
-    taste,
-    ease,
     description,
     ingredients: ingredients.slice(0, -1),
     instructions: instructions.slice(0, -1),
@@ -113,12 +111,14 @@ const Editor = ({ author, initialContent, initialSlug = "", history }) => {
     // Upload to firebase
     setIsSubmitting(true);
     addPromise(submitPost(slug, timestampedContent))
+      .then(() => addRatingToRecipe(slug, 'ease', ease, user.uid))
+      .then(() => addRatingToRecipe(slug, 'taste', taste, user.uid))
       .then(() => addToMyList(user.uid, slug, "contribution"))
       .then(() => addToMyList(user.uid, slug, "check"))
       .then(() =>
         addToMyList(user.uid, slug, "rate", {
-          ease: content.ease,
-          taste: content.taste,
+          ease: ease,
+          taste: taste,
         })
       )
       .then(() => setIsSubmitting(false))

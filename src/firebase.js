@@ -153,3 +153,11 @@ export const submitPost = async (slug, content) =>
   await getFirebase().database().ref(`/posts/${slug}`).set(content);
 
 export const getTimestamp = () => getFirebase().database.ServerValue.TIMESTAMP;
+
+export const addRatingToRecipe = async (slug, ratingType, ratingValue, uid) => {
+  return await getFirebase().database().ref(`/posts/${slug}/${ratingType}/${uid}`).set({
+    rating:ratingValue,
+    timestamp: getTimestamp()
+  });
+
+}
