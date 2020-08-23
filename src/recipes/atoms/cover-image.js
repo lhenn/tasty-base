@@ -35,12 +35,21 @@ const CoverImagePlaceholder = () => (
 const StyledWrapper = styled.div`
   display: flex;
   align-items: center;
-  justify-content: center
+  justify-content: center;
+  background-image: url(${(props) => props.src});
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 400px;
+  z-index: 0;
+  &:focus-within {
+    opacity: ${defaultTransparent};
+  }
 `;
 
 const StyledCoverImageInput = styled.input`
   margin: 0 auto;
   opacity: 0;
+  z-index: 1;
   &:invalid {
     opacity: 1;
   }
@@ -49,17 +58,22 @@ const StyledCoverImageInput = styled.input`
   }
 `;
 
-const StyledImageWithPlaceholder = styled(ImageWithPlaceholder)`
-  opacity: 1;
-  ${StyledWrapper}:focus-within & {
-    opacity: ${defaultTransparent};
-  }
-`;
+// const StyledImageWithPlaceholder = styled(ImageWithPlaceholder)`
+//   opacity: 1;
+//   ${StyledWrapper}:focus-within & {
+//     opacity: ${defaultTransparent};
+//   }
+// `;
 
 export const CoverImageEditor = ({ src, set }) => {
   const inputRef = useRef();
   return (
-    <StyledWrapper>
+    <StyledWrapper
+      role="img"
+      src={src}
+      alt="cover image"
+      onClick={() => inputRef.current.focus()}
+    >
       <StyledCoverImageInput
         id="cover-image-url-input"
         type="url"
@@ -68,13 +82,13 @@ export const CoverImageEditor = ({ src, set }) => {
         value={src}
         onChange={(e) => set(e.target.value)}
       />
-      <StyledImageWithPlaceholder
+      {/*<StyledImageWithPlaceholder
         src={src}
         alt="cover image"
         Image={DisplayCoverImage}
         Placeholder={CoverImagePlaceholder}
         onClick={() => inputRef.current.focus()}
-      />
+      />*/}
     </StyledWrapper>
   );
 };

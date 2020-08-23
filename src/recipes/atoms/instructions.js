@@ -35,7 +35,9 @@ export const DisplayInstructions = ({ instructions }) => {
 };
 
 // TODO: style this puppy
-const DeleteInstructionButton = styled.button``;
+const DeleteInstructionButton = styled.button`
+  margin-right: 10px;
+`;
 
 const InstructionRow = styled.div`
   display: flex;
@@ -48,6 +50,7 @@ const InstructionTextArea = styled.textarea`
   resize: none;
   min-height: 40px;
   width: 100%;
+  margin-right: 10px;
 `;
 
 export const InstructionsEditor = ({

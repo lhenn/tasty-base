@@ -38,11 +38,15 @@ export const DisplayIngredients = ({ ingredients }) => {
 };
 
 // TODO: style this puppy
-const DeleteIngredientButton = styled.button``;
+const DeleteIngredientButton = styled.button`
+  margin-right: 10px
+`;
 
 const IngredientsInput = styled.input`
   border: none;
   resize: none;
+  min-width: 0px;
+  margin-right: 10px;
 `;
 
 export const IngredientsEditor = ({
@@ -54,18 +58,18 @@ export const IngredientsEditor = ({
     <IngredientsWrapper id="ingredients-editor-wrapper">
       <IngredientsHeader solid={ingredients.length > 1} />
       {ingredients.map((ingredient, index) => (
-        <div key={`ingredient-${index}`}>
+        <div style={{display: "flex"}} key={`ingredient-${index}`}>
           <IngredientsInput
-            id="amount"
+            id={`ingredient-${index}-amount-input`}
             placeholder="Amount"
             value={ingredient.amount}
             onChange={(e) =>
               setIngredientField(index, e.target.value, "amount")
             }
             style={{ display: "inline-block" }}
-          />{" "}
+          />
           <IngredientsInput
-            id="amount"
+            id={`ingredient-${index}-name-input`}
             placeholder="Name"
             value={ingredient.name}
             onChange={(e) => setIngredientField(index, e.target.value, "name")}
