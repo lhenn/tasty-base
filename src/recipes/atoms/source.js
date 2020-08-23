@@ -72,12 +72,6 @@ const SourceTypeSelector = ({ sourceType, set }) => (
   </select>
 );
 
-// const inputPlaceholder = { web: "Recipe URL", cookbook: "Title & author" };
-
-const SourceInput = ({ source, set }) => (
-  <input value={source} onChange={(e) => set(e.target.value)} />
-);
-
 export const SourceEditor = ({
   sourceType,
   setSourceType,
@@ -107,6 +101,7 @@ export const SourceEditor = ({
           type="url"
           minLength="1"
           id="web-source"
+          placeholder="Recipe URL"
           value={newSource}
           onChange={(e) => setNewSource(e.target.value)}
           required
@@ -118,6 +113,7 @@ export const SourceEditor = ({
           type="text"
           minLength="1"
           id="web-source"
+          placeholder="Cookbook title"
           value={newSource}
           onChange={(e) => setNewSource(e.target.value)}
           required

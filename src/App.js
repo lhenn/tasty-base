@@ -9,15 +9,14 @@ import NavBar from "./general/navbar";
 import About from "./pages/about";
 import Create from "./pages/create";
 import Edit from "./pages/edit";
-import Favorites from "./pages/favorites";
 import Graph from "./pages/graph";
 import Home from "./pages/home";
+import MyRecipes from "./pages/myrecipes";
 import NoMatch from "./pages/no-match";
 import Notes from "./pages/notes";
 import Signin from "./pages/signin";
 import SelfLoadingRecipePost from "./recipes/recipe-post";
 import { GlobalStyle } from "./styling";
-import MyRecipes from "./pages/myrecipes";
 
 // background-color: whitesmoke;
 const MainContent = styled.main`
@@ -167,7 +166,6 @@ const App = () => {
               />
               <Route exact path="/signin" component={Signin} />
               <Route exact path="/my-recipes" component={MyRecipes} />
-              // <Route exact path="/fav-recipes" component={Favorites} />
               <Route exact path="/notes" component={Notes} />
               <Route exact path="/create" component={Create} />
               <Route exact path="/about" component={About} />

@@ -41,6 +41,9 @@ const StyledWrapper = styled.div`
 const StyledCoverImageInput = styled.input`
   margin: 0 auto;
   opacity: 0;
+  &:invalid {
+    opacity: 1;
+  }
   ${StyledWrapper}:focus-within & {
     opacity: 1;
   }
@@ -58,6 +61,8 @@ export const CoverImageEditor = ({ src, set }) => {
   return (
     <StyledWrapper>
       <StyledCoverImageInput
+        id="cover-image-url-input"
+        type="url"
         ref={inputRef}
         placeholder="Cover image URL"
         value={src}

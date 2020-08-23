@@ -101,18 +101,25 @@ const ThumbnailContainer = styled.div`
   flex-wrap: wrap;
 `;
 
-const UploadButton = ({ status }) => {
-  if (status === LOADED) {
-    return <SecondaryButton>Upload</SecondaryButton>;
-  } else if (status === INIT || status === PENDING) {
-    return <SecondaryButton disabled>Uploading...</SecondaryButton>;
-  } else if (status === FILES_UPLOADED) {
-    return <SecondaryButton disabled>Uploaded!</SecondaryButton>;
-  } else if (status === IDLE) {
-    return null;
-  } else {
-    return <SecondaryButton disabled>Error!</SecondaryButton>;
-  }
+const UploadButton = ({ status, ...props }) => {
+  if (status === IDLE) return null;
+  else if (status === LOADED)
+    return (
+      <SecondaryButton type="button" {...props}>
+        Upload
+      </SecondaryButton>
+    );
+
+  const text =
+    status === INIT || status === PENDING
+      ? "Uploading..."
+      : status === FILES_UPLOADED
+      ? "Uploaded!"
+      : "Error!";
+
+  return (
+    <SecondaryButton disabled type="button" {...props}>{text}</SecondaryButton>
+  );
 };
 
 // Callbacks:
@@ -129,39 +136,40 @@ const ImageUploader = ({
   onSetCover,
 }) => {
   return (
-    <div className="container" style={{ alignItems: "center", width: "100%", display: "block"}}>
-      <form className="form" onSubmit={onSubmit}>
-        <FileInput onChange={onChange} />
+    <div
+      className="container"
+      style={{ alignItems: "center", width: "100%", display: "block" }}
+    >
+      <FileInput onChange={onChange} />
 
-        <ThumbnailContainer>
-          {files.map(({ file, src, id }, index) => {
-            let wasUploaded = false;
-            let downloadURL = "";
+      <ThumbnailContainer>
+        {files.map(({ file, src, id }, index) => {
+          let wasUploaded = false;
+          let downloadURL = "";
 
-            // Check whether file was uploaded or not
-            for (var i in uploaded) {
-              if (uploaded[i].file === file) {
-                wasUploaded = true;
-                downloadURL = uploaded[id].downloadURL;
-                break;
-              }
+          // Check whether file was uploaded or not
+          for (var i in uploaded) {
+            if (uploaded[i].file === file) {
+              wasUploaded = true;
+              downloadURL = uploaded[id].downloadURL;
+              break;
             }
+          }
 
-            return (
-              <Thumbnail
-                key={`thumb${index}-${file.name}`}
-                downloadURL={downloadURL}
-                src={src}
-                filename={file.name}
-                wasUploaded={wasUploaded}
-                curCover={curCover}
-                onSetCover={onSetCover}
-              />
-            );
-          })}
-        </ThumbnailContainer>
-        <UploadButton status={status} />
-      </form>
+          return (
+            <Thumbnail
+              key={`thumb${index}-${file.name}`}
+              downloadURL={downloadURL}
+              src={src}
+              filename={file.name}
+              wasUploaded={wasUploaded}
+              curCover={curCover}
+              onSetCover={onSetCover}
+            />
+          );
+        })}
+      </ThumbnailContainer>
+      <UploadButton status={status} onClick={onSubmit} />
     </div>
   );
 };

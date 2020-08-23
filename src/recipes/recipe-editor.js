@@ -9,49 +9,12 @@ import useFileHandlers from "../useFileHandlers";
 import { CoverImageEditor } from "./atoms/cover-image";
 import { DescriptionEditor } from "./atoms/description";
 import { DetailsEditor } from "./atoms/details";
+import { emptyIngredient } from "./atoms/ingredients";
 import { OverviewEditor } from "./atoms/overview";
 import SlugEditor from "./atoms/slug";
 import { TitleEditor } from "./atoms/title";
 import { RecipeContainer, RecipeHeader } from "./display-recipe";
-
-const emptyIngredient = { name: "", amount: "" };
-
-// On click, submit the post and then redirect to post's page
-const SubmitButton = ({ content, slug, history, uid }) => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const { addPromise } = useCancellablePromises();
-
-  const submit = () => {
-    // Don't submit multiple times
-    if (isSubmitting) return;
-
-    // Swap Date timestamp out for special firebase one
-    const timestampedContent = {
-      ...content,
-      timestamp: getTimestamp(),
-    };
-
-    // Upload to firebase
-    setIsSubmitting(true);
-    addPromise(submitPost(slug, timestampedContent))
-      .then(() => addToMyList(uid, slug, "contribution"))
-      .then(() => addToMyList(uid, slug, "check"))
-      .then(() =>
-        addToMyList(uid, slug, "rate", {
-          ease: content.ease,
-          taste: content.taste,
-        })
-      )
-      .then(() => setIsSubmitting(false))
-      .then(() => history.push(`/recipes/${slug}`));
-  };
-
-  return (
-    <PrimaryButton onClick={submit} disabled={isSubmitting}>
-      Submit
-    </PrimaryButton>
-  );
-};
+import useExpandingArray from "./form-hooks";
 
 const ImageUploaderWrapper = styled.div`
   display: flex;
@@ -79,15 +42,18 @@ const Editor = ({ author, initialContent, initialSlug = "", history }) => {
   const [description, setDescription] = useState(
     initialContent?.description || ""
   );
-  const [ingredients, setIngredients] = useState(
-    initialContent?.ingredients
+  const [ingredients, setIngredientField, deleteIngredient] = useExpandingArray(
+    initialContent?.ingredients?.length > 0
       ? [...initialContent.ingredients]
       : [emptyIngredient]
   );
-  const [instructions, setInstructions] = useState(
+  const [
+    instructions,
+    setInstructionField,
+    deleteInstruction,
+  ] = useExpandingArray(
     initialContent?.instructions ? [...initialContent.instructions] : [""]
   );
-
   const [slug, setSlug] = useState(initialSlug);
 
   // Set up file handlers for ImageUploader
@@ -109,13 +75,12 @@ const Editor = ({ author, initialContent, initialSlug = "", history }) => {
     taste,
     ease,
     description,
-    ingredients,
-    instructions,
+    ingredients: ingredients.slice(0, -1),
+    instructions: instructions.slice(0, -1),
     author,
     gallery: Object.values(galleryUploaded).map((img) => img.downloadURL),
   };
 
-  // The information that all recipes should have, regardless of source
   const imageUploader = (
     <ImageUploaderWrapper>
       <label htmlFor="post-image-uploader">{"Upload images"}</label>
@@ -132,27 +97,47 @@ const Editor = ({ author, initialContent, initialSlug = "", history }) => {
     </ImageUploaderWrapper>
   );
 
-  const submitButton = (
-    <div style={{ textAlign: "right" }}>
-      <SubmitButton
-        content={content}
-        slug={slug}
-        history={history}
-        uid={user.uid}
-      />
-    </div>
-  );
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { addPromise } = useCancellablePromises();
 
-  const cancelButton = (
+  const onSubmit = () => {
+    // Don't submit multiple times
+    if (isSubmitting) return;
+
+    // Swap Date timestamp out for special firebase one
+    const timestampedContent = {
+      ...content,
+      timestamp: getTimestamp(),
+    };
+
+    // Upload to firebase
+    setIsSubmitting(true);
+    addPromise(submitPost(slug, timestampedContent))
+      .then(() => addToMyList(user.uid, slug, "contribution"))
+      .then(() => addToMyList(user.uid, slug, "check"))
+      .then(() =>
+        addToMyList(user.uid, slug, "rate", {
+          ease: content.ease,
+          taste: content.taste,
+        })
+      )
+      .then(() => setIsSubmitting(false))
+      .then(() => history.push(`/recipes/${slug}`));
+  };
+
+  const buttons = (
     <div style={{ textAlign: "right" }}>
-      <PrimaryButton onClick={() => history.push(`/recipes/${slug}`)}>
+      <PrimaryButton type="submit" disabled={isSubmitting}>
+        Submit
+      </PrimaryButton>
+      <PrimaryButton type="button" onClick={() => history.go(-1)}>
         Cancel
       </PrimaryButton>
     </div>
   );
 
   return (
-    <>
+    <form onSubmit={onSubmit}>
       <RecipeContainer>
         <RecipeHeader>
           <TitleEditor title={title} set={setTitle} />
@@ -187,18 +172,18 @@ const Editor = ({ author, initialContent, initialSlug = "", history }) => {
           <DetailsEditor
             ingredients={ingredients}
             instructions={instructions}
-            setIngredients={setIngredients}
-            setInstructions={setInstructions}
+            setIngredientField={setIngredientField}
+            deleteIngredient={deleteIngredient}
+            setInstructionField={setInstructionField}
+            deleteInstruction={deleteInstruction}
           />
         )}
       </RecipeContainer>
 
       {imageUploader}
 
-      {submitButton}
-
-      {cancelButton}
-    </>
+      {buttons}
+    </form>
   );
 };
 

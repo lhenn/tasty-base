@@ -83,7 +83,7 @@ const DisplayRecipePost = ({ content, slug }) => {
 
       <DisplayDescription description={content.description} />
 
-      {content.source === "personal" && (
+      {content.sourceType === "personal" && (
         <DisplayDetails
           ingredients={content.ingredients}
           instructions={content.instructions}

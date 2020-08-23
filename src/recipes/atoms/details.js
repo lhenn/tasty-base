@@ -22,17 +22,21 @@ export const DisplayDetails = ({ ingredients, instructions }) => (
 export const DetailsEditor = ({
   ingredients,
   instructions,
-  setIngredients,
-  setInstructions,
+  setInstructionField,
+  deleteInstruction,
+  setIngredientField,
+  deleteIngredient,
 }) => (
-  <DetailsWrapper>
+  <DetailsWrapper id="details-wrapper">
     <IngredientsEditor
       ingredients={ingredients}
-      setIngredients={setIngredients}
+      setIngredientField={setIngredientField}
+      deleteIngredient={deleteIngredient}
     />
     <InstructionsEditor
       instructions={instructions}
-      setInstructions={setInstructions}
+      setInstructionField={setInstructionField}
+      deleteInstruction={deleteInstruction}
     />
   </DetailsWrapper>
 );

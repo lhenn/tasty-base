@@ -82,7 +82,7 @@ export const DisplayRatings = (ratings) => (
 
 export const RatingInput = ({ value, set }) => (
   <input
-    style={{width: "100px"}}
+    style={{ width: "100%" }}
     type="number"
     min={`${minRating}`}
     max={`${maxRating}`}
@@ -96,18 +96,26 @@ export const RatingInput = ({ value, set }) => (
 // visible when they're not
 const StyledRatingEditor = styled(RatingWrapper)``;
 
-const StyledShowOnFocusParent = styled.div`
+const StyledRatingInput = styled.input`
   position: absolute;
+  width: 70px;
   opacity: 0;
+  &:invalid {
+    opacity: 1;
+  }
   ${StyledRatingEditor}:focus-within & {
     opacity: 1;
   }
 `;
 
-const StyledHideOnFocusParent = styled.div`
+const StyledDots = styled.div`
+  width: 100%;
   position: absolute;
   opacity: 1;
-  ${StyledRatingEditor}:focus-within & {
+  ${StyledRatingInput}:invalid + & {
+    opacity: 0;
+  }
+  ${RatingWrapper}:focus-within & {
     opacity: 0;
   }
 `;
@@ -118,25 +126,40 @@ export const RatingsEditor = ({ taste, setTaste, ease, setEase }) => {
       <RatingWrapper>
         <RatingLabel>taste </RatingLabel>
         <StyledRatingEditor>
-          <StyledHideOnFocusParent>
-            <Dots name="taste" value={taste} color={colors["taste"]} />
-          </StyledHideOnFocusParent>
-          <StyledShowOnFocusParent>
-            <RatingInput value={taste} set={setTaste} />
-          </StyledShowOnFocusParent>
+          <StyledDots>
+            <Dots
+              id="taste-dots"
+              name="taste"
+              value={taste}
+              color={colors["taste"]}
+            />
+          </StyledDots>
+          <StyledRatingInput
+            type="number"
+            min={`${minRating}`}
+            max={`${maxRating}`}
+            step={`${ratingStep}`}
+            value={taste}
+            onChange={(e) => setTaste(parseFloatOrEmpty(e.target.value))}
+          />
         </StyledRatingEditor>
       </RatingWrapper>
-      <RatingWrapper>
+      {/*<RatingWrapper>
         <RatingLabel>ease </RatingLabel>
         <StyledRatingEditor>
-          <StyledHideOnFocusParent>
-            <Dots name="ease" value={ease} color={colors["ease"]} />
-          </StyledHideOnFocusParent>
-          <StyledShowOnFocusParent>
-            <RatingInput value={ease} set={setEase} />
-          </StyledShowOnFocusParent>
+          <StyledDotsWrapper>
+            <Dots
+              id="ease-dots"
+              name="ease"
+              value={ease}
+              color={colors["ease"]}
+            />
+          </StyledDotsWrapper>
+          <StyledInputWrapper>
+            <StyledRatingInput id="ease-input" value={ease} set={setEase} />
+          </StyledInputWrapper>
         </StyledRatingEditor>
-      </RatingWrapper>
+      </RatingWrapper>*/}
     </RatingsContainer>
   );
 };
