@@ -159,5 +159,9 @@ export const addRatingToRecipe = async (slug, ratingType, ratingValue, uid) => {
     rating:ratingValue,
     timestamp: getTimestamp()
   });
+}
+
+export const removeRatingFromRecipe = async (slug, ratingType, uid) => {
+  return await getFirebase().database().ref(`/posts/${slug}/${ratingType}/${uid}`).remove()
 
 }

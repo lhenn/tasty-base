@@ -9,12 +9,12 @@ import {
   addToMyList,
   removeFromMyList,
   addRatingToRecipe,
+  removeRatingFromRecipe
 } from "../../firebase";
 import { FormGroup, FormRow, Label } from "../../forms/general-forms";
 import { PrimaryButton } from "../../general/buttons";
 import { Icon } from "./generic-icons";
 import { RatingInput } from "./ratings";
-
 
 const TtInner = styled.div`
   display: flex;
@@ -129,16 +129,15 @@ const Check = ({ slug }) => {
   const uncheck = () => {
     if (busy) return;
     setBusy(true);
-    removeFromMyList(user.uid, slug, "check").then(
-      removeFromMyList(user.uid, slug, "rate").then(
-        () => {
-          setBusy(false);
-          setRate(false);
-        },
-        (err) => console.log("remove ratings failed with code:", err.code)
-      ),
-      (err) => console.log("remove check failed with code:", err.code)
-    );
+    removeFromMyList(user.uid, slug, "check")
+      .then(() => removeFromMyList(user.uid, slug, "rate"))
+      .then(() => removeRatingFromRecipe(slug, 'ease', user.uid))
+      .then(() => removeRatingFromRecipe(slug, 'taste', user.uid))
+      .then(() => {
+        setBusy(false);
+        setRate(false);
+      });
+   
   };
 
   const onClick = () => (!isChecked ? check() : uncheck());
