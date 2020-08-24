@@ -1,7 +1,12 @@
 import React, { useContext, useState } from "react";
 import styled from "styled-components";
 import { UserContext } from "../App";
-import { addToMyList, getTimestamp, submitPost, addRatingToRecipe} from "../firebase";
+import {
+  addToMyList,
+  getTimestamp,
+  submitPost,
+  addRatingToRecipe,
+} from "../firebase";
 import { PrimaryButton } from "../general/buttons";
 import ImageUploader from "../general/image-uploader";
 import useCancellablePromises from "../promise-hooks";
@@ -37,8 +42,12 @@ const Editor = ({ author, initialContent, initialSlug = "", history }) => {
   const [source, setSource] = useState(initialContent?.source || "");
   const [time, setTime] = useState(initialContent?.time || "");
   const [servings, setServings] = useState(initialContent?.servings || "");
-  const [taste, setTaste] = useState(initialContent?.taste?.[user.uid].rating || "");
-  const [ease, setEase] = useState(initialContent?.ease?.[user.uid].rating || "");
+  const [taste, setTaste] = useState(
+    initialContent?.taste ? initialContent.taste[user.uid].rating : ""
+  );
+  const [ease, setEase] = useState(
+    initialContent?.ease ? initialContent.ease[user.uid].rating : ""
+);
   const [description, setDescription] = useState(
     initialContent?.description || ""
   );
@@ -111,16 +120,11 @@ const Editor = ({ author, initialContent, initialSlug = "", history }) => {
     // Upload to firebase
     setIsSubmitting(true);
     addPromise(submitPost(slug, timestampedContent))
-      .then(() => addRatingToRecipe(slug, 'ease', ease, user.uid))
-      .then(() => addRatingToRecipe(slug, 'taste', taste, user.uid))
+      .then(() => addRatingToRecipe(slug, "ease", ease, user.uid))
+      .then(() => addRatingToRecipe(slug, "taste", taste, user.uid))
       .then(() => addToMyList(user.uid, slug, "contribution"))
       .then(() => addToMyList(user.uid, slug, "check"))
-      .then(() =>
-        addToMyList(user.uid, slug, "rate", {
-          ease: ease,
-          taste: taste,
-        })
-      )
+      .then(() => addToMyList(user.uid, slug, "rate", { ease, taste }))
       .then(() => setIsSubmitting(false))
       .then(() => history.push(`/recipes/${slug}`));
   };
@@ -152,18 +156,20 @@ const Editor = ({ author, initialContent, initialSlug = "", history }) => {
         <OverviewEditor
           authorName={initialContent?.authorName}
           timestamp={initialContent?.timestamp}
-          sourceType={sourceType}
-          setSourceType={setSourceType}
-          source={source}
-          setSource={setSource}
-          time={time}
-          setTime={setTime}
-          servings={servings}
-          setServings={setServings}
-          taste={taste}
-          setTaste={setTaste}
-          ease={ease}
-          setEase={setEase}
+          {...{
+            sourceType,
+            setSourceType,
+            source,
+            setSource,
+            time,
+            setTime,
+            servings,
+            setServings,
+            taste,
+            setTaste,
+            ease,
+            setEase,
+          }}
         />
 
         <DescriptionEditor description={description} set={setDescription} />
