@@ -28,6 +28,12 @@ const DotsWrapper = styled.div`
   flex-direction: row;
 `;
 
+const Count = styled.span`
+  color: #717070;
+  padding: 5px;
+  font-size: 16px;
+`;
+
 export const RatingLabel = styled.span`
   width: 55px;
 `;
@@ -58,35 +64,41 @@ const Dots = ({ name, value, color }) => {
 };
 
 // Specialized components for Tasty Base ratings
-export const TasteRating = ({ value }) => (
+export const TasteRating = ({ value, count }) => (
   <RatingWrapper>
     <RatingLabel>taste</RatingLabel>
     <Dots name="taste" value={value} color={colors["taste"]} />
+    <Count>({count})</Count>
   </RatingWrapper>
 );
 
-export const EaseRating = ({ value }) => (
+export const EaseRating = ({ value, count }) => (
   <RatingWrapper>
     <RatingLabel>ease</RatingLabel>
     <Dots name="ease" value={value} color={colors["ease"]} />
+    <Count>({count})</Count>
   </RatingWrapper>
 );
 
 export const DisplayRatings = (ratings) => {
   const averageRating = (ratingObject) => {
-    let rateArray = [];
-      for (let k in ratingObject) {
-        rateArray.push(ratingObject[k].rating);
-      }
-      return rateArray.reduce((a,b) => a + b, 0) / rateArray.length;
-  }
-  const tasteValue = averageRating(ratings.taste);
-  const easeValue = averageRating(ratings.ease);
+    let [rateArray, count] = [[], 0];
+    for (let k in ratingObject) {
+      rateArray.push(ratingObject[k].rating);
+      count++;
+    }
+    return {
+      count,
+      value: rateArray.reduce((a, b) => a + b, 0) / rateArray.length,
+    };
+  };
+  const tasteData = averageRating(ratings.taste);
+  const easeData = averageRating(ratings.ease);
 
   return (
     <RatingsContainer>
-      <TasteRating value={tasteValue} />
-      <EaseRating value={easeValue} />
+      <TasteRating value={tasteData.value} count={tasteData.count} />
+      <EaseRating value={easeData.value} count={easeData.count} />
     </RatingsContainer>
   );
 };
