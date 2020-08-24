@@ -5,11 +5,16 @@ import Overlay from "react-bootstrap/Overlay";
 import Tooltip from "react-bootstrap/Tooltip";
 import styled from "styled-components";
 import { UserContext } from "../../App";
-import { addToMyList, removeFromMyList } from "../../firebase";
+import {
+  addToMyList,
+  removeFromMyList,
+  addRatingToRecipe,
+} from "../../firebase";
 import { FormGroup, FormRow, Label } from "../../forms/general-forms";
 import { PrimaryButton } from "../../general/buttons";
 import { Icon } from "./generic-icons";
 import { RatingInput } from "./ratings";
+
 
 const TtInner = styled.div`
   display: flex;
@@ -38,6 +43,8 @@ function RateToolTip(props) {
   };
   const sendRatings = (ease, taste) => {
     addToMyList(user.uid, props.slug, "rate", { ease, taste })
+      .then(() => addRatingToRecipe(props.slug, "ease", ease, user.uid))
+      .then(() => addRatingToRecipe(props.slug, "taste", taste, user.uid))
       .then(() => {
         props.closeRate();
       })
