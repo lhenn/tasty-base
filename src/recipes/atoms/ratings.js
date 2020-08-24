@@ -72,13 +72,24 @@ export const EaseRating = ({ value }) => (
   </RatingWrapper>
 );
 
-//Once multiple ratings available, figure out how to be more specific with props (rather than passing whole post)
-export const DisplayRatings = (ratings) => (
-  <RatingsContainer>
-    <TasteRating value={ratings.taste} />
-    <EaseRating value={ratings.ease} />
-  </RatingsContainer>
-);
+export const DisplayRatings = (ratings) => {
+  const averageRating = (ratingObject) => {
+    let rateArray = [];
+      for (let k in ratingObject) {
+        rateArray.push(ratingObject[k].rating);
+      }
+      return rateArray.reduce((a,b) => a + b, 0) / rateArray.length;
+  }
+  const tasteValue = averageRating(ratings.taste);
+  const easeValue = averageRating(ratings.ease);
+
+  return (
+    <RatingsContainer>
+      <TasteRating value={tasteValue} />
+      <EaseRating value={easeValue} />
+    </RatingsContainer>
+  );
+};
 
 export const RatingInput = ({ value, set }) => (
   <input
