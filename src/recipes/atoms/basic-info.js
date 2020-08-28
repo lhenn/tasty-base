@@ -1,17 +1,26 @@
 import React from "react";
 import styled from "styled-components";
 import { parseIntOrEmpty } from "../../utils";
+import { faClock, faUtensilSpoon } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { blueBase } from "../../styling";
 
 export const BasicInfoContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  @media (max-width: 700px) {
+    align-items:flex-start;
+  }
+`;
+const Icon = styled(FontAwesomeIcon)`
+  color:${blueBase}
 `;
 
 export const DisplayBasicInfo = ({ time, servings }) => (
   <BasicInfoContainer>
-    {time && <p>total time: {time} min</p>}
-    {servings && <p>servings: {servings}</p>}
+    {time && <div><Icon icon={faClock}/>&nbsp;&nbsp;{time} min </div>}
+    {servings && <div><Icon icon={faUtensilSpoon}/>&nbsp;&nbsp;{servings} servings</div>}
   </BasicInfoContainer>
 );
 

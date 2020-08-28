@@ -25,7 +25,7 @@ const Timestamp = ({ timestamp }) => {
   );
 };
 
-const AuthorDateWrapper = styled.p`
+const AuthorDateWrapper = styled.div`
   color: ${redBase};
 `;
 

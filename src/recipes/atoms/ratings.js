@@ -30,7 +30,7 @@ const DotsWrapper = styled.div`
 
 const Count = styled.span`
   color: #717070;
-  padding: 5px;
+  padding: 0 5px;
   font-size: 16px;
 `;
 

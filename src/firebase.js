@@ -63,6 +63,7 @@ export const addToMyList = (uid, slug, action, ratings = null) => {
             taste: ratings.taste,
           },
         };
+        console.log('should be updating:', uid, slug, action)
   return getFirebase()
     .database()
     .ref(`/users/${uid}/data/myListRecipes/${slug}`)

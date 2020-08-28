@@ -5,6 +5,7 @@ import { BasicInfoEditor, DisplayBasicInfo } from "./basic-info";
 import { DisplayRatings, RatingsEditor } from "./ratings";
 import { DisplaySource, SourceEditor } from "./source";
 
+
 const OverviewWrapper = styled.div`
   margin: 25px 0;
   width: 100%;
@@ -24,6 +25,9 @@ const OverviewFirstColumn = styled.div`
   text-align: center;
   justify-content:center;
   width: 100%;
+  @media (max-width: 700px) {
+    align-items:flex-start;
+  }
 `;
 
 const OverviewColumn = styled.div`
@@ -35,6 +39,7 @@ const OverviewColumn = styled.div`
   width: 100%;
   @media (max-width: 700px) {
     border: 0;
+    align-items:flex-start;
   }
 `;
 

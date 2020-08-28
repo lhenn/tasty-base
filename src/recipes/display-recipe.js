@@ -49,8 +49,8 @@ export const RecipeHeader = styled.div`
   justify-content: space-between;
   align-items: center;
   @media (max-width: 700px) {
-    flex-direction: column;
-    text-align: center;
+    flex-flow: column-reverse;
+    align-items: flex-start;
   }
 `;
 

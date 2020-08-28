@@ -40,21 +40,21 @@ export const DisplaySource = ({ sourceType, source }) => {
   if (sourceType === "personal") {
     return (
       <SourceContainer>
-        <p>personal recipe</p>
+        <div>personal recipe</div>
       </SourceContainer>
     );
   } else if (sourceType === "cookbook") {
     return (
       <SourceContainer>
-        <p>source: {source}</p>
+        <div>source: {source}</div>
       </SourceContainer>
     );
   } else {
     return (
       <SourceContainer>
-        <p>
+        <div>
           source: <DisplayWebSource source={source} />
-        </p>
+        </div>
       </SourceContainer>
     );
   }
