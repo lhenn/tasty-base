@@ -47,7 +47,7 @@ const Editor = ({ author, initialContent, initialSlug = "", history }) => {
   );
   const [ease, setEase] = useState(
     initialContent?.ease ? initialContent.ease[user.uid].rating : ""
-);
+  );
   const [description, setDescription] = useState(
     initialContent?.description || ""
   );
@@ -107,7 +107,10 @@ const Editor = ({ author, initialContent, initialSlug = "", history }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { addPromise } = useCancellablePromises();
 
-  const onSubmit = () => {
+  const onSubmit = (event) => {
+    event.preventDefault();
+    console.log(">", slug);
+
     // Don't submit multiple times
     if (isSubmitting) return;
 
@@ -116,6 +119,7 @@ const Editor = ({ author, initialContent, initialSlug = "", history }) => {
       ...content,
       timestamp: getTimestamp(),
     };
+    console.log("SUBMITTED:", slug);
 
     // Upload to firebase
     setIsSubmitting(true);
@@ -126,6 +130,7 @@ const Editor = ({ author, initialContent, initialSlug = "", history }) => {
       .then(() => addToMyList(user.uid, slug, "check"))
       .then(() => addToMyList(user.uid, slug, "rate", { ease, taste }))
       .then(() => setIsSubmitting(false))
+      .then(() => console.log("SUBMITTED:", slug))
       .then(() => history.push(`/recipes/${slug}`));
   };
 
@@ -134,7 +139,13 @@ const Editor = ({ author, initialContent, initialSlug = "", history }) => {
       <PrimaryButton type="submit" disabled={isSubmitting}>
         Submit
       </PrimaryButton>
-      <PrimaryButton type="button" onClick={() => history.go(-1)}>
+      <PrimaryButton
+        type="button"
+        onClick={(event) => {
+          event.preventDefault();
+          history.go(-1);
+        }}
+      >
         Cancel
       </PrimaryButton>
     </div>
@@ -186,7 +197,7 @@ const Editor = ({ author, initialContent, initialSlug = "", history }) => {
         )}
       </RecipeContainer>
 
-      {imageUploader}
+      {/*imageUploader*/}
 
       {buttons}
     </form>
