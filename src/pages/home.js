@@ -3,8 +3,7 @@ import Columns from "../general/columns";
 import {
   HeaderWrapper,
   PageTitle,
-  PageViewOptions,
-  SearchField,
+  PageViewOptions
 } from "../general/page-header";
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
@@ -58,7 +57,6 @@ const Home = memo(({ loadingPosts, posts, updatePosts }) => {
             <span>Sort by: </span>
             <DropdownButton title={sortBy}>{sortButtons}</DropdownButton>
           </SortByContainer>
-          <SearchField placeholder="search" />
         </PageViewOptions>
       </HeaderWrapper>
       {postContent}

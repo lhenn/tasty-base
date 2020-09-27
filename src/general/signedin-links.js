@@ -103,9 +103,6 @@ const SignedInLinks = ({ user }) => {
         <Link to="/my-recipes">My Recipes</Link>
       </NavItem>
       <NavItem>
-        <Link to="/notes">Notes</Link>
-      </NavItem>
-      <NavItem>
         <Link to="/create">
           <PrimaryButton>recipe +</PrimaryButton>
         </Link>

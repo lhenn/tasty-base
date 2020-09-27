@@ -19,10 +19,6 @@ const About = () => {
           personal recipe book (or shared Dropbox folder full of text files)
           combined with Pinterest.
         </li>
-        <li>
-          A "wish list" for jotting down recipe ideas. Adam found this really
-          important since he was previously using a giant text file.
-        </li>
         <li>Realistic taste and ease ratings for each recipe.</li>
         <li>No advertisements or life stories you have to scroll through to get to recipes.</li>
       </ul>

@@ -15,7 +15,6 @@ import {
   HeaderWrapper,
   PageTitle,
   PageViewOptions,
-  SearchField,
 } from "../general/page-header";
 import useCancellablePromises from "../promise-hooks";
 import { greenBase, redOrangeBase, yellowBase } from "../styling";
@@ -105,8 +104,6 @@ const MyRecipes = () => {
           >
             contributions <FilterIcon icon={faLightbulb} />
           </FilterButton>
-
-          <SearchField placeholder="search" />
         </PageViewOptions>
       </HeaderWrapper>
 

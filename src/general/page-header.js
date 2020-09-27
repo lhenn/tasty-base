@@ -18,14 +18,3 @@ export const PageViewOptions = styled.div`
   align-items: center;
 `;
 
-export const SearchField = styled.input`
-  border: solid 2px black;
-  border-radius: 20px;
-  height: 35px;
-  width: 200px;
-  padding: 0 10px;
-  margin-left: 10px;
-  &:focus {
-    outline: none;
-  }
-`;
