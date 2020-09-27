@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import styled from "styled-components";
 import { lightGrey } from "../styling";
 import { UserContext } from "../App";
@@ -8,6 +8,7 @@ import { DisplayDetails } from "./atoms/details";
 import { Icons } from "./atoms/icons";
 import { DisplayOverview } from "./atoms/overview";
 import { DisplayTitle } from "./atoms/title";
+import { SubscribeToRatings, UnsubscribeFromRatings } from "./atoms/ratings.js";
 
 // box-shadow: 10px 10px 5px -10px rgba(0, 0, 0, 0.75);
 export const RecipeContainer = styled.div`
@@ -56,6 +57,12 @@ export const RecipeHeader = styled.div`
 
 const DisplayRecipePost = ({ content, slug }) => {
   const { user } = useContext(UserContext);
+  const [taste, setTaste] = useState(null);
+  const [ease, setEase] = useState(null);
+  useEffect(() => {
+    SubscribeToRatings(slug, content.taste, content.ease, setTaste, setEase);
+    return UnsubscribeFromRatings();
+  }, []);
 
   if (!content) return <h1>Loading recipe post...</h1>;
 
@@ -77,8 +84,8 @@ const DisplayRecipePost = ({ content, slug }) => {
         source={content.source}
         activeTime={content.time}
         servings={content.servings}
-        tastiness={content.taste}
-        easiness={content.ease}
+        tastiness={taste}
+        easiness={ease}
       />
 
       <DisplayDescription description={content.description} />
