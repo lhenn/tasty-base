@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import AuthorDate from "./atoms/author-date";
 import { CardCoverImage } from "./atoms/cover-image";
 import { Icons } from "./atoms/icons";
-import { DisplayRatings } from "./atoms/ratings.js";
+import { DisplayRatings, SubscribeToRatings, UnsubscribeFromRatings } from "./atoms/ratings.js";
 import { DisplayTitle } from "./atoms/title";
 
 const CardContainer = styled.div`
@@ -31,29 +31,40 @@ const BottomRow = styled.div`
   align-items: flex-end;
 `;
 
-const RecipePreview = ({ post: { content, slug } }) => (
-  <Link to={`/recipes/${slug}`}>
-    <CardContainer>
-      {content.coverImageURL && (
-        <CardCoverImage
-          src={content.coverImageURL}
-          alt={content.coverImageAlt}
-        />
-      )}
 
-      <CardContent>
-        <DisplayTitle title={content.title} />
-        <AuthorDate
-          authorName={content.authorName}
-          timestamp={content.timestamp}
-        />
-        <BottomRow>
-          <DisplayRatings taste={content.taste} ease={content.ease} />
-          <Icons slug={slug} />
-        </BottomRow>
-      </CardContent>
-    </CardContainer>
-  </Link>
-);
+const RecipePreview = ({ post: { content, slug } }) => {
+  const [taste, setTaste] = useState(null);
+  const [ease, setEase] = useState(null);
+
+  useEffect(() => {
+    SubscribeToRatings(slug, content.taste, content.ease, setTaste, setEase);
+    return UnsubscribeFromRatings();
+  }, []);
+
+  return (
+    <Link to={`/recipes/${slug}`}>
+      <CardContainer>
+        {content.coverImageURL && (
+          <CardCoverImage
+            src={content.coverImageURL}
+            alt={content.coverImageAlt}
+          />
+        )}
+
+        <CardContent>
+          <DisplayTitle title={content.title} />
+          <AuthorDate
+            authorName={content.authorName}
+            timestamp={content.timestamp}
+          />
+          <BottomRow>
+            <DisplayRatings taste={taste} ease={ease} />
+            <Icons slug={slug} />
+          </BottomRow>
+        </CardContent>
+      </CardContainer>
+    </Link>
+  );
+};
 
 export default RecipePreview;
