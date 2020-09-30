@@ -17,8 +17,8 @@ const SortByContainer = styled.div`
 // Sort button labels and corresponding arguments for updatePosts
 const sorts = {
   newest: ["timestamp", "reverse"],
-  tastiest: ["tastiness", "reverse"],
-  easiest: ["easiness", "reverse"],
+  tastiest: ["taste", "reverse"],
+  easiest: ["ease", "reverse"],
 };
 
 const Home = memo(({ loadingPosts, posts, updatePosts }) => {
