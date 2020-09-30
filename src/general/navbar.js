@@ -3,8 +3,35 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { UserContext } from "../App";
 import { blueBase, logoFont } from "../styling";
-import SignedInLinks from "./signedin-links";
+import {MobileSignedInLinks, SignedInLinks} from "./signedin-links";
 import SignedOutLinks from "./signedout-links";
+import { getLayoutSize, SMALL, MEDIUM, LARGE } from "../App";
+import { useBreakpoint } from "../breakpoint-hooks";
+
+const MobileNavWrapper = styled.div`
+  height:105vh;
+  width:100%;
+  position:fixed;
+  background-color: ${blueBase};
+  display: flex;
+  justify-content: center;
+  align-items:center;
+  margin-top:-10px;
+  overflow-y:fixed;
+  z-index:10;
+`;
+const MobileNavInner = styled.div`
+  display: flex;
+  flex-direction:column;
+  justify-content: space-around;
+  height: 300px;
+  align-items: center;
+`;
+const MobileLogoWrapper = styled.div`
+  display: flex;
+  justify-content: flex-start;
+`;
+
 
 const NavWrapper = styled.div`
   display: flex;
@@ -40,6 +67,26 @@ const Logo = styled.p`
 
 const NavBar = () => {
   const { user } = useContext(UserContext);
+  const matches = useBreakpoint();
+  // Media query
+  const layoutSize = getLayoutSize(matches);
+  console.log('layoutSize: ', layoutSize);
+
+  if(layoutSize == "small"){
+    return (
+      <MobileNavWrapper>
+      <MobileNavInner id="nav-bars">
+        <MobileLogoWrapper>
+          <Link to="/">
+            {/*<Logo src={LogoSource} />*/}
+            <Logo>Tasty Base</Logo>
+          </Link>
+        </MobileLogoWrapper>
+        {user ? <MobileSignedInLinks user={user} /> : <SignedOutLinks />}
+      </MobileNavInner>
+    </MobileNavWrapper>
+    )
+  }
 
   return (
     <NavWrapper>
