@@ -33,8 +33,8 @@ const BottomRow = styled.div`
 
 
 const RecipePreview = ({ post: { content, slug } }) => {
-  const [taste, setTaste] = useState(null);
-  const [ease, setEase] = useState(null);
+  const [taste, setTaste] = useState(content.taste);
+  const [ease, setEase] = useState(content.ease);
 
   useEffect(() => {
     SubscribeToRatings(slug, content.taste, content.ease, setTaste, setEase);

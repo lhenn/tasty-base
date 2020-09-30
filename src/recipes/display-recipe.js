@@ -57,8 +57,8 @@ export const RecipeHeader = styled.div`
 
 const DisplayRecipePost = ({ content, slug }) => {
   const { user } = useContext(UserContext);
-  const [taste, setTaste] = useState(null);
-  const [ease, setEase] = useState(null);
+  const [taste, setTaste] = useState(content.taste);
+  const [ease, setEase] = useState(content.ease);
   useEffect(() => {
     SubscribeToRatings(slug, content.taste, content.ease, setTaste, setEase);
     return UnsubscribeFromRatings();
