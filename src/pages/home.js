@@ -1,4 +1,4 @@
-import React, { memo, useState } from "react";
+import React, { useEffect, memo, useState } from "react";
 import Columns from "../general/columns";
 import {
   HeaderWrapper,
@@ -46,6 +46,8 @@ const Home = memo(({ loadingPosts, posts, updatePosts }) => {
   ) : (
     <Columns posts={posts} />
   );
+
+  useEffect(() => fetchSortedPosts(sortBy), [])
 
   // Slugs are unique and can thus be used as keys
   return (
