@@ -111,7 +111,8 @@ export const SubscribeToRatings = (slug, initialTaste, initialEase, setTaste, se
   .database()
   .ref(`posts/${slug}/taste`)
   .on("value", (snapshot) => {
-    if( snapshot.val() !== null && JSON.stringify(snapshot.val()) != JSON.stringify(initialTaste)){
+    console.log('snapshot val: ', snapshot.val());
+    if(JSON.stringify(snapshot.val()) != JSON.stringify(initialTaste)){
       setTaste(snapshot.val());
     }
   });
@@ -119,7 +120,7 @@ export const SubscribeToRatings = (slug, initialTaste, initialEase, setTaste, se
   .database()
   .ref(`posts/${slug}/ease`)
   .on("value", (snapshot) => {
-    if( snapshot.val() !== null && JSON.stringify(snapshot.val()) != JSON.stringify(initialEase)){
+    if(JSON.stringify(snapshot.val()) != JSON.stringify(initialEase)){
       setEase(snapshot.val());
     }
   });
