@@ -82,7 +82,6 @@ export const EaseRating = ({ value, count }) => (
 );
 
 export const DisplayRatings = (ratings) => {
-  console.log('displayRatings updating with: ', ratings)
   const averageRating = (ratingObject) => {
     let [rateArray, count] = [[], 0];
     for (let k in ratingObject) {
@@ -111,8 +110,7 @@ export const SubscribeToRatings = (slug, initialTaste, initialEase, setTaste, se
   .database()
   .ref(`posts/${slug}/taste`)
   .on("value", (snapshot) => {
-    console.log('snapshot val: ', snapshot.val());
-    if(JSON.stringify(snapshot.val()) != JSON.stringify(initialTaste)){
+    if(JSON.stringify(snapshot.val()) !== JSON.stringify(initialTaste)){
       setTaste(snapshot.val());
     }
   });
@@ -120,7 +118,7 @@ export const SubscribeToRatings = (slug, initialTaste, initialEase, setTaste, se
   .database()
   .ref(`posts/${slug}/ease`)
   .on("value", (snapshot) => {
-    if(JSON.stringify(snapshot.val()) != JSON.stringify(initialEase)){
+    if(JSON.stringify(snapshot.val()) !== JSON.stringify(initialEase)){
       setEase(snapshot.val());
     }
   });

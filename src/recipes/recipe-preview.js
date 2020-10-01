@@ -38,7 +38,7 @@ const RecipePreview = ({ post: { content, slug } }) => {
 
   useEffect(() => {
     SubscribeToRatings(slug, content.taste, content.ease, setTaste, setEase);
-    return UnsubscribeFromRatings();
+    return UnsubscribeFromRatings;
   }, []);
 
   return (

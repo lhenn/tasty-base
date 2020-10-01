@@ -61,7 +61,7 @@ const DisplayRecipePost = ({ content, slug }) => {
   const [ease, setEase] = useState(content.ease);
   useEffect(() => {
     SubscribeToRatings(slug, content.taste, content.ease, setTaste, setEase);
-    return UnsubscribeFromRatings();
+    return UnsubscribeFromRatings;
   }, []);
 
   if (!content) return <h1>Loading recipe post...</h1>;
