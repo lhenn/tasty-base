@@ -59,7 +59,7 @@ const Edit = ({ history, match }) => {
       <Editor
         author={user.uid}
         initialContent={content}
-        initialSlug={slug}
+        slug={slug}
         history={history}
       />
     </>

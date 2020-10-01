@@ -173,8 +173,10 @@ export const fetchPosts = async (slugs) => {
   return await insertAuthorNames(posts);
 };
 
-export const submitPost = async (slug, content) =>
-  await getFirebase().database().ref(`/posts/${slug}`).set(content);
+export const submitPost = async (slug, content) => {
+  const postRef = getFirebase().database().ref(`/posts/${slug}`);
+  return slug === "" ? await postRef.push(content) : await postRef.set(content);
+};
 
 export const getTimestamp = () => getFirebase().database.ServerValue.TIMESTAMP;
 
