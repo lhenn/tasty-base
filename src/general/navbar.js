@@ -1,37 +1,38 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
+import { faBars, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { UserContext } from "../App";
-import { blueBase, logoFont } from "../styling";
-import {MobileSignedInLinks, SignedInLinks} from "./signedin-links";
-import SignedOutLinks from "./signedout-links";
+import { blueBase, yellowBase, logoFont, containerRules } from "../styling";
+import { MobileSignedInLinks, SignedInLinks } from "./signedin-links";
+import { MobileSignedOutLinks, SignedOutLinks} from "./signedout-links";
 import { getLayoutSize, SMALL, MEDIUM, LARGE } from "../App";
 import { useBreakpoint } from "../breakpoint-hooks";
 
 const MobileNavWrapper = styled.div`
-  height:105vh;
-  width:100%;
-  position:fixed;
+  height: 100vh;
+  width: 100%;
+  position: fixed;
   background-color: ${blueBase};
   display: flex;
-  justify-content: center;
-  align-items:center;
-  margin-top:-10px;
-  overflow-y:fixed;
-  z-index:10;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction:column;
+  z-index: 10;
 `;
 const MobileNavInner = styled.div`
   display: flex;
-  flex-direction:column;
+  flex-direction: column;
   justify-content: space-around;
-  height: 300px;
+  flex-grow:1;
+  padding:200px 0;
   align-items: center;
 `;
 const MobileLogoWrapper = styled.div`
   display: flex;
   justify-content: flex-start;
 `;
-
 
 const NavWrapper = styled.div`
   display: flex;
@@ -45,8 +46,7 @@ const NavInner = styled.nav`
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  width: 100%;
-  max-width: 1100px;
+  ${containerRules}
 `;
 
 const LogoWrapper = styled.div`
@@ -64,28 +64,57 @@ const Logo = styled.p`
   font-family: ${logoFont};
   color: white;
 `;
+const MobileNavDisplay = styled.button`
+  color: ${blueBase};
+  background-color: ${yellowBase};
+  margin:10px;
+  border: none;
+  width: 2.7rem;
+  height: 2.7rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  align-self: flex-end;
+    justify-self: flex-start;
+`;
 
 const NavBar = () => {
+  const [status, setStatus] = useState("close");
   const { user } = useContext(UserContext);
   const matches = useBreakpoint();
   // Media query
   const layoutSize = getLayoutSize(matches);
-  console.log('layoutSize: ', layoutSize);
+  console.log("layoutSize: ", layoutSize);
 
-  if(layoutSize == "small"){
+  const toggleDisplay = (display) => {
+    console.log('should be toggling..');
+    setStatus(display);
+  };
+  if (layoutSize == "small" && status == "close") {
+    return (
+      <MobileNavDisplay onClick={() => toggleDisplay("open")}>
+        <FontAwesomeIcon icon={faBars} />
+      </MobileNavDisplay>
+    );
+  }
+  if (layoutSize == "small" && status != "close") {
     return (
       <MobileNavWrapper>
-      <MobileNavInner id="nav-bars">
-        <MobileLogoWrapper>
-          <Link to="/">
-            {/*<Logo src={LogoSource} />*/}
-            <Logo>Tasty Base</Logo>
-          </Link>
-        </MobileLogoWrapper>
-        {user ? <MobileSignedInLinks user={user} /> : <SignedOutLinks />}
-      </MobileNavInner>
-    </MobileNavWrapper>
-    )
+        <MobileNavDisplay onClick={() => toggleDisplay("close")}>
+          <FontAwesomeIcon icon={faTimes} />
+        </MobileNavDisplay>
+        <MobileNavInner id="nav-bars">
+          <MobileLogoWrapper>
+            <Link to="/" onClick ={() => toggleDisplay("close")}>
+              {/*<Logo src={LogoSource} />*/}
+              <Logo>Tasty Base</Logo>
+            </Link>
+          </MobileLogoWrapper>
+          {user ? <MobileSignedInLinks user={user} toggleDisplay={toggleDisplay} /> : <MobileSignedOutLinks toggleDisplay={toggleDisplay} />}
+        </MobileNavInner>
+      </MobileNavWrapper>
+    );
   }
 
   return (

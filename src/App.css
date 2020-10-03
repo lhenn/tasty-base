@@ -6,6 +6,10 @@
 body {
   font-family: "Source Sans Pro", sans-serif;
 }
+#root{
+  display:flex;
+  flex-direction:column;
+}
 
 a,
 a:hover {

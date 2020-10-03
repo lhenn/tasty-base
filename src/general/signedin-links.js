@@ -7,7 +7,7 @@ import { Link, Redirect } from "react-router-dom";
 import styled from "styled-components";
 import { getFirebase } from "../firebase";
 import { PrimaryButton } from "./buttons";
-import NavItem from "./nav-item";
+import { NavItem } from "../styling";
 
 const UserWrapper = styled.div`
   display: flex;
@@ -33,10 +33,9 @@ const TtInner = styled.div`
 const SignOutLink = styled.button`
   background-color: inherit;
   padding-top: 10px;
-  color: #dedddd;
+  color: white;
   border: none;
   &:hover {
-    color: white;
     cursor: pointer;
   }
 `;
@@ -46,7 +45,9 @@ const logout = () => {
     .auth()
     .signOut()
     .then(
-      () => <Redirect to="/" />,
+      () => {
+        return <Redirect to="/" />;
+      },
       function (error) {
         console.error("Sign Out Error", error);
       }
@@ -77,25 +78,32 @@ const UserPhoto = ({ user }) => {
   );
 };
 
-export const MobileSignedInLinks = ({user}) => {
+export const MobileSignedInLinks = ({ user, toggleDisplay }) => {
   return (
     <>
       <NavItem>
-        <Link to="/my-recipes">My Recipes</Link>
-      </NavItem>
-      <NavItem>
-          <SignOutLink onClick={logout}>
-                Sign out
-          </SignOutLink>
-      </NavItem>
-      <NavItem>
-        <Link to="/create">
+        <Link to="/create" onClick={() => toggleDisplay("close")}>
           <PrimaryButton>recipe +</PrimaryButton>
         </Link>
       </NavItem>
+      <NavItem>
+        <Link to="/about" onClick={() => toggleDisplay("close")}>
+          About
+        </Link>
+      </NavItem>
+      <NavItem>
+        <SignOutLink
+          onClick={() => {
+            toggleDisplay("close");
+            logout();
+          }}
+        >
+          Sign out
+        </SignOutLink>
+      </NavItem>
     </>
   );
-}
+};
 export const SignedInLinks = ({ user }) => {
   return (
     <>
@@ -115,4 +123,3 @@ export const SignedInLinks = ({ user }) => {
     </>
   );
 };
-

@@ -14,18 +14,13 @@ import MyRecipes from "./pages/myrecipes";
 import NoMatch from "./pages/no-match";
 import Signin from "./pages/signin";
 import SelfLoadingRecipePost from "./recipes/recipe-post";
-import { GlobalStyle } from "./styling";
+import { GlobalStyle, containerRules } from "./styling";
 
 // background-color: whitesmoke;
 const MainContent = styled.main`
-  max-width: 1100px;
-  margin: 20px auto;
-  width: 100%;
-  padding: 20px;
+  ${containerRules}
+  margin: 0 auto;
   min-height: 85vh;
-  @media (max-width: 700px) {
-    margin: 10px auto;
-  }
 `;
 
 export const UserContext = createContext(null); // for user info and userData
