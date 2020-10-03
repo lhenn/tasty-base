@@ -6,7 +6,7 @@ import styled from "styled-components";
 import { UserContext } from "../App";
 import { blueBase, yellowBase, logoFont, containerRules } from "../styling";
 import { MobileSignedInLinks, SignedInLinks } from "./signedin-links";
-import { MobileSignedOutLinks, SignedOutLinks} from "./signedout-links";
+import { MobileSignedOutLinks, SignedOutLinks } from "./signedout-links";
 import { getLayoutSize, SMALL, MEDIUM, LARGE } from "../App";
 import { useBreakpoint } from "../breakpoint-hooks";
 
@@ -18,15 +18,15 @@ const MobileNavWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex-direction:column;
+  flex-direction: column;
   z-index: 10;
 `;
 const MobileNavInner = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-  flex-grow:1;
-  padding:200px 0;
+  flex-grow: 1;
+  padding: 200px 0;
   align-items: center;
 `;
 const MobileLogoWrapper = styled.div`
@@ -67,7 +67,7 @@ const Logo = styled.p`
 const MobileNavDisplay = styled.button`
   color: ${blueBase};
   background-color: ${yellowBase};
-  margin:10px;
+  margin: 10px;
   border: none;
   width: 2.7rem;
   height: 2.7rem;
@@ -76,7 +76,7 @@ const MobileNavDisplay = styled.button`
   justify-content: center;
   font-size: 26px;
   align-self: flex-end;
-    justify-self: flex-start;
+  justify-self: flex-start;
 `;
 
 const NavBar = () => {
@@ -88,7 +88,7 @@ const NavBar = () => {
   console.log("layoutSize: ", layoutSize);
 
   const toggleDisplay = (display) => {
-    console.log('should be toggling..');
+    console.log("should be toggling..");
     setStatus(display);
   };
   if (layoutSize == "small" && status == "close") {
@@ -106,12 +106,16 @@ const NavBar = () => {
         </MobileNavDisplay>
         <MobileNavInner id="nav-bars">
           <MobileLogoWrapper>
-            <Link to="/" onClick ={() => toggleDisplay("close")}>
+            <Link to="/" onClick={() => toggleDisplay("close")}>
               {/*<Logo src={LogoSource} />*/}
               <Logo>Tasty Base</Logo>
             </Link>
           </MobileLogoWrapper>
-          {user ? <MobileSignedInLinks user={user} toggleDisplay={toggleDisplay} /> : <MobileSignedOutLinks toggleDisplay={toggleDisplay} />}
+          {user ? (
+            <MobileSignedInLinks toggleDisplay={toggleDisplay} />
+          ) : (
+            <MobileSignedOutLinks toggleDisplay={toggleDisplay} />
+          )}
         </MobileNavInner>
       </MobileNavWrapper>
     );

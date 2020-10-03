@@ -78,7 +78,7 @@ const UserPhoto = ({ user }) => {
   );
 };
 
-export const MobileSignedInLinks = ({ user, toggleDisplay }) => {
+export const MobileSignedInLinks = ({ toggleDisplay }) => {
   return (
     <>
       <NavItem>
@@ -107,9 +107,6 @@ export const MobileSignedInLinks = ({ user, toggleDisplay }) => {
 export const SignedInLinks = ({ user }) => {
   return (
     <>
-      <NavItem>
-        <Link to="/my-recipes">My Recipes</Link>
-      </NavItem>
       <NavItem>
         <Link to="/create">
           <PrimaryButton>recipe +</PrimaryButton>
