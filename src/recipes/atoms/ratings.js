@@ -22,6 +22,7 @@ export const RatingWrapper = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
+  padding: 5px;
 `;
 
 const DotsWrapper = styled.div`
@@ -35,7 +36,7 @@ const Count = styled.span`
   font-size: 16px;
 `;
 
-export const RatingLabel = styled.span`
+export const StyledRatingSpan = styled.span`
   width: 55px;
 `;
 
@@ -67,7 +68,7 @@ const Dots = ({ name, value, color }) => {
 // Specialized components for Tasty Base ratings
 export const TasteRating = ({ value, count }) => (
   <RatingWrapper>
-    <RatingLabel>taste</RatingLabel>
+    <StyledRatingSpan>taste</StyledRatingSpan>
     <Dots name="taste" value={value} color={colors["taste"]} />
     <Count>({count})</Count>
   </RatingWrapper>
@@ -75,7 +76,7 @@ export const TasteRating = ({ value, count }) => (
 
 export const EaseRating = ({ value, count }) => (
   <RatingWrapper>
-    <RatingLabel>ease</RatingLabel>
+    <StyledRatingSpan>ease</StyledRatingSpan>
     <Dots name="ease" value={value} color={colors["ease"]} />
     <Count>({count})</Count>
   </RatingWrapper>

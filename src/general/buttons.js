@@ -16,10 +16,10 @@ export const SecondaryButton = styled.button`
 `;
 
 export const FilterButton = styled.button`
- border:solid 2px black;
- margin: 0 10px;
- color: black;
- background-color: ${props => props.isActive ? props.color : 'white'};
+  border: solid 2px black;
+  margin: 0 10px;
+  color: black;
+  background-color: ${(props) => (props.isActive ? props.color : "white")};
 `;
 
 export const NoteButton = styled.button`
@@ -29,9 +29,7 @@ export const NoteButton = styled.button`
   margin: 0 10px;
 `;
 export const SecondaryNoteButton = styled.button`
-background-color: inherit;
-color:${blueBase};
-border: 0;
-
-
+  background-color: inherit;
+  color: ${blueBase};
+  border: 0;
 `;

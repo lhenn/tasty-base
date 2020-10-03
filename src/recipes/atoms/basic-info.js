@@ -13,33 +13,34 @@ export const BasicInfoContainer = styled.div`
     align-items: flex-start;
   }
 `;
+
 const Icon = styled(FontAwesomeIcon)`
   color: ${blueBase};
+`;
+
+const MarginedDiv = styled.div`
+  margin: 5px;
 `;
 
 export const DisplayBasicInfo = ({ time, servings }) => (
   <BasicInfoContainer>
     {time && (
-      <div>
+      <MarginedDiv>
         <Icon icon={faClock} />
         &nbsp;&nbsp;{time} min{" "}
-      </div>
+      </MarginedDiv>
     )}
     {servings && (
-      <div>
+      <MarginedDiv>
         <Icon icon={faUtensilSpoon} />
         &nbsp;&nbsp;{servings} servings
-      </div>
+      </MarginedDiv>
     )}
   </BasicInfoContainer>
 );
 
 const StyledPositiveIntInput = styled.input`
   width: 80px;
-`;
-
-const MarginedDiv = styled.div`
-  margin: 5px;
 `;
 
 export const BasicInfoEditor = ({ time, setTime, servings, setServings }) => {

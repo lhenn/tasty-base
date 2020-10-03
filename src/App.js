@@ -10,7 +10,6 @@ import About from "./pages/about";
 import Create from "./pages/create";
 import Edit from "./pages/edit";
 import Home from "./pages/home";
-import MyRecipes from "./pages/myrecipes";
 import NoMatch from "./pages/no-match";
 import Signin from "./pages/signin";
 import SelfLoadingRecipePost from "./recipes/recipe-post";
@@ -100,12 +99,12 @@ const App = () => {
   // TODO: enable cancellation of previous Promise if new one is started while
   // it's still resolving. Probably need state variable to keep track of any
   // pending post updates as a cancellable Promise.
-  const updatePosts = (sortBy = "timestamp", order = "reverse") => {
+  const updatePosts = () => {
     if (loadingPosts) {
       console.log("cannot call updatePosts: already loading posts!");
     } else {
       setPosts({ posts: [], loadingPosts: true });
-      fetchSortedPosts(sortBy, order).then(
+      fetchSortedPosts().then(
         (newPosts) => {
           setPosts({ posts: newPosts, loadingPosts: false });
         },
@@ -150,25 +149,10 @@ const App = () => {
                 exact
                 path="/"
                 render={() => (
-                  <Home
-                    posts={posts}
-                    loadingPosts={loadingPosts}
-                    updatePosts={updatePosts}
-                  />
+                  <Home posts={posts} loadingPosts={loadingPosts} />
                 )}
               />
               <Route exact path="/signin" component={Signin} />
-              <Route
-                exact
-                path="/my-recipes"
-                render={() => (
-                  <MyRecipes
-                    posts={posts}
-                    loadingPosts={loadingPosts}
-                    updatePosts={updatePosts}
-                  />
-                )}
-              />
               <Route exact path="/create" component={Create} />
               <Route exact path="/about" component={About} />
               <Route

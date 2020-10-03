@@ -27,6 +27,7 @@ const Timestamp = ({ timestamp }) => {
 
 const AuthorDateWrapper = styled.div`
   color: ${redBase};
+  padding: 5px;
 `;
 
 const AuthorDate = ({ authorName, timestamp }) => {

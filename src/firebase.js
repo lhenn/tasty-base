@@ -105,15 +105,8 @@ const insertAuthorNames = async (posts) => {
   return posts;
 };
 
-export const fetchSortedPosts = async (
-  sortBy = "timestamp",
-  order = "reverse"
-) => {
-  const snapshots = await getFirebase()
-    .database()
-    .ref("/posts")
-    // .orderByChild(sortBy)
-    .once("value");
+export const fetchSortedPosts = async () => {
+  const snapshots = await getFirebase().database().ref("/posts").once("value");
 
   // For some strange reason, can't just do snapshots.val()
   const posts = [];
@@ -123,30 +116,7 @@ export const fetchSortedPosts = async (
 
   await insertAuthorNames(posts);
 
-  // Sort the posts
-  let sortVals = Array.from(Array(posts.length).keys());
-  if (sortBy === "taste" || sortBy === "ease") {
-    const ratings = posts.map((p) => {
-      const entries = p.content[sortBy];
-      if (entries) return Object.values(entries).map((entry) => entry.rating);
-      else return [0.0];
-    });
-    sortVals = ratings.map(
-      (rs) => rs.reduce((prev, cur) => prev + cur, 0) / rs.length
-    );
-  } else if (sortBy === "timestamp") {
-    sortVals = posts.map((p) => p.content.timestamp);
-  }
-
-  // Find order of indices that sorts sortVals
-  const idxs = Array.from(Array(posts.length).keys());
-  const sortIdxs = idxs.sort((a, b) =>
-    sortVals[a] < sortVals[b] ? -1 : (sortVals[b] < sortVals[a]) | 0
-  );
-
-  return order === "reverse"
-    ? sortIdxs.map((i) => posts[i]).reverse()
-    : sortIdxs.map((i) => posts[i]);
+  return posts;
 };
 
 export const fetchPost = async (slug) => {
