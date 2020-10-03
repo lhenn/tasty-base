@@ -9,6 +9,7 @@ export const SourceContainer = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
+  padding: 5px;
 `;
 
 const StyledWebSourceLink = styled.a`
