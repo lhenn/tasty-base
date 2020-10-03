@@ -9,23 +9,14 @@ const TitleStyles = css`
   }
 `;
 
-export const StyledTitle = styled.h1`
+const StyledTitle = styled.h1`
   ${TitleStyles}
 `;
-
-const TransparentStyledTitle = styled(StyledTitle)`
-  opacity: 0.4;
-`;
-
-export const TitlePlaceholder = () => (
-  <TransparentStyledTitle>Title</TransparentStyledTitle>
-);
 
 export const DisplayTitle = ({ title }) => <StyledTitle>{title}</StyledTitle>;
 
 const StyledTitleInput = styled.input`
   ${TitleStyles}
-  // border: none;
 `;
 
 export const TitleEditor = ({ title, set }) => {

@@ -105,28 +105,34 @@ export const DisplayRatings = (ratings) => {
 };
 
 // Subscribe and unsubscribe functions are for updating rating values in components when the database values are updated (in recipe-preview and display-recipe)
-export const SubscribeToRatings = (slug, initialTaste, initialEase, setTaste, setEase) => {
+export const SubscribeToRatings = (
+  slug,
+  initialTaste,
+  initialEase,
+  setTaste,
+  setEase
+) => {
   firebase
-  .database()
-  .ref(`posts/${slug}/taste`)
-  .on("value", (snapshot) => {
-    if(JSON.stringify(snapshot.val()) !== JSON.stringify(initialTaste)){
-      setTaste(snapshot.val());
-    }
-  });
+    .database()
+    .ref(`posts/${slug}/taste`)
+    .on("value", (snapshot) => {
+      if (JSON.stringify(snapshot.val()) !== JSON.stringify(initialTaste)) {
+        setTaste(snapshot.val());
+      }
+    });
   firebase
-  .database()
-  .ref(`posts/${slug}/ease`)
-  .on("value", (snapshot) => {
-    if(JSON.stringify(snapshot.val()) !== JSON.stringify(initialEase)){
-      setEase(snapshot.val());
-    }
-  });
-}
+    .database()
+    .ref(`posts/${slug}/ease`)
+    .on("value", (snapshot) => {
+      if (JSON.stringify(snapshot.val()) !== JSON.stringify(initialEase)) {
+        setEase(snapshot.val());
+      }
+    });
+};
 export const UnsubscribeFromRatings = (slug) => {
-firebase.database().ref(`posts/${slug}/taste`).off("value");
+  firebase.database().ref(`posts/${slug}/taste`).off("value");
   firebase.database().ref(`posts/${slug}/ease`).off("value");
-}
+};
 
 export const RatingInput = ({ value, set }) => (
   <input
@@ -145,73 +151,42 @@ export const RatingInput = ({ value, set }) => (
 const StyledRatingEditor = styled(RatingWrapper)``;
 
 const StyledRatingInput = styled.input`
-  position: absolute;
   width: 70px;
-  opacity: 0;
-  &:invalid {
-    opacity: 1;
-  }
-  ${StyledRatingEditor}:focus-within & {
-    opacity: 1;
-  }
 `;
 
-const StyledDots = styled.div`
-  width: 100px;
-  opacity: 1;
-  ${StyledRatingInput}:invalid + & {
-    opacity: 0;
-  }
-  ${RatingWrapper}:focus-within & {
-    opacity: 0;
-  }
+const MarginedDiv = styled.div`
+  margin: 5px;
 `;
 
 export const RatingsEditor = ({ taste, setTaste, ease, setEase }) => {
   return (
     <RatingsContainer>
-      <RatingWrapper>
-        <RatingLabel>taste </RatingLabel>
-        <StyledRatingEditor>
-          <StyledDots>
-            <Dots
-              id="taste-dots"
-              name="taste"
-              value={taste}
-              color={colors["taste"]}
-            />
-          </StyledDots>
-          <StyledRatingInput
-            type="number"
-            min={`${minRating}`}
-            max={`${maxRating}`}
-            step={`${ratingStep}`}
-            value={taste}
-            onChange={(e) => setTaste(parseFloatOrEmpty(e.target.value))}
-          />
-        </StyledRatingEditor>
-      </RatingWrapper>
-      <RatingWrapper>
-        <RatingLabel>ease </RatingLabel>
-        <StyledRatingEditor>
-          <StyledDots>
-            <Dots
-              id="ease-dots"
-              name="ease"
-              value={ease}
-              color={colors["ease"]}
-            />
-          </StyledDots>
-          <StyledRatingInput
-            type="number"
-            min={`${minRating}`}
-            max={`${maxRating}`}
-            step={`${ratingStep}`}
-            value={ease}
-            onChange={(e) => setEase(parseFloatOrEmpty(e.target.value))}
-          />
-        </StyledRatingEditor>
-      </RatingWrapper>
+      <MarginedDiv>
+        {"taste: "}
+        <StyledRatingInput
+          type="number"
+          placeholder="--"
+          min={`${minRating}`}
+          max={`${maxRating}`}
+          step={`${ratingStep}`}
+          value={taste}
+          onChange={(e) => setTaste(parseFloatOrEmpty(e.target.value))}
+          required
+        />
+      </MarginedDiv>
+      <MarginedDiv>
+        {"ease: "}
+        <StyledRatingInput
+          type="number"
+          placeholder="--"
+          min={`${minRating}`}
+          max={`${maxRating}`}
+          step={`${ratingStep}`}
+          value={ease}
+          onChange={(e) => setEase(parseFloatOrEmpty(e.target.value))}
+          required
+        />
+      </MarginedDiv>
     </RatingsContainer>
   );
 };

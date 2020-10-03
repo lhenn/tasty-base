@@ -1,7 +1,6 @@
 import React, { useRef } from "react";
 import styled from "styled-components";
 import { defaultTransparent } from "../../styling";
-import { ImageWithPlaceholder } from "../../utils";
 
 export const DisplayCoverImage = styled.img`
   height: 400px;
@@ -15,34 +14,25 @@ export const CardCoverImage = styled.img`
   object-fit: cover;
 `;
 
-const CoverImagePlaceholderWrapper = styled.div`
-  height: 100px;
-  width: 100%;
-  background: #e8e8e8;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-const CoverImagePlaceholder = () => (
-  <CoverImagePlaceholderWrapper>
-    <p style={{ margin: "0", padding: "0", opacity: defaultTransparent }}>
-      No cover image selected
-    </p>
-  </CoverImagePlaceholderWrapper>
-);
-
 const StyledWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  background-image: url(${(props) => props.src});
+  background-image: url(${(props) => props.src}),
+    url("https://via.placeholder.com/1000x400?text=Click+to+add+cover+image");
   background-repeat: no-repeat;
   background-size: cover;
   height: 400px;
   z-index: 0;
+  margin: 12px 0;
   &:focus-within {
-    opacity: ${defaultTransparent};
+    background: linear-gradient(
+        rgba(255, 255, 255, ${defaultTransparent}),
+        rgba(255, 255, 255, ${defaultTransparent})
+      ),
+      url(${(props) => props.src});
+    background-repeat: no-repeat;
+    background-size: cover;
   }
 `;
 
@@ -50,6 +40,7 @@ const StyledCoverImageInput = styled.input`
   margin: 0 auto;
   opacity: 0;
   z-index: 1;
+  width: 80%;
   &:invalid {
     opacity: 1;
   }
@@ -57,13 +48,6 @@ const StyledCoverImageInput = styled.input`
     opacity: 1;
   }
 `;
-
-// const StyledImageWithPlaceholder = styled(ImageWithPlaceholder)`
-//   opacity: 1;
-//   ${StyledWrapper}:focus-within & {
-//     opacity: ${defaultTransparent};
-//   }
-// `;
 
 export const CoverImageEditor = ({ src, set }) => {
   const inputRef = useRef();
@@ -82,13 +66,6 @@ export const CoverImageEditor = ({ src, set }) => {
         value={src}
         onChange={(e) => set(e.target.value)}
       />
-      {/*<StyledImageWithPlaceholder
-        src={src}
-        alt="cover image"
-        Image={DisplayCoverImage}
-        Placeholder={CoverImagePlaceholder}
-        onClick={() => inputRef.current.focus()}
-      />*/}
     </StyledWrapper>
   );
 };

@@ -5,9 +5,8 @@ import { BasicInfoEditor, DisplayBasicInfo } from "./basic-info";
 import { DisplayRatings, RatingsEditor } from "./ratings";
 import { DisplaySource, SourceEditor } from "./source";
 
-
 const OverviewWrapper = styled.div`
-  margin: 25px 0;
+  margin: 12px 0;
   width: 100%;
   display: flex;
   flex-direction: row;
@@ -23,10 +22,10 @@ const OverviewFirstColumn = styled.div`
   flex-direction: column;
   align-items: center;
   text-align: center;
-  justify-content:center;
+  justify-content: center;
   width: 100%;
   @media (max-width: 700px) {
-    align-items:flex-start;
+    align-items: flex-start;
   }
 `;
 
@@ -35,11 +34,11 @@ const OverviewColumn = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content:center;
+  justify-content: center;
   width: 100%;
   @media (max-width: 700px) {
     border: 0;
-    align-items:flex-start;
+    align-items: flex-start;
   }
 `;
 
@@ -70,8 +69,6 @@ export const DisplayOverview = ({
 );
 
 export const OverviewEditor = ({
-  authorName,
-  timestamp,
   sourceType,
   setSourceType,
   source,
@@ -88,7 +85,6 @@ export const OverviewEditor = ({
   return (
     <OverviewWrapper>
       <OverviewFirstColumn>
-        <AuthorDate authorName={authorName} timestamp={timestamp} />
         <SourceEditor
           sourceType={sourceType}
           setSourceType={setSourceType}

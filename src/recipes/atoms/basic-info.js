@@ -10,23 +10,36 @@ export const BasicInfoContainer = styled.div`
   flex-direction: column;
   align-items: center;
   @media (max-width: 700px) {
-    align-items:flex-start;
+    align-items: flex-start;
   }
 `;
 const Icon = styled(FontAwesomeIcon)`
-  color:${blueBase}
+  color: ${blueBase};
 `;
 
 export const DisplayBasicInfo = ({ time, servings }) => (
   <BasicInfoContainer>
-    {time && <div><Icon icon={faClock}/>&nbsp;&nbsp;{time} min </div>}
-    {servings && <div><Icon icon={faUtensilSpoon}/>&nbsp;&nbsp;{servings} servings</div>}
+    {time && (
+      <div>
+        <Icon icon={faClock} />
+        &nbsp;&nbsp;{time} min{" "}
+      </div>
+    )}
+    {servings && (
+      <div>
+        <Icon icon={faUtensilSpoon} />
+        &nbsp;&nbsp;{servings} servings
+      </div>
+    )}
   </BasicInfoContainer>
 );
 
 const StyledPositiveIntInput = styled.input`
-  border: none;
-	width: 80px;
+  width: 80px;
+`;
+
+const MarginedDiv = styled.div`
+  margin: 5px;
 `;
 
 export const BasicInfoEditor = ({ time, setTime, servings, setServings }) => {
@@ -54,8 +67,15 @@ export const BasicInfoEditor = ({ time, setTime, servings, setServings }) => {
 
   return (
     <BasicInfoContainer>
-      <p>total time: {timeInput} min</p>
-      <p>servings: {servingsInput}</p>
+      <MarginedDiv>
+        {"total time: "}
+        {timeInput}
+        {" min"}
+      </MarginedDiv>
+      <MarginedDiv>
+        {"servings: "}
+        {servingsInput}
+      </MarginedDiv>
     </BasicInfoContainer>
   );
 };

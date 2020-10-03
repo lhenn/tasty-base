@@ -1,6 +1,8 @@
 import React from "react";
 import styled from "styled-components";
 import { defaultTransparent } from "../../styling";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const InstructionsHeader = ({ solid = true }) => (
   <h2 style={{ fontSize: "30px", opacity: solid ? 1 : defaultTransparent }}>
@@ -46,7 +48,6 @@ const InstructionRow = styled.div`
 `;
 
 const InstructionTextArea = styled.textarea`
-  border: none;
   resize: none;
   min-height: 40px;
   width: 100%;
@@ -77,12 +78,12 @@ export const InstructionsEditor = ({
                 onChange={(e) => setInstructionField(index, e.target.value)}
                 onKeyDown={handleKeyDown}
               />
-              <DeleteInstructionButton
+              <FontAwesomeIcon
+                icon={faTrash}
                 id={`delete-ingredient-${index}`}
                 onClick={() => deleteInstruction(index)}
-              >
-                X
-              </DeleteInstructionButton>
+                style={{ display: "inline-block" }}
+              />
             </InstructionRow>
           </InstructionsLI>
         ))}

@@ -6,7 +6,7 @@ import { DisplayInstructions, InstructionsEditor } from "./instructions";
 const DetailsWrapper = styled.div`
   display: flex;
   width: 100%;
-  padding: 25px 0 25px 0;
+  margin: 12px 0;
   @media (max-width: 700px) {
     flex-direction: column;
   }

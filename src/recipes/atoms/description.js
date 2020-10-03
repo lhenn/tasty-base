@@ -32,14 +32,9 @@ export const DisplayDescription = ({ description }) => (
 );
 
 const StyledDescriptionInput = styled.textarea`
-  border: none;
-  background: transparent;
   resize: none;
   width: 100%;
   min-height: 40px;
-  &:focus {
-    background: white;
-  }
 `;
 
 export const DescriptionEditor = ({ description, set }) => {

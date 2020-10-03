@@ -1,15 +1,16 @@
 import { faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useState } from "react";
+import React from "react";
 import styled from "styled-components";
 import { mediumBlueBase } from "../../styling";
-import ClickToOpen from "../click-to-open";
 
 export const SourceContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: space-between;
 `;
+
 const StyledWebSourceLink = styled.a`
   display: inline-flex;
   align-items: flex-start;
@@ -20,10 +21,12 @@ const StyledWebSourceLink = styled.a`
     cursor: pointer;
   }
 `;
+
 const ExternalLinkIcon = styled(FontAwesomeIcon)`
   font-size: 15px;
   margin: 5px;
 `;
+
 const DisplayWebSource = (source) => {
   //remove href if in edit mode to prevent confusion
   return window.location.pathname.includes("edit") ? (
@@ -36,6 +39,7 @@ const DisplayWebSource = (source) => {
     </StyledWebSourceLink>
   );
 };
+
 export const DisplaySource = ({ sourceType, source }) => {
   if (sourceType === "personal") {
     return (
@@ -60,8 +64,17 @@ export const DisplaySource = ({ sourceType, source }) => {
   }
 };
 
+const StyledSourceTypeSelector = styled.select``;
+
 const SourceTypeSelector = ({ sourceType, set }) => (
-  <select value={sourceType} onChange={(e) => set(e.target.value)}>
+  <StyledSourceTypeSelector
+    value={sourceType}
+    onChange={(e) => set(e.target.value)}
+    required
+  >
+    <option value="" disabled selected>
+      Select recipe source
+    </option>
     <option value="personal">Personal</option>
     <option value="web" placeholder="Recipe URL">
       Web
@@ -69,8 +82,20 @@ const SourceTypeSelector = ({ sourceType, set }) => (
     <option value="cookbook" placeholder="Title & author">
       Cookbook
     </option>
-  </select>
+  </StyledSourceTypeSelector>
 );
+
+const StyledRatingInput = styled.input`
+  border: solid 2px #5cd032;
+  border-radius: 4px;
+`;
+
+const MarginedHideableDiv = styled.div`
+  margin: 5px;
+  &:empty {
+    display: none;
+  }
+`;
 
 export const SourceEditor = ({
   sourceType,
@@ -78,49 +103,44 @@ export const SourceEditor = ({
   source,
   setSource,
 }) => {
-  const [newSourceType, setNewSourceType] = useState(sourceType);
-  const [newSource, setNewSource] = useState(source);
-
-  const onClose = () => {
-    setSourceType(newSourceType) || setSource(newSource);
-  };
-
-  const closed = <DisplaySource sourceType={sourceType} source={source} />;
-
-  const open = (
+  return (
     <SourceContainer>
-      <SourceTypeSelector
-        sourceType={newSourceType}
-        set={(value) => {
-          setNewSourceType(value) || setNewSource("");
-        }}
-      />
-
-      {newSourceType === "web" && (
-        <input
-          type="url"
-          minLength="1"
-          id="web-source"
-          placeholder="Recipe URL"
-          value={newSource}
-          onChange={(e) => setNewSource(e.target.value)}
-          required
+      <div style={{ margin: "8px, 5px, 5px, 5px" }}>
+        <SourceTypeSelector
+          sourceType={sourceType}
+          set={(value) => {
+            setSourceType(value) || setSource("");
+          }}
         />
-      )}
+      </div>
 
-      {newSourceType === "cookbook" && (
-        <input
-          type="text"
-          minLength="1"
-          id="web-source"
-          placeholder="Cookbook title"
-          value={newSource}
-          onChange={(e) => setNewSource(e.target.value)}
-          required
-        />
-      )}
+      <MarginedHideableDiv>
+        {sourceType === "web" && (
+          <StyledRatingInput
+            type="url"
+            minLength="1"
+            id="web-source"
+            placeholder="Recipe URL"
+            value={source}
+            onChange={(e) => setSource(e.target.value)}
+            required
+          />
+        )}
+      </MarginedHideableDiv>
+
+      <MarginedHideableDiv>
+        {sourceType === "cookbook" && (
+          <StyledRatingInput
+            type="text"
+            minLength="1"
+            id="web-source"
+            placeholder="Cookbook title"
+            value={source}
+            onChange={(e) => setSource(e.target.value)}
+            required
+          />
+        )}
+      </MarginedHideableDiv>
     </SourceContainer>
   );
-
-  return <ClickToOpen open={open} closed={closed} onClose={onClose} />;
 };

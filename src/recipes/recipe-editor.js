@@ -28,7 +28,6 @@ const ImageUploaderWrapper = styled.div`
 `;
 
 const Editor = ({ author, initialContent, slug = "", history }) => {
-  console.log(">>> slug:", slug);
   const { user } = useContext(UserContext);
 
   // Make sure fields' states are defined
@@ -37,7 +36,7 @@ const Editor = ({ author, initialContent, slug = "", history }) => {
     initialContent?.coverImageURL || ""
   );
   const [sourceType, setSourceType] = useState(
-    initialContent?.sourceType || "personal"
+    initialContent?.sourceType || ""
   );
   const [source, setSource] = useState(initialContent?.source || "");
   const [time, setTime] = useState(initialContent?.time || "");
@@ -161,8 +160,6 @@ const Editor = ({ author, initialContent, slug = "", history }) => {
         <CoverImageEditor src={coverImageURL} set={setCoverImageURL} />
 
         <OverviewEditor
-          authorName={initialContent?.authorName}
-          timestamp={initialContent?.timestamp}
           {...{
             sourceType,
             setSourceType,
