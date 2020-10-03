@@ -63,7 +63,7 @@ export const addToMyList = (uid, slug, action, ratings = null) => {
             taste: ratings.taste,
           },
         };
-        console.log('should be updating:', uid, slug, action)
+  console.log("should be updating:", uid, slug, action);
   return getFirebase()
     .database()
     .ref(`/users/${uid}/data/myListRecipes/${slug}`)
@@ -112,7 +112,7 @@ export const fetchSortedPosts = async (
   const snapshots = await getFirebase()
     .database()
     .ref("/posts")
-    .orderByChild(sortBy)
+    // .orderByChild(sortBy)
     .once("value");
 
   // For some strange reason, can't just do snapshots.val()
@@ -123,7 +123,30 @@ export const fetchSortedPosts = async (
 
   await insertAuthorNames(posts);
 
-  return order === "reverse" ? posts.reverse() : posts;
+  // Sort the posts
+  let sortVals = Array.from(Array(posts.length).keys());
+  if (sortBy === "taste" || sortBy === "ease") {
+    const ratings = posts.map((p) => {
+      const entries = p.content[sortBy];
+      if (entries) return Object.values(entries).map((entry) => entry.rating);
+      else return [0.0];
+    });
+    sortVals = ratings.map(
+      (rs) => rs.reduce((prev, cur) => prev + cur, 0) / rs.length
+    );
+  } else if (sortBy === "timestamp") {
+    sortVals = posts.map((p) => p.content.timestamp);
+  }
+
+  // Find order of indices that sorts sortVals
+  const idxs = Array.from(Array(posts.length).keys());
+  const sortIdxs = idxs.sort((a, b) =>
+    sortVals[a] < sortVals[b] ? -1 : (sortVals[b] < sortVals[a]) | 0
+  );
+
+  return order === "reverse"
+    ? sortIdxs.map((i) => posts[i]).reverse()
+    : sortIdxs.map((i) => posts[i]);
 };
 
 export const fetchPost = async (slug) => {
@@ -150,19 +173,26 @@ export const fetchPosts = async (slugs) => {
   return await insertAuthorNames(posts);
 };
 
-export const submitPost = async (slug, content) =>
-  await getFirebase().database().ref(`/posts/${slug}`).set(content);
+export const submitPost = async (slug, content) => {
+  const postRef = getFirebase().database().ref(`/posts/${slug}`);
+  return slug === "" ? await postRef.push(content) : await postRef.set(content);
+};
 
 export const getTimestamp = () => getFirebase().database.ServerValue.TIMESTAMP;
 
 export const addRatingToRecipe = async (slug, ratingType, ratingValue, uid) => {
-  return await getFirebase().database().ref(`/posts/${slug}/${ratingType}/${uid}`).set({
-    rating:ratingValue,
-    timestamp: getTimestamp()
-  });
-}
+  return await getFirebase()
+    .database()
+    .ref(`/posts/${slug}/${ratingType}/${uid}`)
+    .set({
+      rating: ratingValue,
+      timestamp: getTimestamp(),
+    });
+};
 
 export const removeRatingFromRecipe = async (slug, ratingType, uid) => {
-  return await getFirebase().database().ref(`/posts/${slug}/${ratingType}/${uid}`).remove()
-
-}
+  return await getFirebase()
+    .database()
+    .ref(`/posts/${slug}/${ratingType}/${uid}`)
+    .remove();
+};

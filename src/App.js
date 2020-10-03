@@ -163,7 +163,17 @@ const App = () => {
                 )}
               />
               <Route exact path="/signin" component={Signin} />
-              <Route exact path="/my-recipes" component={MyRecipes} />
+              <Route
+                exact
+                path="/my-recipes"
+                render={() => (
+                  <MyRecipes
+                    posts={posts}
+                    loadingPosts={loadingPosts}
+                    updatePosts={updatePosts}
+                  />
+                )}
+              />
               <Route exact path="/create" component={Create} />
               <Route exact path="/about" component={About} />
               <Route

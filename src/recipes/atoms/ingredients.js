@@ -1,6 +1,8 @@
 import React from "react";
 import styled from "styled-components";
 import { defaultTransparent } from "../../styling";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export const emptyIngredient = { name: "", amount: "" };
 
@@ -8,6 +10,7 @@ const IngredientsWrapper = styled.div`
   width: 33.3333%;
   border-right: 2px solid #000000;
   margin-right: 20px;
+  padding-right: 10px;
   @media (max-width: 700px) {
     width: 100%;
     border: 0;
@@ -37,16 +40,15 @@ export const DisplayIngredients = ({ ingredients }) => {
   );
 };
 
-// TODO: style this puppy
-const DeleteIngredientButton = styled.button`
-  margin-right: 10px
-`;
-
 const IngredientsInput = styled.input`
-  border: none;
   resize: none;
   min-width: 0px;
   margin-right: 10px;
+`;
+
+const IngredientsEditorRow = styled.div`
+  display: flex;
+  align-items: center;
 `;
 
 export const IngredientsEditor = ({
@@ -58,7 +60,7 @@ export const IngredientsEditor = ({
     <IngredientsWrapper id="ingredients-editor-wrapper">
       <IngredientsHeader solid={ingredients.length > 1} />
       {ingredients.map((ingredient, index) => (
-        <div style={{display: "flex"}} key={`ingredient-${index}`}>
+        <IngredientsEditorRow key={`ingredient-${index}`}>
           <IngredientsInput
             id={`ingredient-${index}-amount-input`}
             placeholder="Amount"
@@ -75,52 +77,14 @@ export const IngredientsEditor = ({
             onChange={(e) => setIngredientField(index, e.target.value, "name")}
             style={{ display: "inline-block" }}
           />
-          <DeleteIngredientButton
+          <FontAwesomeIcon
+            icon={faTrash}
             id={`delete-ingredient-${index}`}
             onClick={() => deleteIngredient(index)}
             style={{ display: "inline-block" }}
-          >
-            X
-          </DeleteIngredientButton>
-        </div>
+          />
+        </IngredientsEditorRow>
       ))}
     </IngredientsWrapper>
   );
-
-  /*const open = (
-    <IngredientsWrapper>
-      {ingredientsHeader}
-      {newIngredients.map(({ name, amount }, index) => (
-        <div
-          style={{ display: "flex", flexDirection: "row", width: "100%" }}
-          key={`ingredient-${index}`}
-        >
-          <DeleteIngredientButton
-            id={`delete-ingredient-${index}`}
-            onClick={() => deleteNewIngredient(index)}
-          >
-            X
-          </DeleteIngredientButton>
-          <input
-            type="text"
-            id={`ingredient-amount-${index}`}
-            placeholder="Amount"
-            value={amount}
-            onChange={(e) =>
-              setNewIngredientField(index, e.target.value, "amount")
-            }
-          />
-          <input
-            type="text"
-            id={`ingredient-${index}`}
-            placeholder="Name"
-            value={name}
-            onChange={(e) =>
-              setNewIngredientField(index, e.target.value, "name")
-            }
-          />
-        </div>
-      ))}
-    </IngredientsWrapper>
-  );*/
 };

@@ -16,7 +16,6 @@ import { DescriptionEditor } from "./atoms/description";
 import { DetailsEditor } from "./atoms/details";
 import { emptyIngredient } from "./atoms/ingredients";
 import { OverviewEditor } from "./atoms/overview";
-import SlugEditor from "./atoms/slug";
 import { TitleEditor } from "./atoms/title";
 import { RecipeContainer, RecipeHeader } from "./display-recipe";
 import useExpandingArray from "./form-hooks";
@@ -28,7 +27,7 @@ const ImageUploaderWrapper = styled.div`
   padding: 25px 15% 25px 15%;
 `;
 
-const Editor = ({ author, initialContent, initialSlug = "", history }) => {
+const Editor = ({ author, initialContent, slug = "", history }) => {
   const { user } = useContext(UserContext);
 
   // Make sure fields' states are defined
@@ -37,7 +36,7 @@ const Editor = ({ author, initialContent, initialSlug = "", history }) => {
     initialContent?.coverImageURL || ""
   );
   const [sourceType, setSourceType] = useState(
-    initialContent?.sourceType || "personal"
+    initialContent?.sourceType || ""
   );
   const [source, setSource] = useState(initialContent?.source || "");
   const [time, setTime] = useState(initialContent?.time || "");
@@ -63,7 +62,6 @@ const Editor = ({ author, initialContent, initialSlug = "", history }) => {
   ] = useExpandingArray(
     initialContent?.instructions ? [...initialContent.instructions] : [""]
   );
-  const [slug, setSlug] = useState(initialSlug);
 
   // Set up file handlers for ImageUploader
   const {
@@ -109,7 +107,6 @@ const Editor = ({ author, initialContent, initialSlug = "", history }) => {
 
   const onSubmit = (event) => {
     event.preventDefault();
-    console.log(">", slug);
 
     // Don't submit multiple times
     if (isSubmitting) return;
@@ -119,18 +116,20 @@ const Editor = ({ author, initialContent, initialSlug = "", history }) => {
       ...content,
       timestamp: getTimestamp(),
     };
-    console.log("SUBMITTED:", slug);
 
-    // Upload to firebase
+    // Upload to firebase and update relevant lists and ratings
     setIsSubmitting(true);
     addPromise(submitPost(slug, timestampedContent))
+      .then((snap) => {
+        // Only update the slug if the post is being created
+        if (slug === "") slug = snap.key;
+      })
       .then(() => addRatingToRecipe(slug, "ease", ease, user.uid))
       .then(() => addRatingToRecipe(slug, "taste", taste, user.uid))
       .then(() => addToMyList(user.uid, slug, "contribution"))
       .then(() => addToMyList(user.uid, slug, "check"))
       .then(() => addToMyList(user.uid, slug, "rate", { ease, taste }))
       .then(() => setIsSubmitting(false))
-      .then(() => console.log("SUBMITTED:", slug))
       .then(() => history.push(`/recipes/${slug}`));
   };
 
@@ -156,17 +155,11 @@ const Editor = ({ author, initialContent, initialSlug = "", history }) => {
       <RecipeContainer>
         <RecipeHeader>
           <TitleEditor title={title} set={setTitle} />
-          <SlugEditor
-            slug={slug}
-            setSlug={initialSlug !== "" ? undefined : setSlug}
-          />
         </RecipeHeader>
 
         <CoverImageEditor src={coverImageURL} set={setCoverImageURL} />
 
         <OverviewEditor
-          authorName={initialContent?.authorName}
-          timestamp={initialContent?.timestamp}
           {...{
             sourceType,
             setSourceType,
