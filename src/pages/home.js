@@ -9,14 +9,13 @@ import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import styled from "styled-components";
 import { UserContext } from "../App";
-import { FilterButton } from "../general/buttons";
 import Columns from "../general/columns";
 import {
   HeaderWrapper,
   PageTitle,
   PageViewOptions,
 } from "../general/page-header";
-import { greenBase, redOrangeBase, yellowBase } from "../styling";
+import { greenBase, redBase, yellowBase } from "../styling";
 
 const FilterIcon = styled(FontAwesomeIcon)`
   color: black;
@@ -29,7 +28,11 @@ const SortByContainer = styled.div`
 `;
 
 // Sort button labels and corresponding arguments for updatePosts
-const sorts = { newest: "timestamp", tastiest: "taste", easiest: "ease" };
+const sorts = [
+  { label: "newest", attribute: "timestamp" },
+  { label: "tastiest", attribute: "taste" },
+  { label: "easiest", attribute: "ease" },
+];
 
 const sortPosts = (sortBy, posts) => {
   // Extract values to sort on
@@ -61,55 +64,32 @@ const StyledLeftPaddedDiv = styled.div`
   padding-left: 10px;
 `;
 
-const Filters = ({ filter, setFilter }) => {
-  return (
-    <div>
-      <FilterButton
-        isActive={filter === "all"}
-        color={greenBase}
-        onClick={() => setFilter("all")}
-      >
-        {"all"}
-      </FilterButton>
-      <FilterButton
-        isActive={filter === "check"}
-        color={greenBase}
-        onClick={() => setFilter("check")}
-      >
-        {"made"} <FilterIcon icon={faCheck} />
-      </FilterButton>
-      <FilterButton
-        isActive={filter === "star"}
-        color={yellowBase}
-        onClick={() => setFilter("star")}
-      >
-        {"starred"} <FilterIcon icon={faStar} />
-      </FilterButton>
-      <FilterButton
-        isActive={filter === "contributions"}
-        color={redOrangeBase}
-        onClick={() => setFilter("contributions")}
-      >
-        {"contributions"} <FilterIcon icon={faLightbulb} />
-      </FilterButton>
-    </div>
-  );
-};
+const filters = [
+  { label: "all", attribute: null },
+  { label: "made", attribute: "check", icon: faCheck, color: greenBase },
+  { label: "starred", attribute: "star", icon: faStar, color: yellowBase },
+  {
+    label: "contributions",
+    attribute: "contribution",
+    icon: faLightbulb,
+    color: redBase,
+  },
+];
 
-const FilteredAllPlaceholder = ({ filter }) => {
-  if (filter === "check") {
+const FilteredAllPlaceholder = ({ attribute }) => {
+  if (attribute === "check") {
     return (
       <StyledLeftPaddedDiv>
         {"You haven't made any recipes yet."}
       </StyledLeftPaddedDiv>
     );
-  } else if (filter === "star") {
+  } else if (attribute === "star") {
     return (
       <StyledLeftPaddedDiv>
         {"You haven't starred any recipes yet."}
       </StyledLeftPaddedDiv>
     );
-  } else if (filter === "contributions") {
+  } else if (attribute === "contributions") {
     return (
       <StyledLeftPaddedDiv>
         {"You haven't contributed any recipes yet."}
@@ -118,34 +98,50 @@ const FilteredAllPlaceholder = ({ filter }) => {
   }
 };
 
+const StyledDropdownButtonDiv = styled.div``;
+
+// Labeled dropdown option list. Requires an array options whose entries have
+// key 'label'.
+const DropdownOptions = ({ label, options, cur, setCur }) => {
+  const buttons = options.map((option) => (
+    <Dropdown.Item key={option.label} onClick={() => setCur(option)}>
+      <StyledDropdownButtonDiv>
+        {option.label}{" "}
+        {option.icon && (
+          <FontAwesomeIcon icon={option.icon} color={option.color} />
+        )}
+      </StyledDropdownButtonDiv>
+    </Dropdown.Item>
+  ));
+
+  return (
+    <SortByContainer>
+      <span>{label} </span>
+      <DropdownButton title={cur.label}>{buttons}</DropdownButton>
+    </SortByContainer>
+  );
+};
+
 const Home = memo(({ loadingPosts, posts }) => {
-  const [filter, setFilter] = useState("all");
-  const [sortBy, setSortBy] = useState("newest");
+  const [curFilter, setCurFilter] = useState(filters[0]);
+  const [curSort, setCurSort] = useState(sorts[0]);
   const { user, loadingUser, userData, loadingUserData } = useContext(
     UserContext
   );
-
-  const sortButtons = Object.entries(sorts)
-    .filter((sort) => sort[0] !== sortBy)
-    .map(([label, sb]) => (
-      <Dropdown.Item key={sb} onClick={() => setSortBy(sb)}>
-        {label}
-      </Dropdown.Item>
-    ));
 
   let content;
   if (loadingPosts || loadingUser || loadingUserData) {
     content = <h1>Loading...</h1>;
   } else {
-    if (!user || filter === "all") {
-      content = <Columns posts={sortPosts(sortBy, posts)} />;
+    if (!user || curFilter.attribute === null) {
+      content = <Columns posts={sortPosts(curSort.attribute, posts)} />;
     } else if (!userData || !userData.myListRecipes) {
-      content = <FilteredAllPlaceholder filter={filter} />;
+      content = <FilteredAllPlaceholder attribute={curFilter.attribute} />;
     } else {
       // Find slugs for myListRecipes passing the filter
       const filteredSlugSet = new Set();
       for (let [slug, info] of Object.entries(userData.myListRecipes)) {
-        if (info.hasOwnProperty(filter)) {
+        if (info.hasOwnProperty(curFilter.attribute)) {
           filteredSlugSet.add(slug);
         }
       }
@@ -157,10 +153,12 @@ const Home = memo(({ loadingPosts, posts }) => {
       });
 
       if (filteredPosts.length === 0) {
-        content = <FilteredAllPlaceholder filter={filter} />;
+        content = <FilteredAllPlaceholder attribute={curFilter.attribute} />;
       } else {
         // Sort the posts
-        content = <Columns posts={sortPosts(sortBy, filteredPosts)} />;
+        content = (
+          <Columns posts={sortPosts(curSort.attribute, filteredPosts)} />
+        );
       }
     }
   }
@@ -169,13 +167,24 @@ const Home = memo(({ loadingPosts, posts }) => {
   return (
     <>
       <HeaderWrapper>
-        <PageTitle>Home</PageTitle>
-        {user && <Filters filter={filter} setFilter={setFilter} />}
+        <div>
+          <PageTitle>Home</PageTitle>
+        </div>
         <PageViewOptions>
-          <SortByContainer>
-            <span>Sort by: </span>
-            <DropdownButton title={sortBy}>{sortButtons}</DropdownButton>
-          </SortByContainer>
+          <DropdownOptions
+            label={"Sort by:"}
+            options={sorts}
+            cur={curSort}
+            setCur={setCurSort}
+          />
+          {user && (
+            <DropdownOptions
+              label={"Filter by:"}
+              options={filters}
+              cur={curFilter}
+              setCur={setCurFilter}
+            />
+          )}
         </PageViewOptions>
       </HeaderWrapper>
       {content}

@@ -13,8 +13,9 @@ export const PageTitle = styled.h1`
 `;
 
 export const PageViewOptions = styled.div`
+  width: 38%;
   display: flex;
-  justify-content: flex-end;
+  flex-direction: row-reverse;
+  justify-content: space-between;
   align-items: center;
 `;
-
