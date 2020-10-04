@@ -12,7 +12,7 @@ const getActiveIconColor = (props) => {
 
 export const Icon = styled(FontAwesomeIcon)`
   color: ${(props) =>
-    props.isactive ? getActiveIconColor(props) : "lightgrey"};
+    props.isactive == 'true' ? getActiveIconColor(props) : "lightgrey"};
   font-size: 26px;
   padding: 5px;
   margin: ${(props) => props.margins ?? "20px 5px"};

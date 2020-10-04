@@ -5,6 +5,7 @@ import { UserContext } from "../../App";
 import { addToMyList, removeFromMyList } from "../../firebase";
 import UpdatingTooltip from "../../general/tooltip";
 import { Icon } from "./generic-icons";
+import SignInRequiredTT from "./sign-in-required-tt";
 
 const Star = ({ slug }) => {
   // Busy when sending star/unstar data to firebase
@@ -21,28 +22,37 @@ const Star = ({ slug }) => {
     userData.myListRecipes[slug] &&
     userData.myListRecipes[slug].hasOwnProperty("star");
 
+    console.log('isStarred? ', isStarred)
   const star = () => {
     if (busy) return;
     setBusy(true);
-    addToMyList(user.uid, slug, "star").then(
-      () => {
-        setTTText("Starred!");
-        setBusy(false);
-      },
-      (err) => console.log("star failed with code:", err.code)
-    );
+    if (user) {
+      addToMyList(user.uid, slug, "star").then(
+        () => {
+          setTTText("Starred!");
+        },
+        (err) => console.log("star failed with code:", err.code)
+      );
+    } else {
+      setTTText("Log in or create an account to use this feature :)");
+    }
+    setBusy(false);
   };
 
   const unstar = () => {
     if (busy) return;
     setBusy(true);
-    removeFromMyList(user.uid, slug, "star").then(
-      () => {
-        setTTText("Unstarred!");
-        setBusy(false);
-      },
-      (err) => console.log("unstar failed with code:", err.code)
-    );
+    if (user) {
+      removeFromMyList(user.uid, slug, "star").then(
+        () => {
+          setTTText("Unstarred!");
+          setBusy(false);
+        },
+        (err) => console.log("unstar failed with code:", err.code)
+      );
+    } else {
+      setTTText("Log in or create an account to use this feature :)");
+    }
   };
 
   const onClick = () => (!isStarred ? star() : unstar());
@@ -50,20 +60,38 @@ const Star = ({ slug }) => {
   const onMouseEnter = () => {
     !isStarred ? setTTText("Star") : setTTText("Unstar");
   };
-
   return (
-    <OverlayTrigger
-      placement="bottom"
-      trigger={["hover", "focus"]}
-      overlay={<UpdatingTooltip id="star-tooltip">{ttText}</UpdatingTooltip>}
-    >
-      <Icon
-        icon={faStar}
-        isactive={isStarred}
-        onClick={onClick}
-        onMouseEnter={onMouseEnter}
-      />
-    </OverlayTrigger>
+    <>
+      {user ? (
+        <OverlayTrigger
+          placement="bottom"
+          trigger={["hover", "focus"]}
+          overlay={
+            <UpdatingTooltip id="star-tooltip">{ttText}</UpdatingTooltip>
+          }
+        >
+          <Icon
+            icon={faStar}
+            isactive={isStarred ? 'true' : undefined}
+            onClick={onClick}
+            onMouseEnter={onMouseEnter}
+          />
+        </OverlayTrigger>
+      ) : (
+        <OverlayTrigger
+          placement="bottom"
+          trigger={["click"]}
+          overlay={
+            <UpdatingTooltip id="no-signin-tooltip">{'must be signed in!'}</UpdatingTooltip>
+          }
+        rootClose
+        >
+          <Icon
+            icon={faStar}
+          />
+        </OverlayTrigger>
+      )}
+    </>
   );
 };
 

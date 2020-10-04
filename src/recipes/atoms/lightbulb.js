@@ -6,7 +6,7 @@ const Lightbulb = ({ contribution }) => (
   <Icon
     style={{ fontSize: "32px", marginTop: "18px" }}
     icon={faLightbulb}
-    isactive={contribution}
+    isactive={contribution ? 'true' : undefined}
   />
 );
 
