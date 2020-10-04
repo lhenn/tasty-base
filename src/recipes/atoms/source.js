@@ -86,11 +86,6 @@ const SourceTypeSelector = ({ sourceType, set }) => (
   </StyledSourceTypeSelector>
 );
 
-const StyledRatingInput = styled.input`
-  border: solid 2px #5cd032;
-  border-radius: 4px;
-`;
-
 const MarginedHideableDiv = styled.div`
   margin: 5px;
   &:empty {
@@ -117,7 +112,7 @@ export const SourceEditor = ({
 
       <MarginedHideableDiv>
         {sourceType === "web" && (
-          <StyledRatingInput
+          <input
             type="url"
             minLength="1"
             id="web-source"
@@ -131,7 +126,7 @@ export const SourceEditor = ({
 
       <MarginedHideableDiv>
         {sourceType === "cookbook" && (
-          <StyledRatingInput
+          <input
             type="text"
             minLength="1"
             id="web-source"
