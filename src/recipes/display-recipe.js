@@ -71,12 +71,10 @@ const DisplayRecipePost = ({ content, slug }) => {
     <RecipeContainer>
       <RecipeHeader>
         <DisplayTitle title={content.title} />
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <Icons
-            slug={slug}
-            contribution={!loadingUser && user && content.author === user.uid}
-          />
-        </div>
+        <Icons
+          slug={slug}
+          contribution={!loadingUser && user && content.author === user.uid}
+        />
       </RecipeHeader>
 
       {content.coverImageURL && (

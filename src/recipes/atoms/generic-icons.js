@@ -16,6 +16,7 @@ export const Icon = styled(FontAwesomeIcon)`
   font-size: 26px;
   padding: 5px;
   margin: ${(props) => props.margins ?? "20px 5px"};
+  width: 1.125em !important;
   @media (max-width: 700px) {
     margin: 5px;
   }

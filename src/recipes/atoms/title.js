@@ -4,6 +4,7 @@ import styled, { css } from "styled-components";
 const TitleStyles = css`
   color: black;
   font-size: 40px;
+  width:100%;
   @media (max-width: 700px) {
     font-size: 36px;
   }

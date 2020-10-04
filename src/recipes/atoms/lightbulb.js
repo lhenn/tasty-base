@@ -12,7 +12,6 @@ const Lightbulb = ({ contribution }) => {
     <>
       {user ? (
         <Icon
-          style={{ fontSize: "32px", marginTop: "18px" }}
           icon={faLightbulb}
           isactive={contribution ? "true" : undefined}
         />

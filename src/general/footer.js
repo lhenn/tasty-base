@@ -5,7 +5,7 @@ import { blueBase } from "../styling"
 
 const StyledFooter = styled.div`
   display: flex;
-  height: 50px;
+  min-height: 60px;
   text-align: center;
   align-items: center;
   background: ${blueBase};

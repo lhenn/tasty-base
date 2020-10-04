@@ -16,6 +16,8 @@ import {
   PageViewOptions,
 } from "../general/page-header";
 import { greenBase, redBase, yellowBase } from "../styling";
+import { useBreakpoint } from "../breakpoint-hooks";
+import { getLayoutSize, SMALL, MEDIUM, LARGE } from "../App";
 
 const FilterIcon = styled(FontAwesomeIcon)`
   color: black;
@@ -26,7 +28,7 @@ const SortByContainer = styled.div`
   display: flex;
   align-items: center;
   padding-left:20px;
-  @media(max-width:450px){
+  @media(max-width:850px){
     padding-left:0;
     padding-right:10px;
   }
@@ -136,6 +138,9 @@ const Home = memo(({ loadingPosts, posts }) => {
   const { user, loadingUser, userData, loadingUserData } = useContext(
     UserContext
   );
+  const matches = useBreakpoint();
+  const layoutSize = getLayoutSize(matches);
+  console.log('layoutSize: ', layoutSize);
 
   let content;
   if (loadingPosts || loadingUser || loadingUserData) {
@@ -175,9 +180,11 @@ const Home = memo(({ loadingPosts, posts }) => {
   return (
     <>
       <HeaderWrapper>
-        <div>
+        {layoutSize !== 'small' && (
+          <div>
           <PageTitle>Home</PageTitle>
         </div>
+        )}
         <PageViewOptions>
           <DropdownOptions
             label={"Sort:"}

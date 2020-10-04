@@ -6,7 +6,7 @@ export const HeaderWrapper = styled.div`
   justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
-  @media(max-width:450px){
+  @media(max-width:850px){
     flex-direction:column;
     align-items:flex-start;
     margin-bottom:10px;

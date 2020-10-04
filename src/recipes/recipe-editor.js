@@ -7,7 +7,7 @@ import {
   submitPost,
   addRatingToRecipe,
 } from "../firebase";
-import { PrimaryButton } from "../general/buttons";
+import { PrimaryButton, SecondaryButton } from "../general/buttons";
 import ImageUploader from "../general/image-uploader";
 import useCancellablePromises from "../promise-hooks";
 import useFileHandlers from "../useFileHandlers";
@@ -134,11 +134,8 @@ const Editor = ({ author, initialContent, slug = "", history }) => {
   };
 
   const buttons = (
-    <div style={{ textAlign: "right" }}>
-      <PrimaryButton type="submit" disabled={isSubmitting}>
-        Submit
-      </PrimaryButton>
-      <PrimaryButton
+    <div style={{ display: "flex", justifyContent: "flex-end", padding:"20px 0 10px 0"}}>
+      <SecondaryButton
         type="button"
         onClick={(event) => {
           event.preventDefault();
@@ -146,7 +143,11 @@ const Editor = ({ author, initialContent, slug = "", history }) => {
         }}
       >
         Cancel
+      </SecondaryButton>
+      <PrimaryButton type="submit" disabled={isSubmitting}>
+        Submit
       </PrimaryButton>
+      
     </div>
   );
 

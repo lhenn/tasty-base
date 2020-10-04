@@ -9,6 +9,34 @@ import { blueBase, containerRules, logoFont, yellowBase } from "../styling";
 import { MobileSignedInLinks, SignedInLinks } from "./signedin-links";
 import { MobileSignedOutLinks, SignedOutLinks } from "./signedout-links";
 
+// MOBILE
+const MobileClosedHeader = styled.div`
+  background-color: ${blueBase};
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+`;
+const MobileLogo = styled.p`
+  font-size: 32px;
+  font-family: ${logoFont};
+  color: white;
+  padding:0 !important;
+  margin:10px !important;
+`;
+const MobileNavDisplay = styled.button`
+  color: ${blueBase};
+  background-color: ${yellowBase};
+  border: none;
+  margin:10px;
+  width: 45px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  align-self: flex-end;
+  justify-self: flex-start;
+`;
 const MobileNavWrapper = styled.div`
   height: 100vh;
   width: 100%;
@@ -33,6 +61,7 @@ const MobileLogoWrapper = styled.div`
   justify-content: flex-start;
 `;
 
+// TABLET/DESKTOP
 const NavWrapper = styled.div`
   display: flex;
   width: 100%;
@@ -63,20 +92,6 @@ const Logo = styled.p`
   font-family: ${logoFont};
   color: white;
 `;
-const MobileNavDisplay = styled.button`
-  color: ${blueBase};
-  background-color: ${yellowBase};
-  margin: 10px;
-  border: none;
-  width: 2.7rem;
-  height: 2.7rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 26px;
-  align-self: flex-end;
-  justify-self: flex-start;
-`;
 
 const NavBar = () => {
   const [status, setStatus] = useState("close");
@@ -92,9 +107,14 @@ const NavBar = () => {
   };
   if (layoutSize === SMALL && status === "close") {
     return (
-      <MobileNavDisplay onClick={() => toggleDisplay("open")}>
-        <FontAwesomeIcon icon={faBars} />
-      </MobileNavDisplay>
+      <MobileClosedHeader>
+        <Link to="/">
+        <MobileLogo>Tasty Base</MobileLogo>
+        </Link>
+        <MobileNavDisplay onClick={() => toggleDisplay("open")}>
+          <FontAwesomeIcon icon={faBars} />
+        </MobileNavDisplay>
+      </MobileClosedHeader>
     );
   }
   if (layoutSize === SMALL && status !== "close") {

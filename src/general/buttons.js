@@ -8,8 +8,9 @@ export const PrimaryButton = styled.button`
 
 export const SecondaryButton = styled.button`
   background-color: inherit;
-  color: #775ffb;
-  border: solid 1 px #775ffb;
+  color: ${blueBase};
+  border: solid 1px ${blueBase};
+  margin-right:10px;
   &:hover {
     cursor: pointer;
   }

@@ -19,7 +19,7 @@ import { GlobalStyle, containerRules } from "./styling";
 const MainContent = styled.main`
   ${containerRules}
   margin: 0 auto;
-  min-height: 85vh;
+  flex-grow:1;
 `;
 
 export const UserContext = createContext(null); // for user info and userData
