@@ -31,17 +31,21 @@ nav a h2 {
 }
 
 /* override bootstrap components */
-.btn-primary,
-.dropdown-toggle {
-  background-color: #EFD910 !important;
+.btn-primary.dropdown-toggle {
+  display:flex !important;
+  align-items: center !important;
 color:black !important;
-  padding: 7px 15px !important;
+  padding: 5px 15px !important;
   border-radius: 50px !important;
   margin-left: 10px;
-  font-size: 15px;
+  font-size: 16px;
   border: 0 !important;
-  font-weight: bold;
-  border: 0;
+}
+#filter-btn{
+  background-color: #38b9f7bd !important;
+}
+#sort-btn{
+  background-color:#D3B0FF !important;
 }
 
 .btn-primary:focus,
@@ -59,4 +63,5 @@ color:black !important;
   padding: 0 !important;
   margin: 0 !important;
   background-color: inherit !important;
+  border:none !important;
 }

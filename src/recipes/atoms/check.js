@@ -9,12 +9,13 @@ import {
   addToMyList,
   removeFromMyList,
   addRatingToRecipe,
-  removeRatingFromRecipe
+  removeRatingFromRecipe,
 } from "../../firebase";
 import { FormGroup, FormRow, Label } from "../../forms/general-forms";
 import { PrimaryButton } from "../../general/buttons";
 import { Icon } from "./generic-icons";
 import { RatingInput } from "./ratings";
+import SignInRequiredTT from "./sign-in-required-tt";
 
 const TtInner = styled.div`
   display: flex;
@@ -131,26 +132,31 @@ const Check = ({ slug }) => {
     setBusy(true);
     removeFromMyList(user.uid, slug, "check")
       .then(() => removeFromMyList(user.uid, slug, "rate"))
-      .then(() => removeRatingFromRecipe(slug, 'ease', user.uid))
-      .then(() => removeRatingFromRecipe(slug, 'taste', user.uid))
+      .then(() => removeRatingFromRecipe(slug, "ease", user.uid))
+      .then(() => removeRatingFromRecipe(slug, "taste", user.uid))
       .then(() => {
         setBusy(false);
         setRate(false);
       });
-   
   };
 
   const onClick = () => (!isChecked ? check() : uncheck());
 
   return (
-    <div>
-      <RateToolTip
-        slug={slug}
-        closeRate={() => setRate(false)}
-        isactive={isChecked}
-        onClick={onClick}
-      />
-    </div>
+    <>
+      {user ? (
+        <RateToolTip
+          slug={slug}
+          closeRate={() => setRate(false)}
+          isactive={isChecked ? "true" : undefined}
+          onClick={onClick}
+        />
+      ) : (
+        <SignInRequiredTT
+          wrappedEl={<Icon icon={faCheck} />}
+        ></SignInRequiredTT>
+      )}
+    </>
   );
 };
 

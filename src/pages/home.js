@@ -25,6 +25,11 @@ const FilterIcon = styled(FontAwesomeIcon)`
 const SortByContainer = styled.div`
   display: flex;
   align-items: center;
+  padding-left:20px;
+  @media(max-width:450px){
+    padding-left:0;
+    padding-right:10px;
+  }
 `;
 
 // Sort button labels and corresponding arguments for updatePosts
@@ -98,7 +103,10 @@ const FilteredAllPlaceholder = ({ attribute }) => {
   }
 };
 
-const StyledDropdownButtonDiv = styled.div``;
+const StyledDropdownButtonDiv = styled.div`
+display:flex;
+justify-content:space-between;
+`;
 
 // Labeled dropdown option list. Requires an array options whose entries have
 // key 'label'.
@@ -117,7 +125,7 @@ const DropdownOptions = ({ label, options, cur, setCur }) => {
   return (
     <SortByContainer>
       <span>{label} </span>
-      <DropdownButton title={cur.label}>{buttons}</DropdownButton>
+      <DropdownButton title={cur.label} id={`${label.split(':')[0].toLowerCase()}-btn`}>{buttons}</DropdownButton>
     </SortByContainer>
   );
 };
@@ -172,14 +180,14 @@ const Home = memo(({ loadingPosts, posts }) => {
         </div>
         <PageViewOptions>
           <DropdownOptions
-            label={"Sort by:"}
+            label={"Sort:"}
             options={sorts}
             cur={curSort}
             setCur={setCurSort}
           />
           {user && (
             <DropdownOptions
-              label={"Filter by:"}
+              label={"Filter:"}
               options={filters}
               cur={curFilter}
               setCur={setCurFilter}
