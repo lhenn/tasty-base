@@ -5,7 +5,12 @@ export const HeaderWrapper = styled.div`
   padding: 10px;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
+  @media(max-width:450px){
+    flex-direction:column;
+    align-items:flex-start;
+    margin-bottom:10px;
+  }
 `;
 
 export const PageTitle = styled.h1`
@@ -13,7 +18,6 @@ export const PageTitle = styled.h1`
 `;
 
 export const PageViewOptions = styled.div`
-  width: 38%;
   display: flex;
   flex-direction: row-reverse;
   justify-content: space-between;

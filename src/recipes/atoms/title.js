@@ -3,7 +3,7 @@ import styled, { css } from "styled-components";
 
 const TitleStyles = css`
   color: black;
-  font-size: 48px;
+  font-size: 40px;
   @media (max-width: 700px) {
     font-size: 36px;
   }

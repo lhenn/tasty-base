@@ -4,10 +4,20 @@ import { createGlobalStyle } from "styled-components";
 // Container rules
 const containerWidth ="1200px";
 const containerPadding = "20px";
-export const containerRules = `max-width: ${containerWidth}; padding:${containerPadding}; width: 100%;`;
+const smallBreakPoint = "850px";
+const mobileContainerPadding = "10px";
+export const containerRules = `
+  max-width: ${containerWidth}; 
+  padding:${containerPadding}; 
+  width: 100%;
+  @media(max-width:${smallBreakPoint}){
+    padding:${mobileContainerPadding};
+  }
+  `;
 
 // Colors
 export const blueBase = "#1A153A";
+export const lightBlueBase = "#38b9f7bd";
 export const mediumBlueBase = "#4B3E99";
 export const yellowBase = "#EFD910";
 export const redBase = "#DA1947";
@@ -23,13 +33,13 @@ export const defaultTransparent = 0.4;
 export const GlobalStyle = createGlobalStyle`
   body {
     font-family: ${contentFont}, sans-serif;
-    font-size: 20px;
+    font-size: 18px;
   }
 
   button{
-    padding: 0 10px;
+    padding: 5px 15px;
     border-radius: 50px;
-    font-size: 20px;
+    font-size: 16px;
     &:focus {
       outline: none;
     }
