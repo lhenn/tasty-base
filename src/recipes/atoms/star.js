@@ -22,37 +22,32 @@ const Star = ({ slug }) => {
     userData.myListRecipes[slug] &&
     userData.myListRecipes[slug].hasOwnProperty("star");
 
-    console.log('isStarred? ', isStarred)
+  console.log("isStarred? ", isStarred);
   const star = () => {
     if (busy) return;
     setBusy(true);
-    if (user) {
-      addToMyList(user.uid, slug, "star").then(
-        () => {
-          setTTText("Starred!");
-        },
-        (err) => console.log("star failed with code:", err.code)
-      );
-    } else {
-      setTTText("Log in or create an account to use this feature :)");
-    }
+
+    addToMyList(user.uid, slug, "star").then(
+      () => {
+        setTTText("Starred!");
+      },
+      (err) => console.log("star failed with code:", err.code)
+    );
+
     setBusy(false);
   };
 
   const unstar = () => {
     if (busy) return;
     setBusy(true);
-    if (user) {
-      removeFromMyList(user.uid, slug, "star").then(
-        () => {
-          setTTText("Unstarred!");
-          setBusy(false);
-        },
-        (err) => console.log("unstar failed with code:", err.code)
-      );
-    } else {
-      setTTText("Log in or create an account to use this feature :)");
-    }
+
+    removeFromMyList(user.uid, slug, "star").then(
+      () => {
+        setTTText("Unstarred!");
+        setBusy(false);
+      },
+      (err) => console.log("unstar failed with code:", err.code)
+    );
   };
 
   const onClick = () => (!isStarred ? star() : unstar());
@@ -72,24 +67,13 @@ const Star = ({ slug }) => {
         >
           <Icon
             icon={faStar}
-            isactive={isStarred ? 'true' : undefined}
+            isactive={isStarred ? "true" : undefined}
             onClick={onClick}
             onMouseEnter={onMouseEnter}
           />
         </OverlayTrigger>
       ) : (
-        <OverlayTrigger
-          placement="bottom"
-          trigger={["click"]}
-          overlay={
-            <UpdatingTooltip id="no-signin-tooltip">{'must be signed in!'}</UpdatingTooltip>
-          }
-        rootClose
-        >
-          <Icon
-            icon={faStar}
-          />
-        </OverlayTrigger>
+        <SignInRequiredTT wrappedEl={<Icon icon={faStar} />}></SignInRequiredTT>
       )}
     </>
   );
