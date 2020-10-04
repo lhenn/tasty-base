@@ -2,15 +2,28 @@ import firebase from "firebase/app";
 import database from "firebase/database";
 import storage from "firebase/storage";
 
-const config = {
-  apiKey: "AIzaSyAZOwNwikvL7sAd_KhjYpsozA-UQBW_CGw",
-  authDomain: "tasty-base.firebaseapp.com",
-  databaseURL: "https://tasty-base.firebaseio.com",
-  projectId: "tasty-base",
-  storageBucket: "tasty-base.appspot.com",
-  messagingSenderId: "1019826146813",
-  appId: "1:1019826146813:web:c9fd1d77989f7f72d0dd94",
-};
+// Choose whether to use acceptance database or not
+const acc = true;
+
+const config = acc
+  ? {
+      apiKey: "AIzaSyBBwdt09JIae_a6KhctglvxtichhfTW0Cc",
+      authDomain: "tasty-base-acc.firebaseapp.com",
+      databaseURL: "https://tasty-base-acc.firebaseio.com",
+      projectId: "tasty-base-acc",
+      storageBucket: "tasty-base-acc.appspot.com",
+      messagingSenderId: "750981283601",
+      appId: "1:750981283601:web:1125fa0e0874ec1be656b0",
+    }
+  : {
+      apiKey: "AIzaSyAZOwNwikvL7sAd_KhjYpsozA-UQBW_CGw",
+      authDomain: "tasty-base.firebaseapp.com",
+      databaseURL: "https://tasty-base.firebaseio.com",
+      projectId: "tasty-base",
+      storageBucket: "tasty-base.appspot.com",
+      messagingSenderId: "1019826146813",
+      appId: "1:1019826146813:web:c9fd1d77989f7f72d0dd94",
+    };
 
 // TODO: is this caching step really necessary?
 let firebaseCache;
