@@ -89,7 +89,7 @@ const FilteredAllPlaceholder = ({ attribute }) => {
         {"You haven't starred any recipes yet."}
       </StyledLeftPaddedDiv>
     );
-  } else if (attribute === "contributions") {
+  } else if (attribute === "contribution") {
     return (
       <StyledLeftPaddedDiv>
         {"You haven't contributed any recipes yet."}
