@@ -14,7 +14,7 @@ const dateHoverOptions = {
   year: "numeric",
 };
 
-const dateOptions = { month: "long", day: "numeric", year: "numeric" };
+const dateOptions = { month: "short", day: "numeric", year: "numeric" };
 
 const Timestamp = ({ timestamp }) => {
   const date = new Date(timestamp);

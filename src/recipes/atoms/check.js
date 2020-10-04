@@ -147,7 +147,7 @@ const Check = ({ slug }) => {
       <RateToolTip
         slug={slug}
         closeRate={() => setRate(false)}
-        isactive={isChecked ? 1 : 0}
+        isactive={isChecked}
         onClick={onClick}
       />
     </div>

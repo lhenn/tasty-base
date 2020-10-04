@@ -59,7 +59,7 @@ const Star = ({ slug }) => {
     >
       <Icon
         icon={faStar}
-        isactive={isStarred ? 1 : 0}
+        isactive={isStarred}
         onClick={onClick}
         onMouseEnter={onMouseEnter}
       />

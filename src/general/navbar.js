@@ -1,14 +1,13 @@
-import React, { useContext, useState } from "react";
 import { faBars, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import { UserContext } from "../App";
-import { blueBase, yellowBase, logoFont, containerRules } from "../styling";
+import { getLayoutSize, SMALL, UserContext } from "../App";
+import { useBreakpoint } from "../breakpoint-hooks";
+import { blueBase, containerRules, logoFont, yellowBase } from "../styling";
 import { MobileSignedInLinks, SignedInLinks } from "./signedin-links";
 import { MobileSignedOutLinks, SignedOutLinks } from "./signedout-links";
-import { getLayoutSize, SMALL, MEDIUM, LARGE } from "../App";
-import { useBreakpoint } from "../breakpoint-hooks";
 
 const MobileNavWrapper = styled.div`
   height: 100vh;
@@ -91,14 +90,14 @@ const NavBar = () => {
     console.log("should be toggling..");
     setStatus(display);
   };
-  if (layoutSize == "small" && status == "close") {
+  if (layoutSize === SMALL && status === "close") {
     return (
       <MobileNavDisplay onClick={() => toggleDisplay("open")}>
         <FontAwesomeIcon icon={faBars} />
       </MobileNavDisplay>
     );
   }
-  if (layoutSize == "small" && status != "close") {
+  if (layoutSize === SMALL && status !== "close") {
     return (
       <MobileNavWrapper>
         <MobileNavDisplay onClick={() => toggleDisplay("close")}>
