@@ -1,10 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import { UserContext } from "../App";
 import AuthorDate from "./atoms/author-date";
 import { CardCoverImage } from "./atoms/cover-image";
 import { Icons } from "./atoms/icons";
-import { DisplayRatings, SubscribeToRatings, UnsubscribeFromRatings } from "./atoms/ratings.js";
+import {
+  DisplayRatings,
+  SubscribeToRatings,
+  UnsubscribeFromRatings,
+} from "./atoms/ratings.js";
 import { DisplayTitle } from "./atoms/title";
 
 const CardContainer = styled.div`
@@ -31,10 +36,11 @@ const BottomRow = styled.div`
   align-items: flex-end;
 `;
 
-
 const RecipePreview = ({ post: { content, slug } }) => {
   const [taste, setTaste] = useState(content.taste);
   const [ease, setEase] = useState(content.ease);
+
+  const { user, loadingUser } = useContext(UserContext);
 
   useEffect(() => {
     SubscribeToRatings(slug, content.taste, content.ease, setTaste, setEase);
@@ -59,7 +65,10 @@ const RecipePreview = ({ post: { content, slug } }) => {
           />
           <BottomRow>
             <DisplayRatings taste={taste} ease={ease} />
-            <Icons slug={slug} />
+            <Icons
+              slug={slug}
+              contribution={!loadingUser && content.author === user.uid}
+            />
           </BottomRow>
         </CardContent>
       </CardContainer>

@@ -1,10 +1,13 @@
 import { faCheck, faStar } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styled from "styled-components";
+import { redBase } from "../../styling";
+import { faLightbulb } from "@fortawesome/free-solid-svg-icons";
 
 const getActiveIconColor = (props) => {
   if (props.icon === faStar) return "#EFD910";
   if (props.icon === faCheck) return "#05CF56";
+  if (props.icon === faLightbulb) return redBase;
 };
 
 export const Icon = styled(FontAwesomeIcon)`

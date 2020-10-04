@@ -56,9 +56,10 @@ export const RecipeHeader = styled.div`
 `;
 
 const DisplayRecipePost = ({ content, slug }) => {
-  const { user } = useContext(UserContext);
+  const { user, loadingUser } = useContext(UserContext);
   const [taste, setTaste] = useState(content.taste);
   const [ease, setEase] = useState(content.ease);
+
   useEffect(() => {
     SubscribeToRatings(slug, content.taste, content.ease, setTaste, setEase);
     return UnsubscribeFromRatings;
@@ -70,7 +71,11 @@ const DisplayRecipePost = ({ content, slug }) => {
     <RecipeContainer>
       <RecipeHeader>
         <DisplayTitle title={content.title} />
-        {user && <Icons slug={slug} />}
+        <div style={{ display: "flex", alignItems: "center" }}>
+          {!loadingUser && user && (
+            <Icons slug={slug} contribution={content.author === user.uid} />
+          )}
+        </div>
       </RecipeHeader>
 
       {content.coverImageURL && (
