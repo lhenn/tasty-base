@@ -67,7 +67,7 @@ const RecipePreview = ({ post: { content, slug } }) => {
             <DisplayRatings taste={taste} ease={ease} />
             <Icons
               slug={slug}
-              contribution={!loadingUser && content.author === user.uid}
+              contribution={!loadingUser && user && content.author === user.uid}
             />
           </BottomRow>
         </CardContent>
