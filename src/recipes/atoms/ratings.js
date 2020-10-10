@@ -106,10 +106,8 @@ export const DisplayRatings = (ratings) => {
 };
 
 // Subscribe and unsubscribe functions are for updating rating values in components when the database values are updated (in recipe-preview and display-recipe)
-export const SubscribeToRatings = (
+export const subscribeToRatings = (
   slug,
-  initialTaste,
-  initialEase,
   setTaste,
   setEase
 ) => {
@@ -117,20 +115,16 @@ export const SubscribeToRatings = (
     .database()
     .ref(`posts/${slug}/taste`)
     .on("value", (snapshot) => {
-      if (JSON.stringify(snapshot.val()) !== JSON.stringify(initialTaste)) {
-        setTaste(snapshot.val());
-      }
+      setTaste(snapshot.val());
     });
   firebase
     .database()
     .ref(`posts/${slug}/ease`)
     .on("value", (snapshot) => {
-      if (JSON.stringify(snapshot.val()) !== JSON.stringify(initialEase)) {
-        setEase(snapshot.val());
-      }
+      setEase(snapshot.val());
     });
 };
-export const UnsubscribeFromRatings = (slug) => {
+export const unsubscribeFromRatings = (slug) => {
   firebase.database().ref(`posts/${slug}/taste`).off("value");
   firebase.database().ref(`posts/${slug}/ease`).off("value");
 };

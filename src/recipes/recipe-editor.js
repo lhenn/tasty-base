@@ -1,5 +1,4 @@
-import React, { useContext, useState } from "react";
-import styled from "styled-components";
+import React, { useRef, useEffect, useContext, useState } from "react";
 import { UserContext } from "../App";
 import {
   addToMyList,
@@ -8,9 +7,8 @@ import {
   addRatingToRecipe,
 } from "../firebase";
 import { PrimaryButton, SecondaryButton } from "../general/buttons";
-import ImageUploader from "../general/image-uploader";
-import useCancellablePromises from "../promise-hooks";
-import useFileHandlers from "../useFileHandlers";
+// import ImageUploader from "../general/image-uploader";
+// import useFileHandlers from "../useFileHandlers";
 import { CoverImageEditor } from "./atoms/cover-image";
 import { DescriptionEditor } from "./atoms/description";
 import { DetailsEditor } from "./atoms/details";
@@ -20,12 +18,12 @@ import { TitleEditor } from "./atoms/title";
 import { RecipeContainer, RecipeHeader } from "./display-recipe";
 import useExpandingArray from "./form-hooks";
 
-const ImageUploaderWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 25px 15% 25px 15%;
-`;
+// const ImageUploaderWrapper = styled.div`
+//   display: flex;
+//   flex-direction: column;
+//   align-items: center;
+//   padding: 25px 15% 25px 15%;
+// `;
 
 const Editor = ({ author, initialContent, slug = "", history }) => {
   const { user } = useContext(UserContext);
@@ -64,77 +62,89 @@ const Editor = ({ author, initialContent, slug = "", history }) => {
   );
 
   // Set up file handlers for ImageUploader
-  const {
-    files: galleryFiles,
-    uploaded: galleryUploaded, // uploaded files
-    status: galleryUploadStatus,
-    onSubmit: onSubmitGallery,
-    onChange: onChangeGallery,
-  } = useFileHandlers();
+  // const {
+  //   files: galleryFiles,
+  //   uploaded: galleryUploaded, // uploaded files
+  //   status: galleryUploadStatus,
+  //   onSubmit: onSubmitGallery,
+  //   onChange: onChangeGallery,
+  // } = useFileHandlers();
 
-  const content = {
-    title,
-    coverImageURL,
-    sourceType,
-    source,
-    time,
-    servings,
-    description,
-    ingredients: ingredients.slice(0, -1),
-    instructions: instructions.slice(0, -1),
-    author,
-    gallery: Object.values(galleryUploaded).map((img) => img.downloadURL),
-  };
+  // const imageUploader = (
+  //   <ImageUploaderWrapper>
+  //     <label htmlFor="post-image-uploader">{"Upload images"}</label>
+  //     <ImageUploader
+  //       id="post-image-uploader"
+  //       files={galleryFiles}
+  //       uploaded={galleryUploaded}
+  //       status={galleryUploadStatus}
+  //       onSubmit={onSubmitGallery}
+  //       onChange={onChangeGallery}
+  //       curCover={coverImageURL}
+  //       onSetCover={(url) => setCoverImageURL(url)}
+  //     />
+  //   </ImageUploaderWrapper>
+  // );
 
-  const imageUploader = (
-    <ImageUploaderWrapper>
-      <label htmlFor="post-image-uploader">{"Upload images"}</label>
-      <ImageUploader
-        id="post-image-uploader"
-        files={galleryFiles}
-        uploaded={galleryUploaded}
-        status={galleryUploadStatus}
-        onSubmit={onSubmitGallery}
-        onChange={onChangeGallery}
-        curCover={coverImageURL}
-        onSetCover={(url) => setCoverImageURL(url)}
-      />
-    </ImageUploaderWrapper>
-  );
-
+  // For disabling double submissions
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { addPromise } = useCancellablePromises();
+
+  // Keep track of whether component is mounted to avoid setting state after it
+  // unmounts
+  const isMounted = useRef(true);
+  useEffect(() => {
+    return () => (isMounted.current = false);
+  }, []);
 
   const onSubmit = (event) => {
     event.preventDefault();
 
-    // Don't submit multiple times
     if (isSubmitting) return;
 
-    // Swap Date timestamp out for special firebase one
     const timestampedContent = {
-      ...content,
+      title,
+      coverImageURL,
+      sourceType,
+      source,
+      time,
+      servings,
+      description,
+      ingredients: ingredients.slice(0, -1),
+      instructions: instructions.slice(0, -1),
+      author,
       timestamp: getTimestamp(),
+      // gallery: Object.values(galleryUploaded).map((img) => img.downloadURL),
     };
+    let actualSlug = slug;
 
     // Upload to firebase and update relevant lists and ratings
     setIsSubmitting(true);
-    addPromise(submitPost(slug, timestampedContent))
+    submitPost(actualSlug, timestampedContent)
       .then((snap) => {
         // Only update the slug if the post is being created
-        if (slug === "") slug = snap.key;
+        if (actualSlug === "") actualSlug = snap.key;
       })
-      .then(() => addRatingToRecipe(slug, "ease", ease, user.uid))
-      .then(() => addRatingToRecipe(slug, "taste", taste, user.uid))
-      .then(() => addToMyList(user.uid, slug, "contribution"))
-      .then(() => addToMyList(user.uid, slug, "check"))
-      .then(() => addToMyList(user.uid, slug, "rate", { ease, taste }))
-      .then(() => setIsSubmitting(false))
-      .then(() => history.push(`/recipes/${slug}`));
+      .then(() => addRatingToRecipe(actualSlug, "ease", ease, user.uid))
+      .then(() => addRatingToRecipe(actualSlug, "taste", taste, user.uid))
+      .then(() => addToMyList(user.uid, actualSlug, "contribution"))
+      .then(() => addToMyList(user.uid, actualSlug, "check"))
+      .then(() => addToMyList(user.uid, actualSlug, "rate", { ease, taste }))
+      .then(() => {
+        if (isMounted.current) {
+          setIsSubmitting(false);
+          history.push(`/recipes/${actualSlug}`);
+        }
+      });
   };
 
   const buttons = (
-    <div style={{ display: "flex", justifyContent: "flex-end", padding:"20px 0 10px 0"}}>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "flex-end",
+        padding: "20px 0 10px 0",
+      }}
+    >
       <SecondaryButton
         type="button"
         onClick={(event) => {
@@ -147,7 +157,6 @@ const Editor = ({ author, initialContent, slug = "", history }) => {
       <PrimaryButton type="submit" disabled={isSubmitting}>
         Submit
       </PrimaryButton>
-      
     </div>
   );
 
@@ -179,7 +188,7 @@ const Editor = ({ author, initialContent, slug = "", history }) => {
 
         <DescriptionEditor description={description} set={setDescription} />
 
-        {content.sourceType === "personal" && (
+        {sourceType === "personal" && (
           <DetailsEditor
             ingredients={ingredients}
             instructions={instructions}

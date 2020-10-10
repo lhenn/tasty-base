@@ -8,7 +8,7 @@ import { DisplayDetails } from "./atoms/details";
 import { Icons } from "./atoms/icons";
 import { DisplayOverview } from "./atoms/overview";
 import { DisplayTitle } from "./atoms/title";
-import { SubscribeToRatings, UnsubscribeFromRatings } from "./atoms/ratings.js";
+import { subscribeToRatings, unsubscribeFromRatings } from "./atoms/ratings.js";
 
 // box-shadow: 10px 10px 5px -10px rgba(0, 0, 0, 0.75);
 export const RecipeContainer = styled.div`
@@ -61,8 +61,22 @@ const DisplayRecipePost = ({ content, slug }) => {
   const [ease, setEase] = useState(content.ease);
 
   useEffect(() => {
-    SubscribeToRatings(slug, content.taste, content.ease, setTaste, setEase);
-    return UnsubscribeFromRatings;
+    let isMounted = true;
+
+    subscribeToRatings(
+      slug,
+      (newTaste) => {
+        if (isMounted) setTaste(newTaste);
+      },
+      (newEase) => {
+        if (isMounted) setEase(newEase);
+      }
+    );
+
+    return () => {
+      isMounted = false;
+      unsubscribeFromRatings(slug);
+    };
   }, []);
 
   if (!content) return <h1>Loading recipe post...</h1>;

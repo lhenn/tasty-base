@@ -7,8 +7,8 @@ import { CardCoverImage } from "./atoms/cover-image";
 import { Icons } from "./atoms/icons";
 import {
   DisplayRatings,
-  SubscribeToRatings,
-  UnsubscribeFromRatings,
+  subscribeToRatings,
+  unsubscribeFromRatings,
 } from "./atoms/ratings.js";
 import { DisplayTitle } from "./atoms/title";
 
@@ -43,8 +43,22 @@ const RecipePreview = ({ post: { content, slug } }) => {
   const { user, loadingUser } = useContext(UserContext);
 
   useEffect(() => {
-    SubscribeToRatings(slug, content.taste, content.ease, setTaste, setEase);
-    return UnsubscribeFromRatings;
+    let isMounted = true;
+
+    subscribeToRatings(
+      slug,
+      (newTaste) => {
+        if (isMounted) setTaste(newTaste);
+      },
+      (newEase) => {
+        if (isMounted) setEase(newEase);
+      }
+    );
+
+    return () => {
+      isMounted = false;
+      unsubscribeFromRatings(slug);
+    };
   }, []);
 
   return (
