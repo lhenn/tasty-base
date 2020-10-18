@@ -4,7 +4,7 @@ import {
   faStar,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { memo, useContext, useState } from "react";
+import React, { memo, useEffect, useContext, useState } from "react";
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import styled from "styled-components";
@@ -22,10 +22,10 @@ import { getLayoutSize, SMALL } from "../App";
 const SortByContainer = styled.div`
   display: flex;
   align-items: center;
-  padding-left:20px;
-  @media(max-width:850px){
-    padding-left:0;
-    padding-right:10px;
+  padding-left: 20px;
+  @media (max-width: 850px) {
+    padding-left: 0;
+    padding-right: 10px;
   }
 `;
 
@@ -100,8 +100,8 @@ const FilteredAllPlaceholder = ({ attribute }) => {
 };
 
 const StyledDropdownButtonDiv = styled.div`
-display:flex;
-justify-content:space-between;
+  display: flex;
+  justify-content: space-between;
 `;
 
 // Labeled dropdown option list. Requires an array options whose entries have
@@ -121,12 +121,17 @@ const DropdownOptions = ({ label, options, cur, setCur }) => {
   return (
     <SortByContainer>
       <span>{label} </span>
-      <DropdownButton title={cur.label} id={`${label.split(':')[0].toLowerCase()}-btn`}>{buttons}</DropdownButton>
+      <DropdownButton
+        title={cur.label}
+        id={`${label.split(":")[0].toLowerCase()}-btn`}
+      >
+        {buttons}
+      </DropdownButton>
     </SortByContainer>
   );
 };
 
-const Home = memo(({ loadingPosts, posts }) => {
+const Home = memo(({ loadingPosts, posts, updatePosts }) => {
   const [curFilter, setCurFilter] = useState(filters[0]);
   const [curSort, setCurSort] = useState(sorts[0]);
   const { user, loadingUser, userData, loadingUserData } = useContext(
@@ -134,7 +139,9 @@ const Home = memo(({ loadingPosts, posts }) => {
   );
   const matches = useBreakpoint();
   const layoutSize = getLayoutSize(matches);
-  console.log('layoutSize: ', layoutSize);
+
+  // Make sure posts are fresh
+  useEffect(updatePosts, []);
 
   let content;
   if (loadingPosts || loadingUser || loadingUserData) {
@@ -176,8 +183,8 @@ const Home = memo(({ loadingPosts, posts }) => {
       <HeaderWrapper>
         {layoutSize !== SMALL && (
           <div>
-          <PageTitle>Home</PageTitle>
-        </div>
+            <PageTitle>Home</PageTitle>
+          </div>
         )}
         <PageViewOptions>
           <DropdownOptions

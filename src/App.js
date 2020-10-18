@@ -15,11 +15,10 @@ import Signin from "./pages/signin";
 import SelfLoadingRecipePost from "./recipes/recipe-post";
 import { GlobalStyle, containerRules } from "./styling";
 
-// background-color: whitesmoke;
 const MainContent = styled.main`
   ${containerRules}
   margin: 0 auto;
-  flex-grow:1;
+  flex-grow: 1;
 `;
 
 export const UserContext = createContext(null); // for user info and userData
@@ -100,9 +99,7 @@ const App = () => {
   // it's still resolving. Probably need state variable to keep track of any
   // pending post updates as a cancellable Promise.
   const updatePosts = () => {
-    if (loadingPosts) {
-      console.log("cannot call updatePosts: already loading posts!");
-    } else {
+    if (!loadingPosts) {
       setPosts({ posts: [], loadingPosts: true });
       fetchSortedPosts().then(
         (newPosts) => {
@@ -149,7 +146,11 @@ const App = () => {
                 exact
                 path="/"
                 render={() => (
-                  <Home posts={posts} loadingPosts={loadingPosts} />
+                  <Home
+                    posts={posts}
+                    loadingPosts={loadingPosts}
+                    updatePosts={updatePosts}
+                  />
                 )}
               />
               <Route exact path="/signin" component={Signin} />
