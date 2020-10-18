@@ -4,18 +4,9 @@ import storage from "firebase/storage";
 
 // Choose whether to use acceptance database or not
 const acc = true;
+const version = acc ? 'acceptance' : 'production';
 
-const config = acc
-  ? {
-      apiKey: "AIzaSyBBwdt09JIae_a6KhctglvxtichhfTW0Cc",
-      authDomain: "tasty-base-acc.firebaseapp.com",
-      databaseURL: "https://tasty-base-acc.firebaseio.com",
-      projectId: "tasty-base-acc",
-      storageBucket: "tasty-base-acc.appspot.com",
-      messagingSenderId: "750981283601",
-      appId: "1:750981283601:web:1125fa0e0874ec1be656b0",
-    }
-  : {
+const config = {
       apiKey: "AIzaSyAZOwNwikvL7sAd_KhjYpsozA-UQBW_CGw",
       authDomain: "tasty-base.firebaseapp.com",
       databaseURL: "https://tasty-base.firebaseio.com",
@@ -39,28 +30,49 @@ export const getFirebase = () => {
   return firebase;
 };
 
+// Update the user's information in Firebase whenever they log in
+export const updateUser = (user) => {
+  getFirebase().database().ref(`${version}/users/${user.uid}`).update({
+    name: user.displayName,
+    email: user.email,
+    photo: user.photoURL,
+  });
+};
+export const getUserData = (uid, callback) => {
+  // Listen for changes in user data
+  const userDataRef = getFirebase().database().ref(`${version}/users/${uid}/data`);
+  userDataRef.on(
+    "value",
+    (snapshot) => {
+      callback(snapshot.val());
+    },
+    (err) => console.log("getUserData error: ", err)
+  );
+  // Return unsubscribe function
+  return () => userDataRef.off();
+};
 export const starPost = (uid, slug) =>
   getFirebase()
     .database()
-    .ref(`/users/${uid}/data/starredRecipes/${slug}`)
+    .ref(`${version}/users/${uid}/data/starredRecipes/${slug}`)
     .set(getFirebase().database.ServerValue.TIMESTAMP);
 
 export const unstarPost = (uid, slug) =>
   getFirebase()
     .database()
-    .ref(`/users/${uid}/data/starredRecipes/${slug}`)
+    .ref(`${version}/users/${uid}/data/starredRecipes/${slug}`)
     .remove();
 
 export const checkPost = (uid, slug) =>
   getFirebase()
     .database()
-    .ref(`/users/${uid}/data/checkedRecipes/${slug}`)
+    .ref(`${version}/users/${uid}/data/checkedRecipes/${slug}`)
     .set({ timestamp: getFirebase().database.ServerValue.TIMESTAMP });
 
 export const uncheckPost = (uid, slug) =>
   getFirebase()
     .database()
-    .ref(`/users/${uid}/data/checkedRecipes/${slug}`)
+    .ref(`${version}/users/${uid}/data/checkedRecipes/${slug}`)
     .remove();
 
 export const addToMyList = (uid, slug, action, ratings = null) => {
@@ -79,20 +91,20 @@ export const addToMyList = (uid, slug, action, ratings = null) => {
   console.log("should be updating:", uid, slug, action);
   return getFirebase()
     .database()
-    .ref(`/users/${uid}/data/myListRecipes/${slug}`)
+    .ref(`${version}/users/${uid}/data/myListRecipes/${slug}`)
     .update(entry);
 };
 export const removeFromMyList = (uid, slug, action) =>
   getFirebase()
     .database()
-    .ref(`/users/${uid}/data/myListRecipes/${slug}/${action}`)
+    .ref(`${version}/users/${uid}/data/myListRecipes/${slug}/${action}`)
     .remove();
 
 // TODO: restructure database to make name queries batchable?
 const fetchName = async (uid) => {
   const name = await getFirebase()
     .database()
-    .ref(`/users/${uid}/name`)
+    .ref(`${version}/users/${uid}/name`)
     .once("value");
   return name.val();
 };
@@ -119,7 +131,7 @@ const insertAuthorNames = async (posts) => {
 };
 
 export const fetchSortedPosts = async () => {
-  const snapshots = await getFirebase().database().ref("/posts").once("value");
+  const snapshots = await getFirebase().database().ref(`${version}/posts`).once("value");
 
   // For some strange reason, can't just do snapshots.val()
   const posts = [];
@@ -135,7 +147,7 @@ export const fetchSortedPosts = async () => {
 export const fetchPost = async (slug) => {
   const snapshot = await getFirebase()
     .database()
-    .ref(`posts/${slug}`)
+    .ref(`${version}/posts/${slug}`)
     .once("value");
   // Unclear why this doesn't work in a then...
   const content = snapshot.val();
@@ -148,7 +160,7 @@ export const fetchPosts = async (slugs) => {
     slugs.map((slug) =>
       getFirebase()
         .database()
-        .ref(`/posts/${slug}`)
+        .ref(`${version}/posts/${slug}`)
         .once("value")
         .then((snapshot) => ({ slug, content: snapshot.val() }))
     )
@@ -157,7 +169,7 @@ export const fetchPosts = async (slugs) => {
 };
 
 export const submitPost = async (slug, content) => {
-  const postRef = getFirebase().database().ref(`/posts/${slug}`);
+  const postRef = getFirebase().database().ref(`${version}/posts/${slug}`);
   return slug === "" ? await postRef.push(content) : await postRef.set(content);
 };
 
@@ -166,7 +178,7 @@ export const getTimestamp = () => getFirebase().database.ServerValue.TIMESTAMP;
 export const addRatingToRecipe = async (slug, ratingType, ratingValue, uid) => {
   return await getFirebase()
     .database()
-    .ref(`/posts/${slug}/${ratingType}/${uid}`)
+    .ref(`${version}/posts/${slug}/${ratingType}/${uid}`)
     .set({
       rating: ratingValue,
       timestamp: getTimestamp(),
@@ -176,6 +188,30 @@ export const addRatingToRecipe = async (slug, ratingType, ratingValue, uid) => {
 export const removeRatingFromRecipe = async (slug, ratingType, uid) => {
   return await getFirebase()
     .database()
-    .ref(`/posts/${slug}/${ratingType}/${uid}`)
+    .ref(`${version}/posts/${slug}/${ratingType}/${uid}`)
     .remove();
+};
+
+// Subscribe and unsubscribe functions are for updating rating values in components when the database values are updated (in recipe-preview and display-recipe)
+export const subscribeToRatings = (
+  slug,
+  setTaste,
+  setEase
+) => {
+  firebase
+    .database()
+    .ref(`${version}/posts/${slug}/taste`)
+    .on("value", (snapshot) => {
+      setTaste(snapshot.val());
+    });
+  firebase
+    .database()
+    .ref(`${version}/posts/${slug}/ease`)
+    .on("value", (snapshot) => {
+      setEase(snapshot.val());
+    });
+};
+export const unsubscribeFromRatings = (slug) => {
+  firebase.database().ref(`${version}/posts/${slug}/taste`).off("value");
+  firebase.database().ref(`${version}/posts/${slug}/ease`).off("value");
 };

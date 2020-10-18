@@ -8,7 +8,7 @@ import { DisplayDetails } from "./atoms/details";
 import { Icons } from "./atoms/icons";
 import { DisplayOverview } from "./atoms/overview";
 import { DisplayTitle } from "./atoms/title";
-import { subscribeToRatings, unsubscribeFromRatings } from "./atoms/ratings.js";
+import { subscribeToRatings, unsubscribeFromRatings } from "../firebase";
 
 // box-shadow: 10px 10px 5px -10px rgba(0, 0, 0, 0.75);
 export const RecipeContainer = styled.div`

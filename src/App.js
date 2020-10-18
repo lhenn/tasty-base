@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import styled from "styled-components";
 import "./App.css";
 import { BreakpointProvider } from "./breakpoint-hooks";
-import { fetchSortedPosts, getFirebase } from "./firebase";
+import { fetchSortedPosts, getFirebase, updateUser, getUserData } from "./firebase";
 import Footer from "./general/footer";
 import NavBar from "./general/navbar";
 import About from "./pages/about";
@@ -23,15 +23,6 @@ const MainContent = styled.main`
 
 export const UserContext = createContext(null); // for user info and userData
 
-// Update the user's information in Firebase whenever they log in
-const updateUser = (user) => {
-  getFirebase().database().ref(`/users/${user.uid}`).update({
-    name: user.displayName,
-    email: user.email,
-    photo: user.photoURL,
-  });
-};
-
 const onAuthStateChanged = (callback) => {
   // Subscribe to auth state changes and call the callback.
   // onAuthStateChanged() returns firebase.unsubscribe().
@@ -46,20 +37,6 @@ const onAuthStateChanged = (callback) => {
         callback(null);
       }
     });
-};
-
-const getUserData = (uid, callback) => {
-  // Listen for changes in user data
-  const userDataRef = getFirebase().database().ref(`/users/${uid}/data`);
-  userDataRef.on(
-    "value",
-    (snapshot) => {
-      callback(snapshot.val());
-    },
-    (err) => console.log("getUserData error: ", err)
-  );
-  // Return unsubscribe function
-  return () => userDataRef.off();
 };
 
 // Layout sizes
