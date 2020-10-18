@@ -3,28 +3,18 @@ import database from "firebase/database";
 import storage from "firebase/storage";
 
 // Choose whether to use acceptance database or not
-const acc = true;
-const version = acc ? 'acceptance' : 'production';
+const acc = false;
+const version = acc ? "acceptance" : "production";
 
-const config = acc
-  ? {
-      apiKey: "AIzaSyBBwdt09JIae_a6KhctglvxtichhfTW0Cc",
-      authDomain: "tasty-base-acc.firebaseapp.com",
-      databaseURL: "https://tasty-base-acc.firebaseio.com",
-      projectId: "tasty-base-acc",
-      storageBucket: "tasty-base-acc.appspot.com",
-      messagingSenderId: "750981283601",
-      appId: "1:750981283601:web:1125fa0e0874ec1be656b0",
-    }
-  : {
-      apiKey: "AIzaSyAZOwNwikvL7sAd_KhjYpsozA-UQBW_CGw",
-      authDomain: "tasty-base.firebaseapp.com",
-      databaseURL: "https://tasty-base.firebaseio.com",
-      projectId: "tasty-base",
-      storageBucket: "tasty-base.appspot.com",
-      messagingSenderId: "1019826146813",
-      appId: "1:1019826146813:web:c9fd1d77989f7f72d0dd94",
-    };
+const config = {
+  apiKey: "AIzaSyBBwdt09JIae_a6KhctglvxtichhfTW0Cc",
+  authDomain: "tasty-base-acc.firebaseapp.com",
+  databaseURL: "https://tasty-base-acc.firebaseio.com",
+  projectId: "tasty-base-acc",
+  storageBucket: "tasty-base-acc.appspot.com",
+  messagingSenderId: "750981283601",
+  appId: "1:750981283601:web:1125fa0e0874ec1be656b0",
+};
 
 // TODO: is this caching step really necessary?
 let firebaseCache;
@@ -48,7 +38,21 @@ export const updateUser = (user) => {
     photo: user.photoURL,
   });
 };
-
+export const getUserData = (uid, callback) => {
+  // Listen for changes in user data
+  const userDataRef = getFirebase()
+    .database()
+    .ref(`${version}/users/${uid}/data`);
+  userDataRef.on(
+    "value",
+    (snapshot) => {
+      callback(snapshot.val());
+    },
+    (err) => console.log("getUserData error: ", err)
+  );
+  // Return unsubscribe function
+  return () => userDataRef.off();
+};
 export const starPost = (uid, slug) =>
   getFirebase()
     .database()
@@ -129,7 +133,10 @@ const insertAuthorNames = async (posts) => {
 };
 
 export const fetchSortedPosts = async () => {
-  const snapshots = await getFirebase().database().ref(`${version}/posts`).once("value");
+  const snapshots = await getFirebase()
+    .database()
+    .ref(`${version}/posts`)
+    .once("value");
 
   // For some strange reason, can't just do snapshots.val()
   const posts = [];
@@ -191,11 +198,7 @@ export const removeRatingFromRecipe = async (slug, ratingType, uid) => {
 };
 
 // Subscribe and unsubscribe functions are for updating rating values in components when the database values are updated (in recipe-preview and display-recipe)
-export const subscribeToRatings = (
-  slug,
-  setTaste,
-  setEase
-) => {
+export const subscribeToRatings = (slug, setTaste, setEase) => {
   firebase
     .database()
     .ref(`${version}/posts/${slug}/taste`)

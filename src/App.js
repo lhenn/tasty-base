@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import styled from "styled-components";
 import "./App.css";
 import { BreakpointProvider } from "./breakpoint-hooks";
-import { fetchSortedPosts, getFirebase, updateUser } from "./firebase";
+import { fetchSortedPosts, getFirebase, updateUser, getUserData } from "./firebase";
 import Footer from "./general/footer";
 import NavBar from "./general/navbar";
 import About from "./pages/about";
@@ -38,20 +38,6 @@ const onAuthStateChanged = (callback) => {
         callback(null);
       }
     });
-};
-
-const getUserData = (uid, callback) => {
-  // Listen for changes in user data
-  const userDataRef = getFirebase().database().ref(`acceptance/users/${uid}/data`);
-  userDataRef.on(
-    "value",
-    (snapshot) => {
-      callback(snapshot.val());
-    },
-    (err) => console.log("getUserData error: ", err)
-  );
-  // Return unsubscribe function
-  return () => userDataRef.off();
 };
 
 // Layout sizes
