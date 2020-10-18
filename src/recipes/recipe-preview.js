@@ -5,11 +5,8 @@ import { UserContext } from "../App";
 import AuthorDate from "./atoms/author-date";
 import { CardCoverImage } from "./atoms/cover-image";
 import { Icons } from "./atoms/icons";
-import {
-  DisplayRatings,
-  subscribeToRatings,
-  unsubscribeFromRatings,
-} from "./atoms/ratings.js";
+import { DisplayRatings } from "./atoms/ratings.js";
+import { subscribeToRatings, unsubscribeFromRatings } from "../firebase";
 import { DisplayTitle } from "./atoms/title";
 
 const CardContainer = styled.div`

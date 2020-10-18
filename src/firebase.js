@@ -40,6 +40,15 @@ export const getFirebase = () => {
   return firebase;
 };
 
+// Update the user's information in Firebase whenever they log in
+export const updateUser = (user) => {
+  getFirebase().database().ref(`${version}/users/${user.uid}`).update({
+    name: user.displayName,
+    email: user.email,
+    photo: user.photoURL,
+  });
+};
+
 export const starPost = (uid, slug) =>
   getFirebase()
     .database()
@@ -179,4 +188,28 @@ export const removeRatingFromRecipe = async (slug, ratingType, uid) => {
     .database()
     .ref(`${version}/posts/${slug}/${ratingType}/${uid}`)
     .remove();
+};
+
+// Subscribe and unsubscribe functions are for updating rating values in components when the database values are updated (in recipe-preview and display-recipe)
+export const subscribeToRatings = (
+  slug,
+  setTaste,
+  setEase
+) => {
+  firebase
+    .database()
+    .ref(`${version}/posts/${slug}/taste`)
+    .on("value", (snapshot) => {
+      setTaste(snapshot.val());
+    });
+  firebase
+    .database()
+    .ref(`${version}/posts/${slug}/ease`)
+    .on("value", (snapshot) => {
+      setEase(snapshot.val());
+    });
+};
+export const unsubscribeFromRatings = (slug) => {
+  firebase.database().ref(`${version}/posts/${slug}/taste`).off("value");
+  firebase.database().ref(`${version}/posts/${slug}/ease`).off("value");
 };
