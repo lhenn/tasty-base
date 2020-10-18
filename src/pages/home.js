@@ -17,12 +17,7 @@ import {
 } from "../general/page-header";
 import { greenBase, redBase, yellowBase } from "../styling";
 import { useBreakpoint } from "../breakpoint-hooks";
-import { getLayoutSize, SMALL, MEDIUM, LARGE } from "../App";
-
-const FilterIcon = styled(FontAwesomeIcon)`
-  color: black;
-  font-size: medium;
-`;
+import { getLayoutSize, SMALL } from "../App";
 
 const SortByContainer = styled.div`
   display: flex;
@@ -63,8 +58,7 @@ const sortPosts = (sortBy, posts) => {
     sortVals[a] < sortVals[b] ? -1 : (sortVals[b] < sortVals[a]) | 0
   );
 
-  if (sortBy === "timestamp") return sortIdxs.map((i) => posts[i]);
-  else return sortIdxs.map((i) => posts[i]).reverse();
+  return sortIdxs.map((i) => posts[i]).reverse();
 };
 
 const StyledLeftPaddedDiv = styled.div`
@@ -180,7 +174,7 @@ const Home = memo(({ loadingPosts, posts }) => {
   return (
     <>
       <HeaderWrapper>
-        {layoutSize !== 'small' && (
+        {layoutSize !== SMALL && (
           <div>
           <PageTitle>Home</PageTitle>
         </div>

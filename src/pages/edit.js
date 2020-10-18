@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from "react";
 import { Redirect } from "react-router-dom";
 import { UserContext } from "../App";
 import { fetchPost } from "../firebase";
-import useCancellablePromises from "../promise-hooks";
 import Editor from "../recipes/recipe-editor";
 
 const Edit = ({ history, match }) => {
@@ -10,29 +9,34 @@ const Edit = ({ history, match }) => {
   const [loadingPost, setLoadingPost] = useState(true);
   const [content, setContent] = useState();
   const [authorized, setAuthorized] = useState();
-  const { addPromise } = useCancellablePromises();
 
   const slug = match.params.slug;
 
   // Load content to make sure it's up to date
   useEffect(() => {
     if (!loadingUser) {
-      addPromise(fetchPost(slug)).then(
+      let isMounted = true;
+
+      fetchPost(slug).then(
         ({ content: fetchedContent }) => {
-          // Wait until has been set
-          if (user && fetchedContent.author !== user.uid) {
-            setAuthorized(false);
-          } else {
-            setAuthorized(true);
-            setContent(fetchedContent);
+          if (isMounted) {
+            // Wait until has been set
+            if (user && fetchedContent.author !== user.uid) {
+              setAuthorized(false);
+            } else {
+              setAuthorized(true);
+              setContent(fetchedContent);
+            }
+            setLoadingPost(false);
           }
-          setLoadingPost(false);
         },
         (err) =>
           console.log("edit: content loading failed with code: ", err.code)
       );
+
+      return () => (isMounted = false);
     }
-  }, [loadingUser, user, slug, addPromise]);
+  }, [loadingUser, user, slug]);
 
   if (loadingPost || loadingUser) {
     return <h1>Loading...</h1>;

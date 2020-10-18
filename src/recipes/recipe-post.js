@@ -3,7 +3,6 @@ import { Redirect, Link } from "react-router-dom";
 import { UserContext } from "../App";
 import { fetchPost } from "../firebase";
 import { PrimaryButton } from "../general/buttons";
-import useCancellablePromises from "../promise-hooks";
 import DisplayRecipePost from "./display-recipe";
 
 const EditButton = ({ slug }) => (
@@ -18,17 +17,22 @@ const SelfLoadingRecipePost = ({ slug }) => {
   const [loading, setLoading] = useState(true);
   const [content, setContent] = useState({});
   const { user } = useContext(UserContext);
-  const { addPromise } = useCancellablePromises();
 
   // Load recipe post when component mounts
   useEffect(() => {
-    addPromise(fetchPost(slug)).then(
+    let isMounted = true;
+
+    fetchPost(slug).then(
       (post) => {
-        setContent(post.content);
-        setLoading(false);
+        if (isMounted) {
+          setContent(post.content);
+          setLoading(false);
+        }
       },
       (err) => console.log("SelfLoadingRecipePost failed:", err)
     );
+
+    return () => (isMounted = false);
   }, []);
 
   // useEffect(() => console.log("content:", content), [content])
