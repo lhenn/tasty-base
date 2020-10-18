@@ -2,10 +2,9 @@ import styled from "styled-components";
 
 export const HeaderWrapper = styled.div`
   display: flex;
-  padding: 10px;
+  padding:25px 15px 15px 15px;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
   @media(max-width:850px){
     flex-direction:column;
     align-items:flex-start;
@@ -15,6 +14,7 @@ export const HeaderWrapper = styled.div`
 
 export const PageTitle = styled.h1`
   font-size: 28px;
+  margin:0;
 `;
 
 export const PageViewOptions = styled.div`

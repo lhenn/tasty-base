@@ -15,6 +15,7 @@ const MobileClosedHeader = styled.div`
   display:flex;
   justify-content:space-between;
   align-items:center;
+  min-height:fit-content;
 `;
 const MobileLogo = styled.p`
   font-size: 32px;
@@ -34,7 +35,7 @@ const MobileNavDisplay = styled.button`
   align-items: center;
   justify-content: center;
   font-size: 26px;
-  align-self: flex-end;
+  align-self: ${props => props.status === "closed" ? "flex-start" : "flex-end"};
   justify-self: flex-start;
 `;
 const MobileNavWrapper = styled.div`
@@ -67,7 +68,7 @@ const NavWrapper = styled.div`
   width: 100%;
   justify-content: center;
   background-color: ${blueBase};
-  height: 100px;
+  min-height:fit-content;
 `;
 
 const NavInner = styled.nav`
@@ -111,7 +112,7 @@ const NavBar = () => {
         <Link to="/">
         <MobileLogo>Tasty Base</MobileLogo>
         </Link>
-        <MobileNavDisplay onClick={() => toggleDisplay("open")}>
+        <MobileNavDisplay onClick={() => toggleDisplay("open")} status="closed">
           <FontAwesomeIcon icon={faBars} />
         </MobileNavDisplay>
       </MobileClosedHeader>

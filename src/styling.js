@@ -3,7 +3,7 @@ import { createGlobalStyle } from "styled-components";
 
 // Container rules
 const containerWidth ="1200px";
-const containerPadding = "20px";
+const containerPadding = "0 20px";
 const smallBreakPoint = "850px";
 const mobileContainerPadding = "10px";
 export const containerRules = `
