@@ -166,7 +166,6 @@ export const RatingsEditor = ({ taste, setTaste, ease, setEase }) => {
           step={`${ratingStep}`}
           value={taste}
           onChange={(e) => setTaste(parseFloatOrEmpty(e.target.value))}
-          required
         />
       </MarginedDiv>
       <MarginedDiv>
@@ -179,7 +178,6 @@ export const RatingsEditor = ({ taste, setTaste, ease, setEase }) => {
           step={`${ratingStep}`}
           value={ease}
           onChange={(e) => setEase(parseFloatOrEmpty(e.target.value))}
-          required
         />
       </MarginedDiv>
     </RatingsContainer>

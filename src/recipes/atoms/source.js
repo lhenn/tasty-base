@@ -73,7 +73,7 @@ const SourceTypeSelector = ({ sourceType, set }) => (
     onChange={(e) => set(e.target.value)}
     required
   >
-    <option value="" disabled selected>
+    <option value="" disabled>
       Select recipe source
     </option>
     <option value="personal">Personal</option>

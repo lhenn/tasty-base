@@ -119,22 +119,27 @@ const Editor = ({ author, initialContent, slug = "", history }) => {
 
     // Upload to firebase and update relevant lists and ratings
     setIsSubmitting(true);
-    submitPost(actualSlug, timestampedContent)
+    let newPostPromise = submitPost(actualSlug, timestampedContent)
       .then((snap) => {
         // Only update the slug if the post is being created
         if (actualSlug === "") actualSlug = snap.key;
       })
-      .then(() => addRatingToRecipe(actualSlug, "ease", ease, user.uid))
-      .then(() => addRatingToRecipe(actualSlug, "taste", taste, user.uid))
-      .then(() => addToMyList(user.uid, actualSlug, "contribution"))
-      .then(() => addToMyList(user.uid, actualSlug, "check"))
-      .then(() => addToMyList(user.uid, actualSlug, "rate", { ease, taste }))
-      .then(() => {
-        if (isMounted.current) {
-          setIsSubmitting(false);
-          history.push(`/recipes/${actualSlug}`);
-        }
-      });
+      .then(() => addToMyList(user.uid, actualSlug, "contribution"));
+
+    // Add ratings if both are present
+    if (taste !== "" && ease !== "") {
+      newPostPromise = newPostPromise
+        .then(() => addRatingToRecipe(actualSlug, "taste", taste, user.uid))
+        .then(() => addRatingToRecipe(actualSlug, "ease", ease, user.uid))
+        .then(() => addToMyList(user.uid, actualSlug, "rate", { ease, taste }))
+        .then(() => addToMyList(user.uid, actualSlug, "check"));
+    }
+    newPostPromise.then(() => {
+      if (isMounted.current) {
+        setIsSubmitting(false);
+        history.push(`/recipes/${actualSlug}`);
+      }
+    });
   };
 
   const buttons = (
