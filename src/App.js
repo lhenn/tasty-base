@@ -26,7 +26,7 @@ export const UserContext = createContext(null); // for user info and userData
 
 // Update the user's information in Firebase whenever they log in
 const updateUser = (user) => {
-  getFirebase().database().ref(`/users/${user.uid}`).update({
+  getFirebase().database().ref(`acceptance/users/${user.uid}`).update({
     name: user.displayName,
     email: user.email,
     photo: user.photoURL,
@@ -51,7 +51,7 @@ const onAuthStateChanged = (callback) => {
 
 const getUserData = (uid, callback) => {
   // Listen for changes in user data
-  const userDataRef = getFirebase().database().ref(`/users/${uid}/data`);
+  const userDataRef = getFirebase().database().ref(`acceptance/users/${uid}/data`);
   userDataRef.on(
     "value",
     (snapshot) => {

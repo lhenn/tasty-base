@@ -115,7 +115,7 @@ export const SubscribeToRatings = (
 ) => {
   firebase
     .database()
-    .ref(`posts/${slug}/taste`)
+    .ref(`acceptance/posts/${slug}/taste`)
     .on("value", (snapshot) => {
       if (JSON.stringify(snapshot.val()) !== JSON.stringify(initialTaste)) {
         setTaste(snapshot.val());
@@ -123,7 +123,7 @@ export const SubscribeToRatings = (
     });
   firebase
     .database()
-    .ref(`posts/${slug}/ease`)
+    .ref(`acceptance/posts/${slug}/ease`)
     .on("value", (snapshot) => {
       if (JSON.stringify(snapshot.val()) !== JSON.stringify(initialEase)) {
         setEase(snapshot.val());
@@ -131,8 +131,8 @@ export const SubscribeToRatings = (
     });
 };
 export const UnsubscribeFromRatings = (slug) => {
-  firebase.database().ref(`posts/${slug}/taste`).off("value");
-  firebase.database().ref(`posts/${slug}/ease`).off("value");
+  firebase.database().ref(`acceptance/${slug}/taste`).off("value");
+  firebase.database().ref(`acceptance/${slug}/ease`).off("value");
 };
 
 export const RatingInput = ({ value, set }) => (

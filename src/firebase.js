@@ -4,6 +4,7 @@ import storage from "firebase/storage";
 
 // Choose whether to use acceptance database or not
 const acc = true;
+const version = acc ? 'acceptance' : 'production';
 
 const config = acc
   ? {
@@ -42,25 +43,25 @@ export const getFirebase = () => {
 export const starPost = (uid, slug) =>
   getFirebase()
     .database()
-    .ref(`/users/${uid}/data/starredRecipes/${slug}`)
+    .ref(`${version}/users/${uid}/data/starredRecipes/${slug}`)
     .set(getFirebase().database.ServerValue.TIMESTAMP);
 
 export const unstarPost = (uid, slug) =>
   getFirebase()
     .database()
-    .ref(`/users/${uid}/data/starredRecipes/${slug}`)
+    .ref(`${version}/users/${uid}/data/starredRecipes/${slug}`)
     .remove();
 
 export const checkPost = (uid, slug) =>
   getFirebase()
     .database()
-    .ref(`/users/${uid}/data/checkedRecipes/${slug}`)
+    .ref(`${version}/users/${uid}/data/checkedRecipes/${slug}`)
     .set({ timestamp: getFirebase().database.ServerValue.TIMESTAMP });
 
 export const uncheckPost = (uid, slug) =>
   getFirebase()
     .database()
-    .ref(`/users/${uid}/data/checkedRecipes/${slug}`)
+    .ref(`${version}/users/${uid}/data/checkedRecipes/${slug}`)
     .remove();
 
 export const addToMyList = (uid, slug, action, ratings = null) => {
@@ -79,20 +80,20 @@ export const addToMyList = (uid, slug, action, ratings = null) => {
   console.log("should be updating:", uid, slug, action);
   return getFirebase()
     .database()
-    .ref(`/users/${uid}/data/myListRecipes/${slug}`)
+    .ref(`${version}/users/${uid}/data/myListRecipes/${slug}`)
     .update(entry);
 };
 export const removeFromMyList = (uid, slug, action) =>
   getFirebase()
     .database()
-    .ref(`/users/${uid}/data/myListRecipes/${slug}/${action}`)
+    .ref(`${version}/users/${uid}/data/myListRecipes/${slug}/${action}`)
     .remove();
 
 // TODO: restructure database to make name queries batchable?
 const fetchName = async (uid) => {
   const name = await getFirebase()
     .database()
-    .ref(`/users/${uid}/name`)
+    .ref(`${version}/users/${uid}/name`)
     .once("value");
   return name.val();
 };
@@ -119,7 +120,7 @@ const insertAuthorNames = async (posts) => {
 };
 
 export const fetchSortedPosts = async () => {
-  const snapshots = await getFirebase().database().ref("/posts").once("value");
+  const snapshots = await getFirebase().database().ref(`${version}/posts`).once("value");
 
   // For some strange reason, can't just do snapshots.val()
   const posts = [];
@@ -135,7 +136,7 @@ export const fetchSortedPosts = async () => {
 export const fetchPost = async (slug) => {
   const snapshot = await getFirebase()
     .database()
-    .ref(`posts/${slug}`)
+    .ref(`${version}/posts/${slug}`)
     .once("value");
   // Unclear why this doesn't work in a then...
   const content = snapshot.val();
@@ -148,7 +149,7 @@ export const fetchPosts = async (slugs) => {
     slugs.map((slug) =>
       getFirebase()
         .database()
-        .ref(`/posts/${slug}`)
+        .ref(`${version}/posts/${slug}`)
         .once("value")
         .then((snapshot) => ({ slug, content: snapshot.val() }))
     )
@@ -157,7 +158,7 @@ export const fetchPosts = async (slugs) => {
 };
 
 export const submitPost = async (slug, content) => {
-  const postRef = getFirebase().database().ref(`/posts/${slug}`);
+  const postRef = getFirebase().database().ref(`${version}/posts/${slug}`);
   return slug === "" ? await postRef.push(content) : await postRef.set(content);
 };
 
@@ -166,7 +167,7 @@ export const getTimestamp = () => getFirebase().database.ServerValue.TIMESTAMP;
 export const addRatingToRecipe = async (slug, ratingType, ratingValue, uid) => {
   return await getFirebase()
     .database()
-    .ref(`/posts/${slug}/${ratingType}/${uid}`)
+    .ref(`${version}/posts/${slug}/${ratingType}/${uid}`)
     .set({
       rating: ratingValue,
       timestamp: getTimestamp(),
@@ -176,6 +177,6 @@ export const addRatingToRecipe = async (slug, ratingType, ratingValue, uid) => {
 export const removeRatingFromRecipe = async (slug, ratingType, uid) => {
   return await getFirebase()
     .database()
-    .ref(`/posts/${slug}/${ratingType}/${uid}`)
+    .ref(`${version}/posts/${slug}/${ratingType}/${uid}`)
     .remove();
 };
