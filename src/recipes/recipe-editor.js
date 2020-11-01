@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useContext, useState } from "react";
+import styled from "styled-components";
 import { UserContext } from "../App";
 import {
   addToMyList,
@@ -7,8 +8,8 @@ import {
   addRatingToRecipe,
 } from "../firebase";
 import { PrimaryButton, SecondaryButton } from "../general/buttons";
-// import ImageUploader from "../general/image-uploader";
-// import useFileHandlers from "../useFileHandlers";
+ import ImageUploader from "../general/image-uploader";
+ import useFileHandlers from "../useFileHandlers";
 import { CoverImageEditor } from "./atoms/cover-image";
 import { DescriptionEditor } from "./atoms/description";
 import { DetailsEditor } from "./atoms/details";
@@ -17,13 +18,14 @@ import { OverviewEditor } from "./atoms/overview";
 import { TitleEditor } from "./atoms/title";
 import { RecipeContainer, RecipeHeader } from "./display-recipe";
 import useExpandingArray from "./form-hooks";
+import { isStyledComponent } from "styled-components";
 
-// const ImageUploaderWrapper = styled.div`
-//   display: flex;
-//   flex-direction: column;
-//   align-items: center;
-//   padding: 25px 15% 25px 15%;
-// `;
+const ImageUploaderWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 25px 15% 25px 15%;
+`;
 
 const Editor = ({ author, initialContent, slug = "", history }) => {
   const { user } = useContext(UserContext);
@@ -61,30 +63,32 @@ const Editor = ({ author, initialContent, slug = "", history }) => {
     initialContent?.instructions ? [...initialContent.instructions] : [""]
   );
 
-  // Set up file handlers for ImageUploader
-  // const {
-  //   files: galleryFiles,
-  //   uploaded: galleryUploaded, // uploaded files
-  //   status: galleryUploadStatus,
-  //   onSubmit: onSubmitGallery,
-  //   onChange: onChangeGallery,
-  // } = useFileHandlers();
+  //Set up file handlers for ImageUploader
+  const {
+    files: galleryFiles,
+    uploaded: galleryUploaded, // uploaded files
+    status: galleryUploadStatus,
+    onSubmit: onSubmitGallery,
+    onChange: onChangeGallery,
+  } = useFileHandlers();
 
-  // const imageUploader = (
-  //   <ImageUploaderWrapper>
-  //     <label htmlFor="post-image-uploader">{"Upload images"}</label>
-  //     <ImageUploader
-  //       id="post-image-uploader"
-  //       files={galleryFiles}
-  //       uploaded={galleryUploaded}
-  //       status={galleryUploadStatus}
-  //       onSubmit={onSubmitGallery}
-  //       onChange={onChangeGallery}
-  //       curCover={coverImageURL}
-  //       onSetCover={(url) => setCoverImageURL(url)}
-  //     />
-  //   </ImageUploaderWrapper>
-  // );
+  console.log('galleryUploaded', galleryUploaded)
+
+  const imageUploader = (
+    <ImageUploaderWrapper>
+      <label htmlFor="post-image-uploader">{"Upload images"}</label>
+      <ImageUploader
+        id="post-image-uploader"
+        files={galleryFiles}
+        uploaded={galleryUploaded}
+        status={galleryUploadStatus}
+        onSubmit={onSubmitGallery}
+        onChange={onChangeGallery}
+        curCover={coverImageURL}
+        onSetCover={(url) => setCoverImageURL(url)}
+      />
+    </ImageUploaderWrapper>
+  );
 
   // For disabling double submissions
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -113,7 +117,7 @@ const Editor = ({ author, initialContent, slug = "", history }) => {
       instructions: instructions.slice(0, -1),
       author,
       timestamp: getTimestamp(),
-      // gallery: Object.values(galleryUploaded).map((img) => img.downloadURL),
+      gallery: Object.values(galleryUploaded).map((img) => img.downloadURL),
     };
     let actualSlug = slug;
 
@@ -205,7 +209,7 @@ const Editor = ({ author, initialContent, slug = "", history }) => {
         )}
       </RecipeContainer>
 
-      {/*imageUploader*/}
+      {imageUploader}
 
       {buttons}
     </form>

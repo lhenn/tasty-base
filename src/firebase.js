@@ -215,3 +215,6 @@ export const unsubscribeFromRatings = (slug) => {
   firebase.database().ref(`${version}/posts/${slug}/taste`).off("value");
   firebase.database().ref(`${version}/posts/${slug}/ease`).off("value");
 };
+export const saveImagesToPost = (slug, downloadURL) => {
+  return firebase.database().ref(`${version}/posts/${slug}/images`).push(downloadURL);
+}

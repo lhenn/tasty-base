@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useReducer } from "react";
-import { getFirebase } from "./firebase";
+import { getFirebase, saveImagesToPost } from "./firebase";
 
 // Different states
 export const IDLE = "IDLE";
@@ -110,13 +110,13 @@ const useFileHandlers = () => {
           // console.log("upload is " + progress + "% done");
           switch (snapshot.state) {
             case getFirebase().storage.TaskState.PAUSED:
-              // console.log("upload is paused");
+               console.log("upload is paused");
               break;
             case getFirebase().storage.TaskState.RUNNING:
-              // console.log("upload is running");
+               console.log("upload is running");
               break;
             default:
-              // console.log("snapshot.state is ", snapshot.state);
+               console.log("snapshot.state is ", snapshot.state);
               break;
           }
         },
@@ -142,6 +142,7 @@ const useFileHandlers = () => {
             // logUploadedFile(++countRef.current);
             const pending = state.pending.slice(1);
             dispatch({ type: "file-uploaded", prev, pending, downloadURL });
+            console.log('should now save link to image in database for recipe..', downloadURL)
           });
         }
       );
