@@ -8,7 +8,7 @@ import {
   addRatingToRecipe,
 } from "../firebase";
 import { PrimaryButton, SecondaryButton } from "../general/buttons";
- import ImageUploader from "../general/image-uploader";
+import {ImageUploader, Thumbnail} from "../general/image-uploader";
  import useFileHandlers from "../useFileHandlers";
 import { CoverImageEditor } from "./atoms/cover-image";
 import { DescriptionEditor } from "./atoms/description";
@@ -18,7 +18,6 @@ import { OverviewEditor } from "./atoms/overview";
 import { TitleEditor } from "./atoms/title";
 import { RecipeContainer, RecipeHeader } from "./display-recipe";
 import useExpandingArray from "./form-hooks";
-import { isStyledComponent } from "styled-components";
 
 const ImageUploaderWrapper = styled.div`
   display: flex;
@@ -34,6 +33,9 @@ const Editor = ({ author, initialContent, slug = "", history }) => {
   const [title, setTitle] = useState(initialContent?.title || "");
   const [coverImageURL, setCoverImageURL] = useState(
     initialContent?.coverImageURL || ""
+  );
+  const [existingGallery, setExistingGallery] = useState(
+    initialContent?.gallery || []
   );
   const [sourceType, setSourceType] = useState(
     initialContent?.sourceType || ""
@@ -62,6 +64,7 @@ const Editor = ({ author, initialContent, slug = "", history }) => {
   ] = useExpandingArray(
     initialContent?.instructions ? [...initialContent.instructions] : [""]
   );
+  console.log('coverImageURL:', coverImageURL)
 
   //Set up file handlers for ImageUploader
   const {
@@ -71,8 +74,6 @@ const Editor = ({ author, initialContent, slug = "", history }) => {
     onSubmit: onSubmitGallery,
     onChange: onChangeGallery,
   } = useFileHandlers();
-
-  console.log('galleryUploaded', galleryUploaded)
 
   const imageUploader = (
     <ImageUploaderWrapper>
@@ -117,7 +118,7 @@ const Editor = ({ author, initialContent, slug = "", history }) => {
       instructions: instructions.slice(0, -1),
       author,
       timestamp: getTimestamp(),
-      gallery: Object.values(galleryUploaded).map((img) => img.downloadURL),
+      gallery: existingGallery.concat(Object.values(galleryUploaded).map((img) => img.downloadURL)),
     };
     let actualSlug = slug;
 
@@ -168,7 +169,6 @@ const Editor = ({ author, initialContent, slug = "", history }) => {
       </PrimaryButton>
     </div>
   );
-
   return (
     <form onSubmit={onSubmit}>
       <RecipeContainer>
@@ -210,7 +210,25 @@ const Editor = ({ author, initialContent, slug = "", history }) => {
       </RecipeContainer>
 
       {imageUploader}
+      {existingGallery && existingGallery.length > 0 && (
+        <p>Images will go here..</p>
 
+      )}
+      {existingGallery && existingGallery.length > 0 
+      && existingGallery.map((src) => {
+        //console.log('image:', src)
+        let token = new URLSearchParams(src).get("token"); 
+
+        return (
+          <Thumbnail key={token}
+          downloadURL={src}
+          src={src}
+          filename={'bleh'}
+          wasUploaded={true}
+          curCover={coverImageURL}
+          onSetCover={(url) => setCoverImageURL(url)}/>
+        )
+      })}
       {buttons}
     </form>
   );

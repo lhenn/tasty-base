@@ -45,7 +45,7 @@ const ThumbnailImg = styled.img`
 // Thumbnail component
 // onSetCover is called when an image is toggled/untoggled as the album cover.
 // It takes the image's URL and the file name as the alt text.
-const Thumbnail = ({
+export const Thumbnail = ({
   downloadURL,
   src,
   filename,
@@ -126,7 +126,7 @@ const UploadButton = ({ status, ...props }) => {
 //  onSetCover: called after an image is set as the cover with the src and alt
 //    props of the image.
 //  onUnsetCover: called after an image is unset as the cover with the src
-const ImageUploader = ({
+export const ImageUploader = ({
   files,
   uploaded,
   status,
@@ -173,5 +173,3 @@ const ImageUploader = ({
     </div>
   );
 };
-
-export default ImageUploader;
