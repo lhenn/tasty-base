@@ -115,7 +115,7 @@ const DisplayRecipePost = ({ content, slug }) => {
         />
       )}
 
-      {content.gallery && content.gallery.length > 0 && (
+      {content.gallery && content.gallery.length > 1 && (
         <Gallery gallery={content.gallery} />
       )}
     </RecipeContainer>
