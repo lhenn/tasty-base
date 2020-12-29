@@ -23,9 +23,9 @@ const FileInput = (props) => (
 
 // Container for thumbnail
 const ThumbnailWrapper = styled.div`
-  width: 120px;
-  align-items: center;
-  padding: 5px;
+height: 200px;
+width: 200px;
+margin: 10px;
   ${({ isCover }) => isCover && `background: #17cb05`}
 `;
 
@@ -33,6 +33,8 @@ const ThumbnailWrapper = styled.div`
 const ThumbnailImg = styled.img`
   max-width: 100%;
   max-height: 100%;
+object-fit: cover;
+
   opacity: ${(props) => {
     if (props.wasUploaded) {
       return 1;

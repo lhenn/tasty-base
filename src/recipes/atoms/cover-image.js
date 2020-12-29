@@ -50,7 +50,6 @@ const StyledCoverImageInput = styled.input`
 `;
 
 export const CoverImageEditor = ({ src, set }) => {
-  console.log('cover Image Editor src:', src)
   const inputRef = useRef();
   return (
     <StyledWrapper

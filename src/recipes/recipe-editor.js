@@ -8,8 +8,9 @@ import {
   addRatingToRecipe,
 } from "../firebase";
 import { PrimaryButton, SecondaryButton } from "../general/buttons";
-import {ImageUploader, Thumbnail} from "../general/image-uploader";
- import useFileHandlers from "../useFileHandlers";
+import { ImageUploader, Thumbnail } from "../general/image-uploader";
+import { EditGallery } from "./atoms/gallery";
+import useFileHandlers from "../useFileHandlers";
 import { CoverImageEditor } from "./atoms/cover-image";
 import { DescriptionEditor } from "./atoms/description";
 import { DetailsEditor } from "./atoms/details";
@@ -64,7 +65,7 @@ const Editor = ({ author, initialContent, slug = "", history }) => {
   ] = useExpandingArray(
     initialContent?.instructions ? [...initialContent.instructions] : [""]
   );
-  console.log('coverImageURL:', coverImageURL)
+  console.log("coverImageURL:", coverImageURL);
 
   //Set up file handlers for ImageUploader
   const {
@@ -118,7 +119,9 @@ const Editor = ({ author, initialContent, slug = "", history }) => {
       instructions: instructions.slice(0, -1),
       author,
       timestamp: getTimestamp(),
-      gallery: existingGallery.concat(Object.values(galleryUploaded).map((img) => img.downloadURL)),
+      gallery: existingGallery.concat(
+        Object.values(galleryUploaded).map((img) => img.downloadURL)
+      ),
     };
     let actualSlug = slug;
 
@@ -208,15 +211,19 @@ const Editor = ({ author, initialContent, slug = "", history }) => {
           />
         )}
       </RecipeContainer>
-
-      {imageUploader}
       {existingGallery && existingGallery.length > 0 && (
-        <p>Images will go here..</p>
-
+        <EditGallery
+          onSetCover={(url) => {
+            console.log("changing url to: ", url);
+            setCoverImageURL(url);
+          }}
+          gallery={existingGallery}
+        />
       )}
+      {/** 
+      {imageUploader}
       {existingGallery && existingGallery.length > 0 
       && existingGallery.map((src) => {
-        //console.log('image:', src)
         let token = new URLSearchParams(src).get("token"); 
 
         return (
@@ -229,6 +236,7 @@ const Editor = ({ author, initialContent, slug = "", history }) => {
           onSetCover={(url) => setCoverImageURL(url)}/>
         )
       })}
+      */}
       {buttons}
     </form>
   );

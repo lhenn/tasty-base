@@ -1,6 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
 import styled from "styled-components";
-import { lightGrey } from "../styling";
 import { UserContext } from "../App";
 import { DisplayCoverImage } from "./atoms/cover-image";
 import { DisplayDescription } from "./atoms/description";
@@ -9,40 +8,11 @@ import { Icons } from "./atoms/icons";
 import { DisplayOverview } from "./atoms/overview";
 import { DisplayTitle } from "./atoms/title";
 import { subscribeToRatings, unsubscribeFromRatings } from "../firebase";
+import { DisplayGallery} from "./atoms/gallery";
 
 // box-shadow: 10px 10px 5px -10px rgba(0, 0, 0, 0.75);
 export const RecipeContainer = styled.div`
   background-color: white;
-`;
-
-const GalleryContainer = styled.div`
-  width: 100%;
-  text-align: center;
-  background: ${lightGrey};
-  padding: 20px;
-  margin-bottom: 20px;
-`;
-
-const Gallery = ({ gallery }) => {
-  return (
-    <GalleryContainer>
-      {gallery.map((img) => {
-        return (
-          <a key={img} data-fancybox="gallery" href={img}>
-            <ThumbnailImg src={img} />
-          </a>
-        );
-      })}
-    </GalleryContainer>
-  );
-};
-
-const ThumbnailImg = styled.img`
-  height: 200px;
-  width: 200px;
-  margin: 10px;
-  object-fit: cover;
-  display: inline-flex;
 `;
 
 export const RecipeHeader = styled.div`
@@ -116,7 +86,7 @@ const DisplayRecipePost = ({ content, slug }) => {
       )}
 
       {content.gallery && content.gallery.length > 1 && (
-        <Gallery gallery={content.gallery} />
+        <DisplayGallery gallery={content.gallery} />
       )}
     </RecipeContainer>
   );

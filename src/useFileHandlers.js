@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useReducer } from "react";
-import { getFirebase, saveImagesToPost } from "./firebase";
+import { getFirebase } from "./firebase";
 
 // Different states
 export const IDLE = "IDLE";
