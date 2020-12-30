@@ -8,7 +8,8 @@ import { Icons } from "./atoms/icons";
 import { DisplayOverview } from "./atoms/overview";
 import { DisplayTitle } from "./atoms/title";
 import { subscribeToRatings, unsubscribeFromRatings } from "../firebase";
-import { DisplayGallery} from "./atoms/gallery";
+import { DisplayGallery } from "./atoms/gallery";
+import { DisplayPostStatusOptions } from "./atoms/post-update-buttons";
 
 // box-shadow: 10px 10px 5px -10px rgba(0, 0, 0, 0.75);
 export const RecipeContainer = styled.div`
@@ -88,6 +89,7 @@ const DisplayRecipePost = ({ content, slug }) => {
       {content.gallery && content.gallery.length > 1 && (
         <DisplayGallery gallery={content.gallery} />
       )}
+      {user?.uid === content.author && <DisplayPostStatusOptions slug={slug} />}
     </RecipeContainer>
   );
 };
