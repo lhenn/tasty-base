@@ -18,6 +18,7 @@ import { GlobalStyle, containerRules } from "./styling";
 const MainContent = styled.main`
   ${containerRules}
   margin: 0 auto;
+  padding: 30px 0;
   flex-grow: 1;
 `;
 

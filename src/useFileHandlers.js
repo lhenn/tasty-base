@@ -160,3 +160,9 @@ const useFileHandlers = () => {
 };
 
 export default useFileHandlers;
+
+const deleteImage = (url) => {
+  //remove url from recipe post gallery/cover image if applicable
+  //remove from firebase storage
+
+}

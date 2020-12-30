@@ -98,9 +98,11 @@ export const Thumbnail = ({
   );
 };
 
-const ThumbnailContainer = styled.div`
+const FilesContainer = styled.div`
   display: flex;
-  flex-wrap: wrap;
+  justify-content:center;
+  align-items:center;
+  flex-direction: column;
 `;
 
 const UploadButton = ({ status, ...props }) => {
@@ -124,6 +126,9 @@ const UploadButton = ({ status, ...props }) => {
   );
 };
 
+const FileName = styled.p`
+margin-bottom:5px;
+`;
 // Callbacks:
 //  onSetCover: called after an image is set as the cover with the src and alt
 //    props of the image.
@@ -144,7 +149,7 @@ export const ImageUploader = ({
     >
       <FileInput onChange={onChange} />
 
-      <ThumbnailContainer>
+      <FilesContainer>
         {files.map(({ file, src, id }, index) => {
           let wasUploaded = false;
           let downloadURL = "";
@@ -159,18 +164,19 @@ export const ImageUploader = ({
           }
 
           return (
-            <Thumbnail
-              key={`thumb${index}-${file.name}`}
-              downloadURL={downloadURL}
-              src={src}
-              filename={file.name}
-              wasUploaded={wasUploaded}
-              curCover={curCover}
-              onSetCover={onSetCover}
-            />
+            <FileName key={`thumb${index}-${file.name}`} >{file.name}</FileName>
+            // <Thumbnail
+            //   key={`thumb${index}-${file.name}`}
+            //   downloadURL={downloadURL}
+            //   src={src}
+            //   filename={file.name}
+            //   wasUploaded={wasUploaded}
+            //   curCover={curCover}
+            //   onSetCover={onSetCover}
+            // />
           );
         })}
-      </ThumbnailContainer>
+      </FilesContainer>
       <UploadButton status={status} onClick={onSubmit} />
     </div>
   );

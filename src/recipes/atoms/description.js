@@ -28,7 +28,7 @@ const DescriptionHeader = styled.h4`
   align-items: center;
   justify-content: center;
 `;
-// TODO: factor out
+
 const DescriptionText = styled.p`
 ${(props) => {
   return props.layoutSize == SMALL ? "width: 100%; ": "width: 80%; margin-right: 20px;";

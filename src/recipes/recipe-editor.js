@@ -7,7 +7,6 @@ import {
   submitPost,
   addRatingToRecipe,
 } from "../firebase";
-import { PrimaryButton, SecondaryButton } from "../general/buttons";
 import { ImageUploader, Thumbnail } from "../general/image-uploader";
 import { EditGallery } from "./atoms/gallery";
 import useFileHandlers from "../useFileHandlers";
@@ -19,6 +18,7 @@ import { OverviewEditor } from "./atoms/overview";
 import { TitleEditor } from "./atoms/title";
 import { RecipeContainer, RecipeHeader } from "./display-recipe";
 import useExpandingArray from "./form-hooks";
+import {EditPostStatusOptions} from "./atoms/post-update-buttons"
 
 const ImageUploaderWrapper = styled.div`
   display: flex;
@@ -65,7 +65,6 @@ const Editor = ({ author, initialContent, slug = "", history }) => {
   ] = useExpandingArray(
     initialContent?.instructions ? [...initialContent.instructions] : [""]
   );
-  console.log("coverImageURL:", coverImageURL);
 
   //Set up file handlers for ImageUploader
   const {
@@ -150,28 +149,6 @@ const Editor = ({ author, initialContent, slug = "", history }) => {
     });
   };
 
-  const buttons = (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "flex-end",
-        padding: "20px 0 10px 0",
-      }}
-    >
-      <SecondaryButton
-        type="button"
-        onClick={(event) => {
-          event.preventDefault();
-          history.go(-1);
-        }}
-      >
-        Cancel
-      </SecondaryButton>
-      <PrimaryButton type="submit" disabled={isSubmitting}>
-        Submit
-      </PrimaryButton>
-    </div>
-  );
   return (
     <form onSubmit={onSubmit}>
       <RecipeContainer>
@@ -211,6 +188,7 @@ const Editor = ({ author, initialContent, slug = "", history }) => {
           />
         )}
       </RecipeContainer>
+      {imageUploader}
       {existingGallery && existingGallery.length > 0 && (
         <EditGallery
           onSetCover={(url) => {
@@ -237,7 +215,7 @@ const Editor = ({ author, initialContent, slug = "", history }) => {
         )
       })}
       */}
-      {buttons}
+      <EditPostStatusOptions slug={slug} isSubmitting={isSubmitting} />
     </form>
   );
 };
