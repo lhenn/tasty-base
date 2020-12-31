@@ -173,6 +173,12 @@ export const submitPost = async (slug, content) => {
   return slug === "" ? await postRef.push(content) : await postRef.set(content);
 };
 
+export const deletePost = async (slug) => {
+  const postRef = getFirebase().database().ref(`${version}/posts/${slug}`);
+  await postRef.remove();
+
+}
+
 export const getTimestamp = () => getFirebase().database.ServerValue.TIMESTAMP;
 
 export const addRatingToRecipe = async (slug, ratingType, ratingValue, uid) => {

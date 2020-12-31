@@ -2,34 +2,56 @@ import React from "react";
 import styled from "styled-components";
 import mdToHTML from "../../forms/md-parse";
 import { lightGrey } from "../../styling";
+import { getLayoutSize, SMALL, UserContext } from "../../App";
+import { useBreakpoint } from "../../breakpoint-hooks";
 
 // TODO: factor out
 const DescriptionLink = styled.a`
   text-decoration: underline !important;
 `;
 
-// TODO: factor out
-const DescriptionText = styled.p`
-  white-space: pre-line;
-  margin: 0;
-  padding: 0;
-`;
-
 const DescriptionWrapper = styled.div`
   display: flex;
+  flex-direction: ${(props) => {
+    return props.layoutSize == SMALL ? "column" : "row";
+  }};
   align-items: center;
   justify-content: center;
   background: ${lightGrey};
-  padding: 25px 15% 25px 15%;
+  padding: 20px;
+`;
+const DescriptionHeader = styled.h4`
+  font-weight: bold;
+  width: 20%;
+  display: flex;
+  padding:10px;
+  align-items: center;
+  justify-content: center;
 `;
 
-export const DisplayDescription = ({ description }) => (
-  <DescriptionWrapper>
-    <DescriptionText>
-      {mdToHTML(description.replace(/\\n/g, "\n"), DescriptionLink)}
-    </DescriptionText>
-  </DescriptionWrapper>
-);
+const DescriptionText = styled.p`
+${(props) => {
+  return props.layoutSize == SMALL ? "width: 100%; ": "width: 80%; margin-right: 20px;";
+}}
+  white-space: pre-line;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+export const DisplayDescription = ({ description }) => {
+  const matches = useBreakpoint();
+  const layoutSize = getLayoutSize(matches);
+
+  return (
+    <DescriptionWrapper layoutSize={layoutSize}>
+      <DescriptionHeader>About</DescriptionHeader>
+      <DescriptionText layoutSize={layoutSize}>
+        {mdToHTML(description.replace(/\\n/g, "\n"), DescriptionLink)}
+      </DescriptionText>
+    </DescriptionWrapper>
+  );
+};
 
 const StyledDescriptionInput = styled.textarea`
   resize: none;

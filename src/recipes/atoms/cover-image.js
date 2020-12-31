@@ -18,7 +18,7 @@ const StyledWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  background-image: url(${(props) => props.src}),
+  background-image: url("${(props) => props.src}"),
     url("https://via.placeholder.com/1000x400?text=Click+to+add+cover+image");
   background-repeat: no-repeat;
   background-size: cover;

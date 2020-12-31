@@ -22,7 +22,6 @@ const Star = ({ slug }) => {
     userData.myListRecipes[slug] &&
     userData.myListRecipes[slug].hasOwnProperty("star");
 
-  console.log("isStarred? ", isStarred);
   const star = () => {
     if (busy) return;
     setBusy(true);

@@ -100,10 +100,8 @@ const NavBar = () => {
   const matches = useBreakpoint();
   // Media query
   const layoutSize = getLayoutSize(matches);
-  console.log("layoutSize: ", layoutSize);
 
   const toggleDisplay = (display) => {
-    console.log("should be toggling..");
     setStatus(display);
   };
   if (layoutSize === SMALL && status === "close") {
