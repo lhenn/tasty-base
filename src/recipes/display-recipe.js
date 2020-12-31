@@ -86,7 +86,7 @@ const DisplayRecipePost = ({ content, slug }) => {
         />
       )}
 
-      {content.gallery && content.gallery.length > 1 && (
+      {content.gallery && content.gallery.length >= 1 && (
         <DisplayGallery gallery={content.gallery} />
       )}
       {user?.uid === content.author && <DisplayPostStatusOptions slug={slug} />}

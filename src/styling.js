@@ -44,6 +44,10 @@ export const GlobalStyle = createGlobalStyle`
       outline: none;
     }
   }
+  input, select, textarea{
+    border: solid 1px grey;
+    padding:5px;
+  }
 `
 export const buttonPadding = `0 10px`;
 

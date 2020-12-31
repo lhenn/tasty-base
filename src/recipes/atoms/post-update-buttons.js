@@ -10,7 +10,7 @@ const PostStatusOptionsContainer = styled.div`
   display: flex;
   justify-content: center;
 `;
-const DeleteButton = (slug) => (
+const DeleteButton = ({ slug }) => (
   <OverlayTrigger
     placement="bottom"
     trigger={["hover", "focus"]}
@@ -21,6 +21,7 @@ const DeleteButton = (slug) => (
       onClick={(event) => {
         deletePost(slug);
         window.location.href = "/"; //redirect to home
+        //return <Redirect to="/"/>
       }}
     >
       Delete
@@ -35,7 +36,8 @@ export const EditPostStatusOptions = ({ isSubmitting, slug }) => {
       <SecondaryButton
         type="button"
         onClick={(event) => {
-          return <Redirect to={`/recipes/${slug}`} />;
+          window.location.href = `/recipes/${slug}`;
+          //return <Redirect to={`/recipes/${slug}`}/>
         }}
       >
         Cancel
@@ -53,7 +55,7 @@ const EditButton = ({ slug }) => (
 );
 export const DisplayPostStatusOptions = ({ slug }) => (
   <PostStatusOptionsContainer>
-    <EditButton slug={slug} />
     <DeleteButton slug={slug} />
+    <EditButton slug={slug} />
   </PostStatusOptionsContainer>
 );

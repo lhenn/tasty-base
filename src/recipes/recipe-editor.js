@@ -1,30 +1,23 @@
-import React, { useRef, useEffect, useContext, useState } from "react";
-import styled from "styled-components";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { UserContext } from "../App";
 import {
   addToMyList,
+  deleteImages,
   getTimestamp,
   submitPost,
 } from "../firebase";
-import { ImageUploader, Thumbnail } from "../general/image-uploader";
-import { EditGallery } from "./atoms/gallery";
+import ImageUploaderContainer from "../general/image-uploader";
 import useFileHandlers from "../useFileHandlers";
 import { CoverImageEditor } from "./atoms/cover-image";
 import { DescriptionEditor } from "./atoms/description";
 import { DetailsEditor } from "./atoms/details";
+import { EditGallery } from "./atoms/gallery";
 import { emptyIngredient } from "./atoms/ingredients";
 import { OverviewEditor } from "./atoms/overview";
+import { EditPostStatusOptions } from "./atoms/post-update-buttons";
 import { TitleEditor } from "./atoms/title";
 import { RecipeContainer, RecipeHeader } from "./display-recipe";
 import useExpandingArray from "./form-hooks";
-import {EditPostStatusOptions} from "./atoms/post-update-buttons"
-
-const ImageUploaderWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 25px 15% 25px 15%;
-`;
 
 const Editor = ({ author, initialContent, slug = "", history }) => {
   const { user } = useContext(UserContext);
@@ -37,6 +30,7 @@ const Editor = ({ author, initialContent, slug = "", history }) => {
   const [existingGallery, setExistingGallery] = useState(
     initialContent?.gallery || []
   );
+  const [imagesToDelete, setImagesToDelete] = useState([]);
   const [sourceType, setSourceType] = useState(
     initialContent?.sourceType || ""
   );
@@ -74,21 +68,20 @@ const Editor = ({ author, initialContent, slug = "", history }) => {
     onChange: onChangeGallery,
   } = useFileHandlers();
 
-  const imageUploader = (
-    <ImageUploaderWrapper>
-      <label htmlFor="post-image-uploader">{"Upload images"}</label>
-      <ImageUploader
-        id="post-image-uploader"
-        files={galleryFiles}
-        uploaded={galleryUploaded}
-        status={galleryUploadStatus}
-        onSubmit={onSubmitGallery}
-        onChange={onChangeGallery}
-        curCover={coverImageURL}
-        onSetCover={(url) => setCoverImageURL(url)}
-      />
-    </ImageUploaderWrapper>
-  );
+  useEffect(() => {
+    setExistingGallery(
+      existingGallery.concat(
+        Object.values(galleryUploaded).map((img) => img.downloadURL)
+      )
+    );
+  }, [galleryUploaded]);
+
+  // Removes image from gallery component when user selects 'delete'. Does not remove from database until edit submitted
+  const onDeleteImage = (url) => {
+    setImagesToDelete(imagesToDelete.concat([url]));
+    console.log("imagesToDelete updated to: ", imagesToDelete);
+    setExistingGallery(existingGallery.filter((el) => el !== url));
+  };
 
   // For disabling double submissions
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -117,9 +110,7 @@ const Editor = ({ author, initialContent, slug = "", history }) => {
       instructions: instructions.slice(0, -1),
       author,
       timestamp: getTimestamp(),
-      gallery: existingGallery.concat(
-        Object.values(galleryUploaded).map((img) => img.downloadURL)
-      ),
+      gallery: existingGallery,
     };
     let actualSlug = slug;
 
@@ -144,6 +135,8 @@ const Editor = ({ author, initialContent, slug = "", history }) => {
         history.push(`/recipes/${actualSlug}`);
       }
     });
+    // Remove images from storage if they were deleted during session
+    deleteImages(imagesToDelete);
   };
 
   return (
@@ -152,9 +145,7 @@ const Editor = ({ author, initialContent, slug = "", history }) => {
         <RecipeHeader>
           <TitleEditor title={title} set={setTitle} />
         </RecipeHeader>
-
         <CoverImageEditor src={coverImageURL} set={setCoverImageURL} />
-
         <OverviewEditor
           {...{
             sourceType,
@@ -171,9 +162,7 @@ const Editor = ({ author, initialContent, slug = "", history }) => {
             setEase,
           }}
         />
-
         <DescriptionEditor description={description} set={setDescription} />
-
         {sourceType === "personal" && (
           <DetailsEditor
             ingredients={ingredients}
@@ -185,33 +174,21 @@ const Editor = ({ author, initialContent, slug = "", history }) => {
           />
         )}
       </RecipeContainer>
-      {imageUploader}
+      <ImageUploaderContainer
+        id="post-image-uploader"
+        files={galleryFiles}
+        uploaded={galleryUploaded}
+        status={galleryUploadStatus}
+        onSubmit={onSubmitGallery}
+        onChange={onChangeGallery}
+      />
       {existingGallery && existingGallery.length > 0 && (
         <EditGallery
-          onSetCover={(url) => {
-            console.log("changing url to: ", url);
-            setCoverImageURL(url);
-          }}
+          onSetCover={setCoverImageURL}
+          onDeleteImage={onDeleteImage}
           gallery={existingGallery}
         />
       )}
-      {/** 
-      {imageUploader}
-      {existingGallery && existingGallery.length > 0 
-      && existingGallery.map((src) => {
-        let token = new URLSearchParams(src).get("token"); 
-
-        return (
-          <Thumbnail key={token}
-          downloadURL={src}
-          src={src}
-          filename={'bleh'}
-          wasUploaded={true}
-          curCover={coverImageURL}
-          onSetCover={(url) => setCoverImageURL(url)}/>
-        )
-      })}
-      */}
       <EditPostStatusOptions slug={slug} isSubmitting={isSubmitting} />
     </form>
   );

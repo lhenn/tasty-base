@@ -122,7 +122,7 @@ export const RatingInput = ({ value, set }) => (
 const StyledRatingEditor = styled(RatingWrapper)``;
 
 const StyledRatingInput = styled.input`
-  width: 70px;
+  width: 50px;
 `;
 
 const MarginedDiv = styled.div`

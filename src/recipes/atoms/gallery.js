@@ -33,16 +33,6 @@ export const DisplayGallery = ({ gallery }) => {
   );
 };
 
-const FileInput = (props) => (
-  <input
-    type="file"
-    accept="image/*"
-    name="img-uploader-input"
-    multiple
-    {...props}
-  />
-);
-
 const StyledEditThumbnail = styled.div`
   background-image: url("${(props) => props.src}");
   height: 200px;
@@ -74,9 +64,7 @@ const ThumbnailIcon = styled(FontAwesomeIcon)`
     cursor: pointer;
   }
 `;
-const EditThumbnail = ({ src, onSetCover }) => {
-  console.log("src: ", src);
-  //console.log('onSetCover: ', onSetCover)
+const EditThumbnail = ({ src, onSetCover, onDeleteImage }) => {
 
   return (
     <StyledEditThumbnail src={src}>
@@ -97,17 +85,17 @@ const EditThumbnail = ({ src, onSetCover }) => {
           trigger={["hover", "focus"]}
           overlay={<UpdatingTooltip>Delete</UpdatingTooltip>}
         >
-          <ThumbnailIcon icon={faTrash} fontSize="24px" />
+          <ThumbnailIcon icon={faTrash} fontSize="24px" onClick={(e)=>onDeleteImage(src)} />
         </OverlayTrigger>
       </EditThumbnailOverlay>
     </StyledEditThumbnail>
   );
 };
-export const EditGallery = ({ gallery, onSetCover }) => {
+export const EditGallery = ({ gallery, onDeleteImage, onSetCover }) => {
   return (
     <GalleryContainer>
       {gallery.map((img) => {
-        return <EditThumbnail key={img} src={img} onSetCover={onSetCover} />;
+        return <EditThumbnail key={img} src={img} onSetCover={onSetCover} onDeleteImage={onDeleteImage} />;
       })}
     </GalleryContainer>
   );
