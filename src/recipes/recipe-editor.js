@@ -4,7 +4,6 @@ import {
   addToMyList,
   getTimestamp,
   submitPost,
-  addRatingToRecipe,
 } from "../firebase";
 import { PrimaryButton, SecondaryButton } from "../general/buttons";
 // import ImageUploader from "../general/image-uploader";
@@ -129,8 +128,6 @@ const Editor = ({ author, initialContent, slug = "", history }) => {
     // Add ratings if both are present
     if (taste !== "" && ease !== "") {
       newPostPromise = newPostPromise
-        .then(() => addRatingToRecipe(actualSlug, "taste", taste, user.uid))
-        .then(() => addRatingToRecipe(actualSlug, "ease", ease, user.uid))
         .then(() => addToMyList(user.uid, actualSlug, "rate", { ease, taste }))
         .then(() => addToMyList(user.uid, actualSlug, "check"));
     }

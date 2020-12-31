@@ -8,7 +8,6 @@ import { UserContext } from "../../App";
 import {
   addToMyList,
   removeFromMyList,
-  addRatingToRecipe,
   removeRatingFromRecipe,
 } from "../../firebase";
 import { FormGroup, FormRow, Label } from "../../forms/general-forms";
@@ -44,8 +43,6 @@ function RateToolTip(props) {
   };
   const sendRatings = (ease, taste) => {
     addToMyList(user.uid, props.slug, "rate", { ease, taste })
-      .then(() => addRatingToRecipe(props.slug, "ease", ease, user.uid))
-      .then(() => addRatingToRecipe(props.slug, "taste", taste, user.uid))
       .then(() => {
         props.closeRate();
       })

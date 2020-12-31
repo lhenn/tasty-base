@@ -7,6 +7,7 @@ import { fetchSortedPosts, getFirebase, updateUser, getUserData } from "./fireba
 import Footer from "./general/footer";
 import NavBar from "./general/navbar";
 import About from "./pages/about";
+import Privacy from "./pages/privacy";
 import Create from "./pages/create";
 import Edit from "./pages/edit";
 import Home from "./pages/home";
@@ -133,6 +134,7 @@ const App = () => {
               <Route exact path="/signin" component={Signin} />
               <Route exact path="/create" component={Create} />
               <Route exact path="/about" component={About} />
+              <Route exact path="/privacy" component={Privacy} />
               <Route
                 exact
                 path="/recipes/:slug"
