@@ -1,7 +1,5 @@
-import React, { useState } from "react";
-import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import React from "react";
 import styled from "styled-components";
-import UpdatingTooltip from "../general/tooltip";
 import { SecondaryButton } from "../general/buttons";
 import {
   LOADED,
@@ -10,6 +8,13 @@ import {
   FILES_UPLOADED,
   IDLE,
 } from "../useFileHandlers";
+
+const ImageUploaderWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 25px 15% 25px 15%;
+`;
 
 const FileInput = (props) => (
   <input
@@ -20,83 +25,6 @@ const FileInput = (props) => (
     {...props}
   />
 );
-
-// Container for thumbnail
-const ThumbnailWrapper = styled.div`
-height: 200px;
-width: 200px;
-margin: 10px;
-  ${({ isCover }) => isCover && `background: #17cb05`}
-`;
-
-// Thumbnail image
-const ThumbnailImg = styled.img`
-  max-width: 100%;
-  max-height: 100%;
-object-fit: cover;
-
-  opacity: ${(props) => {
-    if (props.wasUploaded) {
-      return 1;
-    } else {
-      return 0.3;
-    }
-  }};
-`;
-
-// Thumbnail component
-// onSetCover is called when an image is toggled/untoggled as the album cover.
-// It takes the image's URL and the file name as the alt text.
-export const Thumbnail = ({
-  downloadURL,
-  src,
-  filename,
-  wasUploaded,
-  curCover,
-  onSetCover,
-}) => {
-  const [ttText, setTTText] = useState("");
-
-  const onClick = () => {
-    if (wasUploaded && curCover !== downloadURL) {
-      setTTText("Set!");
-      onSetCover(downloadURL, filename);
-    } else if (wasUploaded) {
-      setTTText("Unset!");
-      onSetCover("", "");
-    } else {
-      setTTText("Not yet uploaded");
-    }
-  };
-
-  const onMouseEnter = () => {
-    if (wasUploaded && curCover !== downloadURL) {
-      setTTText("Set as cover");
-    } else if (wasUploaded) {
-      setTTText("Unset as cover");
-    } else {
-      setTTText("Not yet uploaded");
-    }
-  };
-
-  return (
-    <OverlayTrigger
-      placement="bottom"
-      trigger={["hover", "focus"]}
-      overlay={
-        <UpdatingTooltip id="favorite-tooltip">{ttText}</UpdatingTooltip>
-      }
-    >
-      <ThumbnailWrapper
-        isCover={wasUploaded && curCover === downloadURL}
-        onClick={onClick}
-        onMouseEnter={onMouseEnter}
-      >
-        <ThumbnailImg src={src} alt={filename} wasUploaded={wasUploaded} />
-      </ThumbnailWrapper>
-    </OverlayTrigger>
-  );
-};
 
 const FilesContainer = styled.div`
   display: flex;
@@ -129,18 +57,13 @@ const UploadButton = ({ status, ...props }) => {
 const FileName = styled.p`
 margin-bottom:5px;
 `;
-// Callbacks:
-//  onSetCover: called after an image is set as the cover with the src and alt
-//    props of the image.
-//  onUnsetCover: called after an image is unset as the cover with the src
-export const ImageUploader = ({
+
+const ImageUploader = ({
   files,
   uploaded,
   status,
   onSubmit,
   onChange,
-  curCover,
-  onSetCover,
 }) => {
   return (
     <div
@@ -162,18 +85,8 @@ export const ImageUploader = ({
               break;
             }
           }
-
           return (
             <FileName key={`thumb${index}-${file.name}`} >{file.name}</FileName>
-            // <Thumbnail
-            //   key={`thumb${index}-${file.name}`}
-            //   downloadURL={downloadURL}
-            //   src={src}
-            //   filename={file.name}
-            //   wasUploaded={wasUploaded}
-            //   curCover={curCover}
-            //   onSetCover={onSetCover}
-            // />
           );
         })}
       </FilesContainer>
@@ -181,3 +94,16 @@ export const ImageUploader = ({
     </div>
   );
 };
+
+const ImageUploaderContainer = (props) => {
+  return (
+    <ImageUploaderWrapper>
+    <label htmlFor="image-uploader">Upload images</label>
+    <ImageUploader
+      id="image-uploader"
+      {...props}
+    />
+  </ImageUploaderWrapper>
+  )
+}
+export default ImageUploaderContainer;

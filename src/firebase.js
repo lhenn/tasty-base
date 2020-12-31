@@ -88,7 +88,6 @@ export const addToMyList = (uid, slug, action, ratings = null) => {
             taste: ratings.taste,
           },
         };
-  console.log("should be updating:", uid, slug, action);
   return getFirebase()
     .database()
     .ref(`${version}/users/${uid}/data/myListRecipes/${slug}`)
@@ -221,3 +220,10 @@ export const unsubscribeFromRatings = (slug) => {
   firebase.database().ref(`${version}/posts/${slug}/taste`).off("value");
   firebase.database().ref(`${version}/posts/${slug}/ease`).off("value");
 };
+export const deleteImages = (images) => {
+  console.log(`images to delete: ${images}`)
+  images.forEach(url => {
+    const imageRef = getFirebase().storage().refFromURL(url);
+    imageRef.delete().then(()=>console.log('file deleted')).catch((err)=>console.log(err))
+  })
+}

@@ -40,7 +40,7 @@ export const DisplayBasicInfo = ({ time, servings }) => (
 );
 
 const StyledPositiveIntInput = styled.input`
-  width: 80px;
+  width: 50px;
 `;
 
 export const BasicInfoEditor = ({ time, setTime, servings, setServings }) => {
