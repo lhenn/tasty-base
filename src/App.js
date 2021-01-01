@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useState } from "react";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
 import styled from "styled-components";
 import "./App.css";
 import { BreakpointProvider } from "./breakpoint-hooks";
@@ -14,7 +14,8 @@ import Home from "./pages/home";
 import NoMatch from "./pages/no-match";
 import Signin from "./pages/signin";
 import SelfLoadingRecipePost from "./recipes/recipe-post";
-import { GlobalStyle, containerRules } from "./styling";
+import { GlobalStyle, containerRules, yellowBase } from "./styling";
+import CookieConsent from "react-cookie-consent";
 
 const MainContent = styled.main`
   ${containerRules}
@@ -150,6 +151,8 @@ const App = () => {
             </Switch>
           </MainContent>
           <Footer />
+          <CookieConsent style={{ background: "#e6edfd", color:"black" }}
+  buttonStyle={{ background: yellowBase, fontSize: "13px", borderRadius:"25px"  }}>This website uses cookies to enhance the user experience. You can find our privacy policy <Link to="/privacy" style={{textDecoration:"underline !important"}}>here</Link>.</CookieConsent>
         </Router>
       </BreakpointProvider>
     </UserContext.Provider>

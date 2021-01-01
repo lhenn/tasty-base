@@ -5,7 +5,7 @@ const Privacy = () => (
     <h1>Privacy Policy for Tasty Base</h1>
 
     <p>
-      At Tasty Base, accessible from tasty-base.com, one of our main priorities
+      At Tasty Base, accessible from tasty-base.web.app, one of our main priorities
       is the privacy of our visitors. This Privacy Policy document contains
       types of information that is collected and recorded by Tasty Base and how
       we use it.
@@ -67,14 +67,14 @@ const Privacy = () => (
     <p>We use the information we collect in various ways, including to:</p>
 
     <ul>
-      <li>Provide, operate, and maintain our webste</li>
-      <li>Improve, personalize, and expand our webste</li>
-      <li>Understand and analyze how you use our webste</li>
+      <li>Provide, operate, and maintain our website</li>
+      <li>Improve, personalize, and expand our website</li>
+      <li>Understand and analyze how you use our website</li>
       <li>Develop new products, services, features, and functionality</li>
       <li>
         Communicate with you, either directly or through one of our partners,
         including for customer service, to provide you with updates and other
-        information relating to the webste, and for marketing and promotional
+        information relating to the website, and for marketing and promotional
         purposes
       </li>
       <li>Send you emails</li>
