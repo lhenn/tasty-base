@@ -69,17 +69,24 @@ const Editor = ({ author, initialContent, slug = "", history }) => {
   } = useFileHandlers();
 
   useEffect(() => {
-    setExistingGallery(
-      existingGallery.concat(
-        Object.values(galleryUploaded).map((img) => img.downloadURL)
-      )
-    );
-  }, [galleryUploaded]);
+    if (galleryUploadStatus === "FILES_UPLOADED") {
+      setExistingGallery(
+        existingGallery.concat(
+          Object.values(galleryUploaded).map((img) => img.downloadURL)
+        )
+      );
+    }
+  }, [galleryUploadStatus]);
 
   // Removes image from gallery component when user selects 'delete'. Does not remove from database until edit submitted
   const onDeleteImage = (url) => {
+    //Check if image is cover image, if so: unset
+    if (url === coverImageURL) {
+      setCoverImageURL("");
+    }
+    //Queue up images to delete when 'submit' is hit
     setImagesToDelete(imagesToDelete.concat([url]));
-    console.log("imagesToDelete updated to: ", imagesToDelete);
+    //Immediately update EditGallery component
     setExistingGallery(existingGallery.filter((el) => el !== url));
   };
 

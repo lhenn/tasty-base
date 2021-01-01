@@ -4,17 +4,17 @@ import storage from "firebase/storage";
 
 // Choose whether to use acceptance database or not
 const acc = true;
-const version = acc ? 'acceptance' : 'production';
+const version = acc ? "acceptance" : "production";
 
 const config = {
-      apiKey: "AIzaSyAZOwNwikvL7sAd_KhjYpsozA-UQBW_CGw",
-      authDomain: "tasty-base.firebaseapp.com",
-      databaseURL: "https://tasty-base.firebaseio.com",
-      projectId: "tasty-base",
-      storageBucket: "tasty-base.appspot.com",
-      messagingSenderId: "1019826146813",
-      appId: "1:1019826146813:web:c9fd1d77989f7f72d0dd94",
-    };
+  apiKey: "AIzaSyAZOwNwikvL7sAd_KhjYpsozA-UQBW_CGw",
+  authDomain: "tasty-base.firebaseapp.com",
+  databaseURL: "https://tasty-base.firebaseio.com",
+  projectId: "tasty-base",
+  storageBucket: "tasty-base.appspot.com",
+  messagingSenderId: "1019826146813",
+  appId: "1:1019826146813:web:c9fd1d77989f7f72d0dd94",
+};
 
 // TODO: is this caching step really necessary?
 let firebaseCache;
@@ -40,7 +40,9 @@ export const updateUser = (user) => {
 };
 export const getUserData = (uid, callback) => {
   // Listen for changes in user data
-  const userDataRef = getFirebase().database().ref(`${version}/users/${uid}/data`);
+  const userDataRef = getFirebase()
+    .database()
+    .ref(`${version}/users/${uid}/data`);
   userDataRef.on(
     "value",
     (snapshot) => {
@@ -130,7 +132,10 @@ const insertAuthorNames = async (posts) => {
 };
 
 export const fetchSortedPosts = async () => {
-  const snapshots = await getFirebase().database().ref(`${version}/posts`).once("value");
+  const snapshots = await getFirebase()
+    .database()
+    .ref(`${version}/posts`)
+    .once("value");
 
   // For some strange reason, can't just do snapshots.val()
   const posts = [];
@@ -150,7 +155,7 @@ export const fetchPost = async (slug) => {
     .once("value");
   // Unclear why this doesn't work in a then...
   const content = snapshot.val();
-  content["authorName"] = await fetchName(content.author);
+  if(content) content["authorName"] = await fetchName(content.author);
   return { slug, content };
 };
 
@@ -173,10 +178,20 @@ export const submitPost = async (slug, content) => {
 };
 
 export const deletePost = async (slug) => {
+  console.log(`calling deletePost`);
+  //Get the post ref
   const postRef = getFirebase().database().ref(`${version}/posts/${slug}`);
+  //Delete any images in gallery
+  const galleryRef = getFirebase()
+    .database()
+    .ref(`${version}/posts/${slug}/gallery`);
+  const images = await galleryRef
+    .once("value")
+    .then((snapshot) => snapshot.val());
+  console.log(`images: ${images}`);
+  if (images) deleteImages(images);
   await postRef.remove();
-
-}
+};
 
 export const getTimestamp = () => getFirebase().database.ServerValue.TIMESTAMP;
 
@@ -198,11 +213,7 @@ export const removeRatingFromRecipe = async (slug, ratingType, uid) => {
 };
 
 // Subscribe and unsubscribe functions are for updating rating values in components when the database values are updated (in recipe-preview and display-recipe)
-export const subscribeToRatings = (
-  slug,
-  setTaste,
-  setEase
-) => {
+export const subscribeToRatings = (slug, setTaste, setEase) => {
   firebase
     .database()
     .ref(`${version}/posts/${slug}/taste`)
@@ -221,9 +232,12 @@ export const unsubscribeFromRatings = (slug) => {
   firebase.database().ref(`${version}/posts/${slug}/ease`).off("value");
 };
 export const deleteImages = (images) => {
-  console.log(`images to delete: ${images}`)
-  images.forEach(url => {
+  console.log(`images to delete: ${images}`);
+  images.forEach((url) => {
     const imageRef = getFirebase().storage().refFromURL(url);
-    imageRef.delete().then(()=>console.log('file deleted')).catch((err)=>console.log(err))
-  })
-}
+    imageRef
+      .delete()
+      .then(() => console.log("file deleted"))
+      .catch((err) => console.log(err));
+  });
+};
