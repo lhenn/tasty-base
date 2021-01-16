@@ -3,7 +3,7 @@ import database from "firebase/database";
 import storage from "firebase/storage";
 
 // Choose whether to use acceptance database or not
-const acc = false;
+const acc = true;
 const version = acc ? "acceptance" : "production";
 
 const config = {
