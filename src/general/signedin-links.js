@@ -54,7 +54,7 @@ const logout = () => {
     );
 };
 
-const UserPhoto = ({ user }) => {
+const UserPhoto = ({ user: {displayName, email, photoURL} }) => {
   return (
     <>
       <OverlayTrigger
@@ -63,7 +63,8 @@ const UserPhoto = ({ user }) => {
         overlay={
           <Tooltip id="overlay">
             <TtInner>
-              <strong>{user.displayName}</strong>
+              <strong>{displayName}</strong>
+              {email}
               <SignOutLink onClick={logout}>
                 Sign out <FontAwesomeIcon icon={faSignOutAlt} />
               </SignOutLink>
@@ -72,7 +73,7 @@ const UserPhoto = ({ user }) => {
         }
         rootClose
       >
-        <UserPhotoC src={user.photoURL} alt="user photo" />
+        <UserPhotoC src={photoURL} alt="user photo" />
       </OverlayTrigger>
     </>
   );
