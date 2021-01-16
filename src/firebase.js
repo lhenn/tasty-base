@@ -3,7 +3,7 @@ import database from "firebase/database";
 import storage from "firebase/storage";
 
 // Choose whether to use acceptance database or not
-const acc = true;
+const acc = false;
 const version = acc ? "acceptance" : "production";
 
 const config = {
@@ -90,11 +90,13 @@ export const addToMyList = (uid, slug, action, ratings = null) => {
             taste: ratings.taste,
           },
         };
+
   return getFirebase()
     .database()
     .ref(`${version}/users/${uid}/data/myListRecipes/${slug}`)
     .update(entry);
 };
+
 export const removeFromMyList = (uid, slug, action) =>
   getFirebase()
     .database()
@@ -155,7 +157,7 @@ export const fetchPost = async (slug) => {
     .once("value");
   // Unclear why this doesn't work in a then...
   const content = snapshot.val();
-  if(content) content["authorName"] = await fetchName(content.author);
+  if (content) content["authorName"] = await fetchName(content.author);
   return { slug, content };
 };
 
@@ -195,14 +197,17 @@ export const deletePost = async (slug) => {
 
 export const getTimestamp = () => getFirebase().database.ServerValue.TIMESTAMP;
 
-export const addRatingToRecipe = async (slug, ratingType, ratingValue, uid) => {
-  return await getFirebase()
-    .database()
-    .ref(`${version}/posts/${slug}/${ratingType}/${uid}`)
-    .set({
-      rating: ratingValue,
-      timestamp: getTimestamp(),
-    });
+// ratings must be an object
+export const rateRecipe = async (slug, ratings, uid) => {
+  const db = getFirebase().database();
+  return await Promise.all(
+    Object.entries(ratings).map(([name, value]) =>
+      db.ref(`${version}/posts/${slug}/${name}/${uid}`).set({
+        rating: value,
+        timestamp: getTimestamp(),
+      })
+    )
+  );
 };
 
 export const removeRatingFromRecipe = async (slug, ratingType, uid) => {

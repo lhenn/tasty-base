@@ -7,6 +7,7 @@ import styled from "styled-components";
 import { UserContext } from "../../App";
 import {
   addToMyList,
+  rateRecipe,
   removeFromMyList,
   removeRatingFromRecipe,
 } from "../../firebase";
@@ -43,6 +44,7 @@ function RateToolTip(props) {
   };
   const sendRatings = (ease, taste) => {
     addToMyList(user.uid, props.slug, "rate", { ease, taste })
+      .then(() => rateRecipe(props.slug, { ease, taste }, user.uid))
       .then(() => {
         props.closeRate();
       })

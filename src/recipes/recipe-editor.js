@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import { UserContext } from "../App";
 import {
   addToMyList,
+  rateRecipe,
   deleteImages,
   getTimestamp,
   submitPost,
@@ -133,8 +134,9 @@ const Editor = ({ author, initialContent, slug = "", history }) => {
     // Add ratings if both are present
     if (taste !== "" && ease !== "") {
       newPostPromise = newPostPromise
+        .then(() => addToMyList(user.uid, actualSlug, "check"))
         .then(() => addToMyList(user.uid, actualSlug, "rate", { ease, taste }))
-        .then(() => addToMyList(user.uid, actualSlug, "check"));
+        .then(() => rateRecipe(slug, { ease, taste }, user.uid));
     }
     newPostPromise.then(() => {
       if (isMounted.current) {
